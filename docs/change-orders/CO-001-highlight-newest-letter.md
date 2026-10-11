@@ -135,4 +135,4 @@ All four answered on 2026-10-11, each with the recommended option: accent color 
 | Tests before → after | unit 237 → 245, browser 35 → 38 |
 | Lines changed | +36 −13 (code, 6 files), +121 −0 (tests, 5 files), +18 −8 (design docs, specs and user flow) |
 | Agent time | about 40 minutes from approval (09:51) to completion (about 10:35), including review stops |
-| Deployed | Not yet |
+| Deployed | 2026-10-11, to learn-mandalorian.andreizimin.com |
