@@ -189,6 +189,7 @@ export function App() {
               <PassagePage
                 paragraphs={pageBlocks(passage.paragraphs, page)}
                 learnedSet={learnedSet}
+                newestLetter={fontState === 'loaded' ? progress.learned[progress.learned.length - 1] : undefined}
                 onPeek={(letter) => dispatch({ type: 'peek', letter })}
               />
             )}

@@ -6,13 +6,15 @@ export const PEEK_MS = 1500;
 interface PassagePageProps {
   paragraphs: readonly string[];
   learnedSet: ReadonlySet<string>;
+  /** The most recently learned letter, drawn in the highlight color. */
+  newestLetter?: string;
   onPeek: (letter: string) => void;
   /** Wired by the layout segment (LAYOUT-007); glyph taps never call it. */
   onPageTurn?: () => void;
 }
 
-// @spec READ-001, READ-004
-export function PassagePage({ paragraphs, learnedSet, onPeek }: PassagePageProps) {
+// @spec READ-001, READ-004, READ-008
+export function PassagePage({ paragraphs, learnedSet, newestLetter, onPeek }: PassagePageProps) {
   const [peek, setPeek] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -33,7 +35,7 @@ export function PassagePage({ paragraphs, learnedSet, onPeek }: PassagePageProps
     <div className="passage-page" onClick={handleClick}>
       {paragraphs.map((text, i) => (
         <p key={i}>
-          <Substituted text={text} letters={learnedSet} />
+          <Substituted text={text} letters={learnedSet} highlight={newestLetter} />
         </p>
       ))}
       {peek && (

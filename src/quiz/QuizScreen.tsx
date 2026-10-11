@@ -19,7 +19,8 @@ interface QuizScreenProps {
 /** Which side of a question is drawn in glyphs. */
 const glyphPrompt = (q: Question) => q.type === 'glyph-to-letter' || q.type === 'mando-to-english';
 
-// @spec QUIZ-025
+// Never passes a highlight letter: the newest-letter highlight would give away which letter a question targets.
+// @spec QUIZ-025, QUIZ-026
 function Item({ text, glyph, word }: { text: string; glyph: boolean; word: boolean }) {
   if (glyph) return <Substituted text={text} letters={new Set(text)} />;
   return <span className={word ? undefined : 'latin-letter'}>{text}</span>;

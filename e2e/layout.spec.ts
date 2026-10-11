@@ -210,9 +210,11 @@ test('highlights the newest letter in a readable accent color, light and dark, w
     expect(ratio).toBeGreaterThanOrEqual(4.5);
   }
 
+  // Pages re-fit when the header changes height (for example when the readiness hint appears),
+  // so wait for layout to settle before measuring.
+  const overflow = () => page.locator('.page-area').evaluate((el) => el.scrollHeight - el.clientHeight);
   for (let i = 0; i < 3; i++) {
-    const overflow = await page.locator('.page-area').evaluate((el) => el.scrollHeight - el.clientHeight);
-    expect(overflow).toBeLessThanOrEqual(1);
+    await expect.poll(overflow).toBeLessThanOrEqual(1);
     await page.getByRole('button', { name: 'Next page' }).click();
   }
 });

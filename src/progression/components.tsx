@@ -15,7 +15,7 @@ export function exampleWords(passageText: string, letter: string, max = MAX_EXAM
   return words;
 }
 
-// @spec PROG-002, PROG-003
+// @spec PROG-002, PROG-003, PROG-015
 export function IntroCard({
   letter,
   passageText,
@@ -32,7 +32,7 @@ export function IntroCard({
     <div role="dialog" aria-label="New letter" className="card intro-card">
       <div className="intro-pair">
         <span className="intro-glyph">
-          <Substituted text={letter} letters={only} />
+          <Substituted text={letter} letters={only} highlight={letter} />
         </span>
         <span className="intro-latin">{letter.toUpperCase()}</span>
       </div>
@@ -40,7 +40,7 @@ export function IntroCard({
         <ul className="intro-examples">
           {examples.map((word) => (
             <li key={word}>
-              <Substituted text={word} letters={only} />
+              <Substituted text={word} letters={only} highlight={letter} />
             </li>
           ))}
         </ul>
@@ -123,14 +123,15 @@ export function Controls({
   );
 }
 
-// @spec PROG-007
+// @spec PROG-007, PROG-015
 export function Legend({ learned }: { learned: readonly string[] }) {
+  const newest = learned[learned.length - 1];
   if (learned.length === 0) return <p className="legend-empty">No letters yet.</p>;
   return (
     <ul className="legend">
       {learned.map((letter) => (
         <li key={letter}>
-          <Substituted text={letter} letters={new Set([letter])} />
+          <Substituted text={letter} letters={new Set([letter])} highlight={newest} />
           <span className="legend-latin">{letter.toUpperCase()}</span>
         </li>
       ))}

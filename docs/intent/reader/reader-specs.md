@@ -14,8 +14,8 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 - `[x]` **READ-003**: The system SHALL expose each word containing glyphs to assistive technology with its Latin spelling.
 - `[x]` **READ-005**: The system SHALL leave digits, punctuation, whitespace and non-ASCII letters unchanged.
 - `[x]` **READ-006**: The system SHALL apply the same glyph to upper and lower case of a letter.
-- `[ ]` **READ-008**: While a passage page is shown, the system SHALL draw every occurrence of the newest learned letter (the most recently added letter in the learned set) in a highlight color distinct from other glyphs, until the learned set changes.
-- `[ ]` **READ-009**: The substitution renderer SHALL accept an optional highlight letter and mark only that letter's glyphs, in upper and lower case, without changing glyph size, weight or spacing.
+- `[x]` **READ-008**: While a passage page is shown, the system SHALL draw every occurrence of the newest learned letter (the most recently added letter in the learned set) in a highlight color distinct from other glyphs, until the learned set changes.
+- `[x]` **READ-009**: The substitution renderer SHALL accept an optional highlight letter and mark only that letter's glyphs, in upper and lower case, without changing glyph size, weight or spacing.
 
 ## Peek
 

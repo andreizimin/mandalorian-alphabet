@@ -31,4 +31,4 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 ## Legend
 
 - `[x]` **PROG-007**: The system SHALL show a legend of all learned letters, reachable from the reader controls (one tap at 600 px or wider; from the menu sheet under 600 px, per LAYOUT-002).
-- `[ ]` **PROG-015**: The system SHALL draw every glyph on the intro card (the new letter and its example words) and the legend's entry for the newest learned letter in the same highlight color as the reader (READ-008).
+- `[x]` **PROG-015**: The system SHALL draw every glyph on the intro card (the new letter and its example words) and the legend's entry for the newest learned letter in the same highlight color as the reader (READ-008).

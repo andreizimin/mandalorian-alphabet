@@ -4,6 +4,7 @@
   --fg: #1d1d1f;
   --muted: #6e6e73;
   --accent: #8a5a2b;
+  --newest: #8a5a2b;
   color-scheme: light dark;
 }
 
@@ -13,6 +14,7 @@
     --fg: #ececec;
     --muted: #9a9a9f;
     --accent: #d9a066;
+    --newest: #d9a066;
   }
 }
 
@@ -163,6 +165,12 @@ body {
 .g {
   font-family: 'Mando AF', serif;
   cursor: pointer;
+}
+
+/* @spec READ-008, LAYOUT-015 */
+/* The newest letter: color only, so glyph widths and pagination are unchanged. */
+.g-new {
+  color: var(--newest);
 }
 
 .peek {
