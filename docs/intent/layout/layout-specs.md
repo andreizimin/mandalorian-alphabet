@@ -16,7 +16,13 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 - `[ ]` **LAYOUT-002**: While the viewport is under 600 px wide, the system SHALL place reader controls in a bottom bar.
 - `[ ]` **LAYOUT-003**: While the viewport is 600 px or wider, the system SHALL place reader controls in a top bar.
 - `[ ]` **LAYOUT-004**: The system SHALL make every interactive control at least 44 by 44 pt.
-- `[ ]` **LAYOUT-007**: When the learner swipes horizontally or taps a page edge, the system SHALL turn the page.
+- `[ ]` **LAYOUT-007**: While a passage page is shown, when the learner swipes horizontally or taps a page edge, the system SHALL turn the page.
+
+## Quiz Screen
+
+- `[ ]` **LAYOUT-008**: The system SHALL open the quiz as a separate full-screen view in one tap from the reader controls.
+- `[ ]` **LAYOUT-009**: While the viewport is under 600 px wide, the system SHALL place the quiz's 4 choices in a 2 by 2 grid in the lower half of the viewport.
+- `[ ]` **LAYOUT-010**: While the viewport is 600 px or wider, the system SHALL place the quiz's 4 choices in a 2 by 2 grid centered under the prompt.
 
 ## Platform
 

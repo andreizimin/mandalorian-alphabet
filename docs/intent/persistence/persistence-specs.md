@@ -8,7 +8,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## State
 
-- `[ ]` **PERS-001**: The system SHALL persist progress, settings, current passage and position across reloads.
+- `[ ]` **PERS-001**: The system SHALL persist progress (learned set, peek counts and per-letter quiz rings), settings, current passage and position across reloads.
 - `[ ]` **PERS-004**: If storage is unavailable, then the system SHALL run with in-memory state and show a banner that progress will not be saved.
 
 ## Export and Import
