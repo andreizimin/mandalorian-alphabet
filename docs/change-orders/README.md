@@ -18,4 +18,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 
 | ID | Title | Type | Status | Specs predicted | Specs actual |
 |---|---|---|---|---|---|
-| [CO-001](CO-001-highlight-newest-letter.md) | Highlight the newest letter | Feature | In progress | +5 | |
+| [CO-001](CO-001-highlight-newest-letter.md) | Highlight the newest letter | Feature | Done | +5 | +5 (1 reworded) |

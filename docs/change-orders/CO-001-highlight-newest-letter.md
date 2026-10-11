@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | In progress |
+| Status | Done |
 | Requested | 2026-10-11 |
 | Approved | 2026-10-11 |
-| Completed | |
+| Completed | 2026-10-11 |
 | Ticket | None |
 
 ## Request
@@ -101,4 +101,38 @@ All four answered on 2026-10-11, each with the recommended option: accent color 
 
 ## Outcome
 
-To be filled in when the change is complete.
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | 0 changes | 0 changes | |
+| LLDs | 4 components, 6 sections | 4 components, 6 sections | Exactly as predicted |
+| Specs | +5 ~0 −0 | +5 ~0 −0 | PROG-015's wording was refined before any test was written (see Surprises) |
+| Tests | 5 files | 5 files | +8 unit tests, +3 browser tests (one test, three viewports) |
+| Code | 5 files | 6 files | `src/quiz/QuizScreen.tsx` gained a spec annotation only |
+| Other | User flow | User flow | |
+
+### Surprises
+
+1. **A spec was ambiguous at its edge.** PROG-015 said the intro card draws "the newest letter's glyph", but the card also shows example words whose glyphs are the same letter. The edge-case audit caught it before tests were written, and the spec was reworded to cover every glyph on the card. The prediction had the right files and the right spec count, but not the right wording.
+2. **A spec about something *not* happening still needs a home in the code.** QUIZ-026 (the quiz never highlights) required no code change, so the prediction listed no quiz code. Traceability still needs a `@spec` tag at the place that guarantees the absence, so `QuizScreen.tsx` was touched for one comment line.
+3. **The browser test exposed an existing reflow, not a highlight bug.** The new test measured page overflow right after a page turn and saw 63 px on iPad and laptop. Investigation showed that when the readiness hint appears, the header grows, and the page re-fits a frame or two later. The test now waits for layout to settle; every page fits once it does. The underlying behavior, text reflowing on the page being read when the hint appears, predates this change and is a candidate for its own change order.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `893731a` | CO-001 proposed: highlight the newest letter |
+| `be6902f` | CO-001: record decisions (all recommended options) |
+| `1d8cfce` | CO-001: design and specs for the newest-letter highlight |
+| `d39f1e9` | CO-001: tests for the newest-letter highlight |
+| `53224df` | CO-001: implement the newest-letter highlight |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 237 → 245, browser 35 → 38 |
+| Lines changed | +36 −13 (code, 6 files), +121 −0 (tests, 5 files), +18 −8 (design docs, specs and user flow) |
+| Agent time | about 40 minutes from approval (09:51) to completion (about 10:35), including review stops |
+| Deployed | Not yet |
