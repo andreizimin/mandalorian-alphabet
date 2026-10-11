@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { browserFontRegistry, createAlphabet } from './alphabet/alphabet';
 import { FontStatus } from './alphabet/FontStatus';
 import { useFontState } from './alphabet/useFontState';
+import { PageTurnBar, useArrowKeyPageTurns } from './layout/pageTurning';
 import { DataPanel, StorageNotice } from './persistence/components';
 import { buildExport, deliverExport } from './persistence/exportImport';
 import { localStore } from './persistence/storage';
@@ -12,7 +13,7 @@ import { PassagePage } from './reader/PassagePage';
 import './app.css';
 
 // Temporary until the content and layout segments land: a fixed three-page
-// passage that cycles, turned with a plain "Next page" button.
+// passage that cycles.
 const DEMO_PAGES = [
   [
     'The bounty hunter walked out into the cold desert night. His armor was beskar, and he kept his helmet on.',
@@ -54,10 +55,16 @@ export function App() {
     setIntroLetter(letter);
   }
 
-  function turnPage() {
+  function turnForward() {
     dispatch({ type: 'pageRead' });
     setPage((p) => (p + 1) % DEMO_PAGES.length);
   }
+
+  function turnBack() {
+    setPage((p) => Math.max(0, p - 1));
+  }
+
+  useArrowKeyPageTurns({ enabled: true, onBack: turnBack, onForward: turnForward });
 
   return (
     <main className="reader">
@@ -84,13 +91,11 @@ export function App() {
         learnedSet={learnedSet}
         onPeek={(letter) => dispatch({ type: 'peek', letter })}
       />
-      <button type="button" className="next-page" onClick={turnPage}>
-        Next page →
-      </button>
       <DataPanel
         onExport={() => void deliverExport(buildExport({ progress }, new Date()))}
         onImport={(data) => replace(data.progress)}
       />
+      <PageTurnBar canBack={page > 0} onBack={turnBack} onForward={turnForward} />
     </main>
   );
 }

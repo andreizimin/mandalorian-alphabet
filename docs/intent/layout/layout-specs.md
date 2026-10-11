@@ -17,6 +17,8 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 - `[ ]` **LAYOUT-003**: While the viewport is 600 px or wider, the system SHALL place reader controls in a top bar.
 - `[ ]` **LAYOUT-004**: The system SHALL make every interactive control at least 44 by 44 pt.
 - `[ ]` **LAYOUT-007**: While a passage page is shown, when the learner swipes left or taps a non-glyph point within the outer 15 % of the viewport width on the right, the system SHALL turn forward; when the learner swipes right or taps a non-glyph point within the outer 15 % on the left, the system SHALL turn back; a tap anywhere else on the page SHALL do nothing.
+- `[x]` **LAYOUT-012**: While a passage page is shown, the system SHALL show back and forward page-turn buttons in a bar fixed to the bottom of the viewport, in the same screen position on every page, with back disabled on the first page.
+- `[x]` **LAYOUT-013**: While a passage page is shown and focus is not in a text field, when the learner presses Right Arrow the system SHALL turn forward and when they press Left Arrow it SHALL turn back, unless Cmd, Ctrl or Alt is held.
 - `[ ]` **LAYOUT-011**: The system SHALL open the library (the list of bundled and pasted passages with the paste action) in one tap from the reader controls.
 
 ## Quiz Screen
