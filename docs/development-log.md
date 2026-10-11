@@ -6,7 +6,6 @@ How the app at [learn-mandalorian.andreizimin.com](https://learn-mandalorian.and
 
 | | |
 |---|---|
-| Wall-clock time | 16 h 43 min, Oct 10 16:51 to Oct 11 09:34 (Pacific), including an overnight break |
 | Active working time | about 2 h 39 min (sum of gaps under 15 minutes between events) |
 | First commit to feature-complete | 2 h 03 min (17:03 to 19:06) |
 | Messages typed by the human | 43, about 25 of them one-word go-aheads ("go", "proceed", "apply all") |
