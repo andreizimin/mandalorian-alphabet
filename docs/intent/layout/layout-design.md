@@ -7,39 +7,51 @@ prefix: LAYOUT
 
 ## Context and Design Philosophy
 
-One codebase serves iPhone and iPad. Layout responds to width, not device type, so iPad Split View and Slide Over behave correctly.
+One codebase serves iPhone, iPad and a laptop. Layout responds to viewport width, not device type, so iPad Split View and Slide Over behave correctly. The reading page gets as much of the screen as possible; on a phone, the actions used every few pages stay in thumb reach and the rest wait one tap away.
 
 ## Breakpoints
 
 | Width | Typical device | Controls |
 |---|---|---|
-| < 600 px | iPhone | Bottom bar (thumb reach) |
-| 600 to 1024 px | iPad portrait, Split View | Top bar |
-| > 1024 px | iPad landscape | Top bar |
+| < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest |
+| ≥ 600 px | iPad, laptop | Top bar with every reader control; bottom bar holds ← and → |
+
+## Reader Controls
+
+The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library and text size.
+
+- **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library and text size. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size buttons leave it open so the size can be stepped several times.
+- **Wider screens (≥ 600 px):** a top bar shows every reader control; the bottom bar holds only the page-turn buttons.
+
+The passage title sits above the page on every width.
 
 ## Reading Column
 
-Single column, max line length about 65 characters, so iPad never shows ultra-wide lines. Text size 16 to 32 px, applied to both fonts equally.
+Single column, line length capped at about 65 characters, so an iPad or laptop never shows ultra-wide lines. The page area fills the space between the top of the screen (or top bar) and the bottom bar, and pagination (owned by `content`) fills exactly that area.
 
-## Quiz Screen
+## Text Size
 
-The quiz is a separate full-screen view opened in one tap from the reader controls. Its 4 answer choices form a 2 by 2 grid: in the lower half of the viewport under 600 px so one thumb reaches all four, centered under the prompt at wider widths.
-
-## Platform
-
-Tap targets at least 44 by 44 pt. Respect safe areas and system light or dark appearance. Page turns follow book direction: swipe left or tap the right edge zone to go forward, swipe right or tap the left edge zone to go back. Edge zones are the outer 15 % of the viewport width on each side, and only non-glyph points in them turn pages; a tap on a glyph anywhere is a peek (owned by `reader`), and a tap elsewhere does nothing.
+Text size runs from 16 to 32 px in 2 px steps, default 20 px, changed with A− and A+ buttons. It applies to the reading font and the glyph font together. Changing it re-paginates the passage, keeping the learner on the word they were reading. Text size is the first entry in the settings slice saved by `persistence`.
 
 ## Page Turning
 
 Every way of turning a page maps to the same two actions, forward and back, which `content` executes:
 
-- **Touch:** swipe and edge-tap zones (see Platform).
-- **Buttons:** a page-turn bar with a back button and a forward button, fixed to the bottom of the viewport (above the safe area) at every width. It never moves with the length of the text, so the learner's thumb or cursor finds it in the same place on every page. The back button is disabled on the first page. The reading column reserves space at the bottom so text never sits under the bar.
-- **Keyboard:** on a laptop, Right Arrow turns forward and Left Arrow turns back. Keys are ignored while focus is in a text field (so the paste box keeps normal cursor movement) and when Cmd, Ctrl or Alt is held (so browser shortcuts like Cmd+Left still work).
+- **Buttons:** ← and → at the two ends of the bottom bar, fixed to the bottom of the viewport (above the safe area) at every width. They never move with the length of the text. The back button is disabled on the first page.
+- **Touch:** swipe left to go forward and swipe right to go back, following book direction. A swipe is a horizontal movement of at least 50 px that is larger than its vertical movement. A tap (movement under 10 px) on a non-glyph point in the outer 15 % of the viewport width turns the page: the right zone forward, the left zone back. A tap on a glyph anywhere is a peek (owned by `reader`); any other tap does nothing.
+- **Keyboard:** Right Arrow turns forward and Left Arrow turns back. Keys are ignored while focus is in a text field and when Cmd, Ctrl or Alt is held.
 
-## Reader Controls
+## Quiz Screen
 
-The reader controls bar (bottom on phones, top on wider viewports) reaches each secondary screen in one tap: the legend, the quiz and the library.
+The quiz is a separate full-screen view replacing the reader, opened in one tap from the reader controls on every width. Its 4 answer choices form a 2 by 2 grid: in the lower half of the viewport under 600 px so one thumb reaches all four, centered under the prompt at wider widths.
+
+## Platform
+
+Every interactive control is at least 44 by 44 pt. The layout respects safe areas (notch, home indicator) and follows the system light or dark appearance.
+
+## Verification
+
+Width-dependent placement, sizes and real pagination depend on the browser's layout engine, which the unit-test environment does not have. These are verified by browser tests (Playwright) running WebKit, the engine behind iPhone and iPad Safari, at an iPhone, an iPad and a laptop viewport.
 
 ## Decisions & Alternatives
 
@@ -47,11 +59,10 @@ The reader controls bar (bottom on phones, top on wider viewports) reaches each 
 |---|---|---|---|
 | Breakpoints | By width | By user agent | Handles Split View and future devices |
 | iPad layout | Single column | Two columns in landscape | Simpler pagination; comfortable line length |
-| Page-turn buttons | Fixed bar at the bottom of the viewport | Button after the text; floating arrows at mid-height | A button after the text moves with every page's length; a bottom bar stays put and is in thumb reach on a phone |
+| Phone controls | Bottom bar with ←, Next letter, Quiz, ⋯, →; the rest in a menu | Arrows and a menu only; two bottom rows with everything | Next letter and Quiz are the actions used between pages and belong in thumb reach; Step back, Reset, Legend, Library and text size are occasional and fit one tap away; two rows cost a phone too much reading space |
+| Page-turn buttons | At the ends of a bar fixed to the bottom of the viewport | Button after the text; floating arrows at mid-height | A button after the text moves with every page's length; a bottom bar stays put and is in thumb reach on a phone |
 | Keyboard turns | Left and Right Arrow, ignored in text fields and with modifier keys | Space and Page Down as well | Arrows match the book direction of swipes; Space would also scroll and collide with typing |
 | Edge-zone width | Outer 15 % of viewport width | Fixed 44 pt strips | A proportional zone stays reachable on iPad and leaves most of a phone page for peeks |
-
-## Open Questions & Future Decisions
-
-### Resolved
-1. ✅ Edge-tap zones are the outer 15 % of width; a glyph tap inside them is a peek, not a page turn.
+| Swipe threshold | 50 px horizontal and more horizontal than vertical | Any horizontal movement | Small finger drift during a glyph tap must not turn the page |
+| Text size control | A− and A+ in 2 px steps | A slider | Two buttons are reliable to hit with a thumb and give predictable steps |
+| Layout verification | Playwright with WebKit at three viewports | Checking CSS by eye; Chromium | Layout specs need a real engine; WebKit is the engine the primary user's devices run |

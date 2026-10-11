@@ -30,4 +30,4 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Legend
 
-- `[x]` **PROG-007**: The system SHALL show a legend of all learned letters, reachable in one tap from the reader.
+- `[ ]` **PROG-007**: The system SHALL show a legend of all learned letters, reachable from the reader controls (one tap at 600 px or wider; from the menu sheet under 600 px, per LAYOUT-002).
