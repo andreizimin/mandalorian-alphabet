@@ -1,9 +1,13 @@
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { browserFontRegistry, createAlphabet } from './alphabet/alphabet';
 import { FontStatus } from './alphabet/FontStatus';
 import { useFontState } from './alphabet/useFontState';
+import { DataPanel, StorageNotice } from './persistence/components';
+import { buildExport, deliverExport } from './persistence/exportImport';
+import { localStore } from './persistence/storage';
+import { usePersistedProgress } from './persistence/usePersistedProgress';
 import { Controls, HintBanner, IntroCard, Legend, WelcomeCard } from './progression/components';
-import { initialProgress, nextLetter, progressReducer, showWelcome, visibleHint } from './progression/progression';
+import { nextLetter, showWelcome, visibleHint } from './progression/progression';
 import { PassagePage } from './reader/PassagePage';
 import './app.css';
 
@@ -27,7 +31,7 @@ const DEMO_PAGES = [
 export function App() {
   const alphabet = useMemo(() => createAlphabet({ registry: browserFontRegistry }), []);
   const fontState = useFontState(alphabet);
-  const [progress, dispatch] = useReducer(progressReducer, initialProgress);
+  const { progress, dispatch, replace, notice, dismissNotice } = usePersistedProgress(localStore);
   const [page, setPage] = useState(0);
   const [introLetter, setIntroLetter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
@@ -58,6 +62,7 @@ export function App() {
   return (
     <main className="reader">
       <FontStatus alphabet={alphabet} />
+      <StorageNotice notice={notice} onDismiss={dismissNotice} />
       <Controls
         canAdvance={nextLetter(progress, order) !== null}
         canStepBack={progress.learned.length > 0}
@@ -82,6 +87,10 @@ export function App() {
       <button type="button" className="next-page" onClick={turnPage}>
         Next page →
       </button>
+      <DataPanel
+        onExport={() => void deliverExport(buildExport({ progress }, new Date()))}
+        onImport={(data) => replace(data.progress)}
+      />
     </main>
   );
 }

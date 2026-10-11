@@ -144,6 +144,31 @@ export function visibleHint(state: ProgressState, t: Thresholds = DEFAULT_THRESH
   return (['reading', 'quiz'] as const).filter((s) => signals[s] && !state.hintDismissedFor.includes(s));
 }
 
+const isLetter = (v: unknown): v is string => typeof v === 'string' && /^[a-z]$/.test(v);
+const isCount = (v: unknown): v is number => Number.isInteger(v) && (v as number) >= 0;
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v);
+
+/** Checks a value restored from storage or an import against the progress shape. */
+// @spec PERS-003, PERS-006
+export function validateProgress(value: unknown): value is ProgressState {
+  if (!isRecord(value)) return false;
+  const { learned, peeksByLetter, newestPagePeeks, currentPagePeeks, quizByLetter, hintDismissedFor, welcomeSeen } =
+    value;
+
+  if (!Array.isArray(learned) || !learned.every(isLetter) || new Set(learned).size !== learned.length) return false;
+  if (!isRecord(peeksByLetter)) return false;
+  if (!Object.entries(peeksByLetter).every(([k, n]) => learned.includes(k) && isCount(n))) return false;
+  if (!Array.isArray(newestPagePeeks) || !newestPagePeeks.every(isCount)) return false;
+  if (!isCount(currentPagePeeks)) return false;
+  if (!isRecord(quizByLetter)) return false;
+  const ringOk = (ring: unknown) =>
+    Array.isArray(ring) && ring.length <= DEFAULT_THRESHOLDS.quizWindow && ring.every((a) => typeof a === 'boolean');
+  if (!Object.entries(quizByLetter).every(([k, ring]) => isLetter(k) && ringOk(ring))) return false;
+  if (!Array.isArray(hintDismissedFor) || !hintDismissedFor.every((s) => s === 'reading' || s === 'quiz')) return false;
+  return typeof welcomeSeen === 'boolean';
+}
+
 // @spec PROG-014
 export function showWelcome(state: ProgressState): boolean {
   return !state.welcomeSeen && state.learned.length === 0;

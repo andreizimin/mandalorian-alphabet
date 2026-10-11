@@ -28,7 +28,7 @@ describe('DataPanel', () => {
 
     await userEvent.upload(screen.getByLabelText(/import/i), jsonFile(exportText));
     expect(props.onImport).not.toHaveBeenCalled();
-    expect(screen.getByText(/replace your progress/i)).toBeInTheDocument();
+    expect(await screen.findByText(/replace your progress/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: /yes, replace/i }));
     expect(props.onImport).toHaveBeenCalledWith({ progress });
@@ -39,7 +39,7 @@ describe('DataPanel', () => {
     const props = renderPanel();
 
     await userEvent.upload(screen.getByLabelText(/import/i), jsonFile(exportText));
-    await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /cancel/i }));
 
     expect(props.onImport).not.toHaveBeenCalled();
     expect(screen.queryByText(/replace your progress/i)).not.toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('DataPanel', () => {
 
     await userEvent.upload(screen.getByLabelText(/import/i), jsonFile('{"hello":1}', 'notes.json'));
 
-    expect(screen.getByRole('alert')).toHaveTextContent(/not a script ramp export/i);
+    expect(await screen.findByRole('alert')).toHaveTextContent(/not a script ramp export/i);
     expect(screen.queryByText(/replace your progress/i)).not.toBeInTheDocument();
     expect(props.onImport).not.toHaveBeenCalled();
   });

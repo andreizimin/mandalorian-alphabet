@@ -13,7 +13,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 - `[x]` **PROG-003**: The intro card SHALL show the glyph, its Latin letter and up to 3 words from the current passage containing it.
 - `[x]` **PROG-010**: While at least one letter in the order is not yet learned, the system SHALL allow the learner to advance at any time, whether or not a readiness hint is showing.
 - `[x]` **PROG-013**: While every letter in the order is learned, the system SHALL disable advance and show no readiness hint.
-- `[ ]` **PROG-014**: When the app is launched with an empty learned set for the first time, the system SHALL show a one-time welcome card over the opening passage that points at the advance control; no letter is introduced until the learner taps advance.
+- `[x]` **PROG-014**: When the app is launched with an empty learned set for the first time, the system SHALL show a one-time welcome card over the opening passage that points at the advance control; no letter is introduced until the learner taps advance.
 
 ## Readiness Hint
 
