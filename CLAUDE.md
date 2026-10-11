@@ -14,6 +14,17 @@ HLD → LLDs → EARS → Tests → Code
 
 The skill guides the agent through HLD check → LLD check → EARS → intent-narrowing edge audit → tests-first → code, with stops between each phase. When specs and code disagree, specs win: fix the code, or fix the spec and cascade.
 
+## Change Orders (MANDATORY)
+
+**Every change — feature, bug or minor fix — starts with a change order, before any design doc, spec, test or code is touched.**
+
+1. Copy `docs/change-orders/TEMPLATE.md` to `docs/change-orders/CO-NNN-short-slug.md` (next unused number) and fill in the predicted impact at every level of the arrow, cross-segment effects, decisions needed, risks and verification. Status: *Proposed*. Add its row to the index in `docs/change-orders/README.md`.
+2. Stop and present it. Work begins only after the requester approves it (status *Approved*).
+3. Walk the LID arrow as predicted. If the work departs from the prediction, update the change order as it happens.
+4. When done, fill in the Outcome section (predicted vs actual per level, surprises, commits, measurements), set status *Done*, and update the index row.
+
+The point is to measure how well intent predicts code, so record predictions honestly and never revise the Predicted Impact after approval; differences belong in Outcome.
+
 ### Navigation
 
 | What you need | Where to look |
@@ -21,6 +32,7 @@ The skill guides the agent through HLD check → LLD check → EARS → intent-n
 | High-level design | `docs/high-level-design.md` |
 | User flow (narrative over the specs) | `docs/user-flow.md` |
 | How the app was built (timeline, usage, decisions) | `docs/development-log.md` |
+| Change orders (one per change, predicted vs actual) | `docs/change-orders/` |
 | Low-level designs | `docs/intent/<node>/<node>-design.md` |
 | EARS specs | `docs/intent/<node>/<node>-specs.md` |
 
