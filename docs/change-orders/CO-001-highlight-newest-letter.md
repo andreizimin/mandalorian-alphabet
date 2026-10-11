@@ -76,6 +76,8 @@ None. The rendering approach (font-styled spans over Latin text) is unchanged; t
 
 ## Decisions Needed
 
+All four answered on 2026-10-11, each with the recommended option: accent color only; always on until the next letter; no highlight in the quiz; same highlight on the intro card and legend.
+
 1. **Highlight style.** *Recommended:* color only, the app's warm accent (brown on the light page, gold on dark). Alternatives: color plus a thin underline (more visible, slightly busier text), or a tinted background behind the glyph (most visible, looks like a search hit). Bold or larger glyphs are ruled out: they change text width and would break pagination.
 2. **How long it lasts.** *Recommended:* always, until the next letter is added. Alternatives: only for the first few pages after a letter is introduced, or an on/off setting.
 3. **The quiz.** *Recommended:* no highlight in the quiz, since it would reveal which letter a question is about.
