@@ -1,0 +1,71 @@
+:root {
+  --bg: #fbfaf7;
+  --fg: #1d1d1f;
+  --muted: #6e6e73;
+  --accent: #8a5a2b;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141414;
+    --fg: #ececec;
+    --muted: #9a9a9f;
+    --accent: #d9a066;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 20px/1.6 Georgia, 'Times New Roman', serif;
+}
+
+.reader {
+  max-width: 65ch;
+  margin: 0 auto;
+  padding: max(24px, env(safe-area-inset-top)) 16px 24px;
+}
+
+.passage-page {
+  position: relative;
+}
+
+.g {
+  font-family: 'Mando AF', serif;
+  cursor: pointer;
+}
+
+.peek {
+  position: fixed;
+  left: 50%;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  min-width: 44px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: var(--fg);
+  color: var(--bg);
+  font: 600 28px/1.2 system-ui, sans-serif;
+  text-align: center;
+}
+
+.font-status {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+  color: var(--muted);
+  font: 15px/1.4 system-ui, sans-serif;
+}
+
+.font-status button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+}

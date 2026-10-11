@@ -27,7 +27,7 @@ describe('PassagePage', () => {
 
     const glyphText = Array.from(container.querySelectorAll('.g')).map((g) => g.textContent!.toLowerCase());
     expect(new Set(glyphText)).toEqual(learned);
-    expect(glyphText).toHaveLength(8);
+    expect(glyphText).toHaveLength(11); // The east gate. (6) + Enter here. (5)
   });
 
   // @spec READ-001

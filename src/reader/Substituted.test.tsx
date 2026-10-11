@@ -43,7 +43,8 @@ describe('Substituted renderer', () => {
     const { container } = render(<Substituted text={text} letters={set('ec42,!')} />);
 
     expect(container.textContent).toBe(text);
-    expect(glyphs(container)).toEqual(['c', 'e']);
+    expect(glyphs(container)).toEqual(['C', 'e', 'e']); // Café, next, line; é, digits and punctuation stay
+
   });
 
   // @spec READ-006

@@ -41,7 +41,7 @@ describe('alphabet font loading', () => {
   // @spec ALPHA-001
   it('ships the bundled font as a WOFF2 file at the path it loads from', () => {
     expect(FONT_URL).toBe('/fonts/mando-af-regular.woff2');
-    const bytes = readFileSync(resolve(__dirname, '../../public', FONT_URL.slice(1)));
+    const bytes = readFileSync(resolve(process.cwd(), 'public', FONT_URL.slice(1)));
     expect(bytes.subarray(0, 4).toString('latin1')).toBe('wOF2');
   });
 
