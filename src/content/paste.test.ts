@@ -39,7 +39,7 @@ describe('parsePaste', () => {
   it('refuses text with no letter a-z', () => {
     expect(parsePaste('')).toEqual({ ok: false, reason: 'no-letters' });
     expect(parsePaste('123 !! 42')).toEqual({ ok: false, reason: 'no-letters' });
-    expect(parsePaste('été über')).toEqual({ ok: false, reason: 'no-letters' });
+    expect(parsePaste('é à ü ñ ø')).toEqual({ ok: false, reason: 'no-letters' });
   });
 
   // @spec TEXT-008

@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent } from 'react';
 import { parseImport, type LearnerData } from './exportImport';
-import type { StorageNoticeKind } from './usePersistedProgress';
+import type { StorageNoticeKind } from './usePersistedSlice';
 
 // @spec PERS-002, PERS-003, PERS-007
 export function DataPanel({ onExport, onImport }: { onExport: () => void; onImport: (data: LearnerData) => void }) {

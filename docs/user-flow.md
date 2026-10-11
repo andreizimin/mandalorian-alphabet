@@ -20,7 +20,7 @@ They tap *advance*. An intro card shows the glyph for E, the letter E, and up to
 
 ## 5. Reading, peeking, getting the hint
 
-They read. When a glyph trips them up they tap it, wherever it sits on the page; the Latin letter appears for 1.5 seconds and the peek is counted for that letter (READ-004). After two pages read since E arrived with fewer than 2 peeks on it, a non-blocking hint says they are ready for the next letter and names reading as the reason (PROG-004). They can dismiss it, which keeps it away until they advance (PROG-012), or advance at any time with or without a hint (PROG-010). On the phone the controls sit in a bottom bar within thumb reach (LAYOUT-002); pages turn by swipe, or by a tap on the outer edges of the page away from any glyph (LAYOUT-007).
+They read. When a glyph trips them up they tap it, wherever it sits on the page; the Latin letter appears for 1.5 seconds and the peek is counted for that letter (READ-004). After two pages read since E arrived with fewer than 2 peeks on it, a non-blocking hint says they are ready for the next letter and names reading as the reason (PROG-004). They can dismiss it, which keeps it away until they advance (PROG-012), or advance at any time with or without a hint (PROG-010). On the phone the controls sit in a bottom bar within thumb reach (LAYOUT-002); pages turn with the ← and → buttons fixed at the bottom of the screen (LAYOUT-012), by swipe, or by a tap on the outer edges of the page away from any glyph (LAYOUT-007); on a laptop the arrow keys work too (LAYOUT-013). Turning back to re-read never counts as new reading (TEXT-011), and the last page of a passage ends with a card offering the next passage or the library (TEXT-012).
 
 ## 6. Second letter: the quiz unlocks
 
@@ -48,7 +48,7 @@ All 26 letters render as glyphs; *advance* is disabled and the hint retires (PRO
 
 ## 12. Keeping it
 
-They install the app to the Home Screen so it launches full screen and iOS does not evict its storage after a week unused (OFF-002). Progress exports as one JSON file and imports on another device after confirmation (PERS-002, PERS-003). If storage is unavailable the app still runs, with a banner that progress will not be saved (PERS-004).
+They install the app to the Home Screen so it launches full screen and iOS does not evict its storage after a week unused (OFF-002). From the library, progress and pasted passages export as one JSON file and import on another device after confirmation (PERS-002, PERS-003). If storage is unavailable the app still runs, with a banner that progress will not be saved (PERS-004).
 
 ## Open Questions
 
