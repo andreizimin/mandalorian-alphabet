@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { browserFontRegistry, createAlphabet } from './alphabet/alphabet';
 import { FontStatus } from './alphabet/FontStatus';
 import { useFontState } from './alphabet/useFontState';
@@ -16,15 +16,20 @@ import {
   turnForward,
 } from './content/reading';
 import { usePagination } from './content/usePagination';
-import { PageTurnBar, useArrowKeyPageTurns } from './layout/pageTurning';
+import { usePageGestures } from './layout/gestures';
+import { useArrowKeyPageTurns } from './layout/pageTurning';
+import { BottomBar, MenuSheet, TopBar, type ReaderActions } from './layout/ReaderChrome';
+import { stepTextSize } from './layout/settings';
 import { DataPanel, StorageNotice } from './persistence/components';
 import { buildExport, deliverExport } from './persistence/exportImport';
+import { settingsSlice } from './persistence/settingsSlice';
 import { localStore } from './persistence/storage';
 import { usePersistedContent } from './persistence/usePersistedContent';
 import { usePersistedProgress } from './persistence/usePersistedProgress';
-import { Controls, HintBanner, IntroCard, Legend, WelcomeCard } from './progression/components';
+import { usePersistedSlice } from './persistence/usePersistedSlice';
+import { HintBanner, IntroCard, Legend, WelcomeCard } from './progression/components';
 import { nextLetter, showWelcome, visibleHint } from './progression/progression';
-import { QuizButton, QuizScreen } from './quiz/QuizScreen';
+import { QuizScreen } from './quiz/QuizScreen';
 import { EVERYDAY_WORDS, GALAXY_WORDS } from './quiz/wordPool';
 import { PassagePage } from './reader/PassagePage';
 import './app.css';
@@ -36,12 +41,15 @@ export function App() {
   const fontState = useFontState(alphabet);
   const progressStore = usePersistedProgress(localStore);
   const contentStore = usePersistedContent(localStore);
+  const settingsStore = usePersistedSlice(localStore, settingsSlice);
   const { progress, dispatch } = progressStore;
   const { content, update } = contentStore;
+  const settings = settingsStore.value;
 
   const [view, setView] = useState<'reader' | 'library' | 'quiz'>('reader');
   const [introLetter, setIntroLetter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [ended, setEnded] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
   const measurerRef = useRef<HTMLDivElement>(null);
@@ -57,7 +65,13 @@ export function App() {
     () => new Set(fontState === 'loaded' ? progress.learned : []),
     [fontState, progress.learned],
   );
-  const pages = usePagination(passage.paragraphs, learnedSet, areaRef, measurerRef, `${fontState}:${progress.learned.join('')}`);
+  const pages = usePagination(
+    passage.paragraphs,
+    learnedSet,
+    areaRef,
+    measurerRef,
+    `${fontState}:${progress.learned.join('')}:${settings.textSize}`,
+  );
   const pageIndex = pageIndexFor(pages, positionOf(content, currentId));
   const page = pages[pageIndex];
 
@@ -87,20 +101,41 @@ export function App() {
     setView('reader');
   }
 
-  useArrowKeyPageTurns({ enabled: view === 'reader', onBack: back, onForward: forward });
+  const reading = view === 'reader' && !menuOpen && !introLetter && !ended && !showWelcome(progress);
+  useArrowKeyPageTurns({ enabled: reading, onBack: back, onForward: forward });
+  usePageGestures({ enabled: reading, onBack: back, onForward: forward });
 
-  const notice = progressStore.notice ?? contentStore.notice;
+  const actions: ReaderActions = {
+    canAdvance: nextLetter(progress, order) !== null,
+    canStepBack: progress.learned.length > 0,
+    canTurnBack: pageIndex > 0,
+    learnedCount: progress.learned.length,
+    fontReady: fontState === 'loaded',
+    textSize: settings.textSize,
+    onAdvance: advance,
+    onStepBack: () => dispatch({ type: 'stepBack' }),
+    onReset: () => dispatch({ type: 'reset' }),
+    onLegend: () => setLegendOpen((o) => !o),
+    onLibrary: () => setView('library'),
+    onQuiz: () => setView('quiz'),
+    onTextSize: (direction) => settingsStore.update((s) => stepTextSize(s, direction)),
+    onBack: back,
+    onForward: forward,
+  };
+
+  const notice = progressStore.notice ?? contentStore.notice ?? settingsStore.notice;
   const dismissNotice = () => {
     progressStore.dismissNotice();
     contentStore.dismissNotice();
+    settingsStore.dismissNotice();
   };
 
   return (
-    <main className="reader">
+    <main className="reader" style={{ '--text-size': `${settings.textSize}px` } as CSSProperties}>
       <FontStatus alphabet={alphabet} />
       <StorageNotice notice={notice} onDismiss={dismissNotice} />
 
-      {view === 'quiz' ? (
+      {view === 'quiz' && (
         <QuizScreen
           learned={progress.learned}
           quizByLetter={progress.quizByLetter}
@@ -110,7 +145,9 @@ export function App() {
           onRecord={(answers) => dispatch({ type: 'quizAnswers', answers })}
           onExit={() => setView('reader')}
         />
-      ) : view === 'library' ? (
+      )}
+
+      {view === 'library' && (
         <>
           <button type="button" onClick={() => setView('reader')}>
             ← Back to reading
@@ -127,37 +164,21 @@ export function App() {
             }}
           />
           <DataPanel
-            onExport={() => void deliverExport(buildExport({ progress, content }, new Date()))}
+            onExport={() => void deliverExport(buildExport({ progress, content, settings }, new Date()))}
             onImport={(data) => {
               progressStore.replace(data.progress);
               if (data.content) contentStore.replace(data.content);
+              if (data.settings) settingsStore.set(data.settings);
             }}
           />
         </>
-      ) : (
+      )}
+
+      {view === 'reader' && (
         <>
           <header className="reader-header">
-            <Controls
-              canAdvance={nextLetter(progress, order) !== null}
-              canStepBack={progress.learned.length > 0}
-              onAdvance={advance}
-              onStepBack={() => dispatch({ type: 'stepBack' })}
-              onReset={() => dispatch({ type: 'reset' })}
-            />
-            <div className="controls">
-              <button type="button" onClick={() => setLegendOpen((o) => !o)}>
-                Legend ({progress.learned.length})
-              </button>
-              <button type="button" onClick={() => setView('library')}>
-                Library
-              </button>
-              <QuizButton
-                learnedCount={progress.learned.length}
-                fontReady={fontState === 'loaded'}
-                onOpen={() => setView('quiz')}
-              />
-              <span className="passage-title">{passage.title}</span>
-            </div>
+            <TopBar {...actions} />
+            <p className="passage-title">{passage.title}</p>
             {legendOpen && <Legend learned={progress.learned} />}
             <HintBanner signals={visibleHint(progress)} onDismiss={() => dispatch({ type: 'dismissHint' })} />
           </header>
@@ -173,7 +194,8 @@ export function App() {
             )}
           </div>
 
-          <PageTurnBar canBack={pageIndex > 0} onBack={back} onForward={forward} />
+          <BottomBar {...actions} onMenu={() => setMenuOpen(true)} />
+          {menuOpen && <MenuSheet {...actions} onClose={() => setMenuOpen(false)} />}
         </>
       )}
 

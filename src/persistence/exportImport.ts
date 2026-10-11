@@ -1,4 +1,5 @@
 import { validateContent, type ContentState } from '../content/reading';
+import { validateSettings, type Settings } from '../layout/settings';
 import { validateProgress, type ProgressState } from '../progression/progression';
 
 export const APP_ID = 'script-ramp';
@@ -7,6 +8,7 @@ export const EXPORT_VERSION = 1;
 export interface LearnerData {
   progress: ProgressState;
   content?: ContentState;
+  settings?: Settings;
 }
 
 export interface ExportFile {
@@ -34,11 +36,18 @@ export function parseImport(text: string): ImportResult {
     return { ok: false };
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return { ok: false };
-  const { app, version, progress, content } = parsed as Record<string, unknown>;
+  const { app, version, progress, content, settings } = parsed as Record<string, unknown>;
   if (app !== APP_ID || version !== EXPORT_VERSION || !validateProgress(progress)) return { ok: false };
-  if (content === undefined) return { ok: true, data: { progress } };
-  if (!validateContent(content)) return { ok: false };
-  return { ok: true, data: { progress, content } };
+  if (content !== undefined && !validateContent(content)) return { ok: false };
+  if (settings !== undefined && !validateSettings(settings)) return { ok: false };
+  return {
+    ok: true,
+    data: {
+      progress,
+      ...(content !== undefined && { content }),
+      ...(settings !== undefined && { settings }),
+    },
+  };
 }
 
 export interface DeliveryEnv {

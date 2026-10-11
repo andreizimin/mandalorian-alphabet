@@ -1,20 +1,24 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
+/** Page-turn buttons at the two ends of the bottom bar; `children` sit between them. */
 // @spec LAYOUT-012
 export function PageTurnBar({
   canBack,
   onBack,
   onForward,
+  children,
 }: {
   canBack: boolean;
   onBack: () => void;
   onForward: () => void;
+  children?: ReactNode;
 }) {
   return (
     <nav className="page-turn-bar" aria-label="Page turning">
       <button type="button" aria-label="Previous page" onClick={onBack} disabled={!canBack}>
         ←
       </button>
+      {children}
       <button type="button" aria-label="Next page" onClick={onForward}>
         →
       </button>
