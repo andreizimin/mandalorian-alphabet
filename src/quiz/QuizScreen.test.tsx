@@ -14,7 +14,7 @@ function expectedSession(seed: number): Question[] {
 }
 
 function renderQuiz(overrides: Partial<Parameters<typeof QuizScreen>[0]> = {}) {
-  const props = { ...base, rng: mulberry32(7), onRecord: vi.fn(), onExit: vi.fn(), ...overrides };
+  const props = { ...base, rng: mulberry32(7), onRecord: vi.fn(), onExit: vi.fn(), ...overrides } as Parameters<typeof QuizScreen>[0] & { onRecord: ReturnType<typeof vi.fn>; onExit: ReturnType<typeof vi.fn> };
   const utils = render(<QuizScreen {...props} />);
   return { ...utils, props };
 }

@@ -338,3 +338,103 @@ button.primary {
 .data-error {
   color: #b3261e;
 }
+
+/* Quiz: a full-screen view replacing the reader. */
+.quiz {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  font: 16px/1.4 system-ui, sans-serif;
+}
+
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+}
+
+.quiz-prompt {
+  margin: 24px 0 8px;
+  text-align: center;
+  font: 56px/1.2 Georgia, serif;
+}
+
+.quiz-feedback {
+  min-height: 1.4em;
+  text-align: center;
+  color: var(--muted);
+}
+
+.latin-letter {
+  text-transform: uppercase;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Phones: choices in the lower half, in thumb reach. */
+@media (max-width: 599px) {
+  .choice-grid {
+    margin-top: auto;
+  }
+}
+
+/* Wider screens: choices centered under the prompt. */
+@media (min-width: 600px) {
+  .choice-grid {
+    width: 100%;
+    max-width: 28rem;
+    margin: 16px auto 0;
+  }
+}
+
+.choice {
+  min-height: 72px;
+  font: 32px/1.2 Georgia, serif;
+}
+
+.choice.correct {
+  border: 2px solid #2e7d32;
+  background: color-mix(in srgb, #2e7d32 15%, transparent);
+}
+
+.choice.wrong {
+  border: 2px solid #b3261e;
+  background: color-mix(in srgb, #b3261e 12%, transparent);
+}
+
+.choice:disabled {
+  opacity: 1;
+}
+
+.quiz-next {
+  align-self: center;
+  margin-top: 16px;
+}
+
+.quiz-results {
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.quiz-score {
+  font: 600 28px/1.2 system-ui, sans-serif;
+}
+
+.quiz-button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.quiz-reason {
+  color: var(--muted);
+  font-size: 13px;
+}

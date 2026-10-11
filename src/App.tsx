@@ -24,6 +24,8 @@ import { usePersistedContent } from './persistence/usePersistedContent';
 import { usePersistedProgress } from './persistence/usePersistedProgress';
 import { Controls, HintBanner, IntroCard, Legend, WelcomeCard } from './progression/components';
 import { nextLetter, showWelcome, visibleHint } from './progression/progression';
+import { QuizButton, QuizScreen } from './quiz/QuizScreen';
+import { EVERYDAY_WORDS, GALAXY_WORDS } from './quiz/wordPool';
 import { PassagePage } from './reader/PassagePage';
 import './app.css';
 
@@ -37,7 +39,7 @@ export function App() {
   const { progress, dispatch } = progressStore;
   const { content, update } = contentStore;
 
-  const [view, setView] = useState<'reader' | 'library'>('reader');
+  const [view, setView] = useState<'reader' | 'library' | 'quiz'>('reader');
   const [introLetter, setIntroLetter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
   const [ended, setEnded] = useState(false);
@@ -98,7 +100,17 @@ export function App() {
       <FontStatus alphabet={alphabet} />
       <StorageNotice notice={notice} onDismiss={dismissNotice} />
 
-      {view === 'library' ? (
+      {view === 'quiz' ? (
+        <QuizScreen
+          learned={progress.learned}
+          quizByLetter={progress.quizByLetter}
+          order={order}
+          everyday={EVERYDAY_WORDS}
+          galaxy={GALAXY_WORDS}
+          onRecord={(answers) => dispatch({ type: 'quizAnswers', answers })}
+          onExit={() => setView('reader')}
+        />
+      ) : view === 'library' ? (
         <>
           <button type="button" onClick={() => setView('reader')}>
             ← Back to reading
@@ -139,6 +151,11 @@ export function App() {
               <button type="button" onClick={() => setView('library')}>
                 Library
               </button>
+              <QuizButton
+                learnedCount={progress.learned.length}
+                fontReady={fontState === 'loaded'}
+                onOpen={() => setView('quiz')}
+              />
               <span className="passage-title">{passage.title}</span>
             </div>
             {legendOpen && <Legend learned={progress.learned} />}
