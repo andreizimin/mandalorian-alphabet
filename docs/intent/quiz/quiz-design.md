@@ -34,6 +34,8 @@ A bundled list of short lowercase words, 3 to 6 letters, in two groups:
 - **Everyday English:** common words a young reader reads without effort.
 - **Galaxy vocabulary:** names and terms from the Star Wars and Mandalorian universe (*jedi*, *droid*, *beskar*, *mando*, *creed*, *clan*...). Single words and names are not copyrightable text; no passage text from the franchise is bundled. Names are stored and shown lowercase; the glyph font is unicase, so case carries no information.
 
+The lists live in `src/quiz/wordPool.ts`: about 330 everyday words, front-loaded with words built from the most frequent letters (*tea*, *toe*, *ate*, *ten*, *note*...) so word questions start early, and about 60 galaxy words. Twelve words already qualify once E, T, A and O are learned. Every entry is lowercase a–z, 3 to 6 letters, and appears in only one group.
+
 Each session draws from the whole qualifying pool. While at least 4 galaxy words qualify, galaxy words are preferred as answers. Distractor words are drawn from the same pool, distinct from each other and from the answer, and have the same length as the answer; when fewer than 3 same-length words exist, the nearest lengths fill in. While the qualifying pool has 10 or more words, no answer word repeats within a session.
 
 ## Session
@@ -86,10 +88,12 @@ The quiz is its own screen, reachable in one tap from the reader controls. Choic
 
 ## Open Questions & Future Decisions
 
+### Resolved
+1. ✅ Word lists chosen and bundled (see Word Pool).
+
 ### Deferred
-1. Choose and bundle the two word lists; verify every galaxy word is a single name or term rather than quoted text.
-2. Word questions give screen readers the Latin spelling through the reader's accessible labels, which reveals the answer. The quiz is visual by nature; decide whether to suppress the label inside the quiz or leave it.
-3. Whether a session may mix an upcoming letter in (a "sneak peek" question) once accuracy on the whole learned set is high.
+1. Word questions give screen readers the Latin spelling through the reader's accessible labels, which reveals the answer. The quiz is visual by nature; decide whether to suppress the label inside the quiz or leave it.
+2. Whether a session may mix an upcoming letter in (a "sneak peek" question) once accuracy on the whole learned set is high.
 
 ## References
 
