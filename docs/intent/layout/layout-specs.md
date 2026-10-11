@@ -16,7 +16,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 - `[ ]` **LAYOUT-002**: While the viewport is under 600 px wide, the system SHALL place reader controls in a bottom bar.
 - `[ ]` **LAYOUT-003**: While the viewport is 600 px or wider, the system SHALL place reader controls in a top bar.
 - `[ ]` **LAYOUT-004**: The system SHALL make every interactive control at least 44 by 44 pt.
-- `[ ]` **LAYOUT-007**: While a passage page is shown, when the learner swipes horizontally, or taps a point that is not a glyph within the outer 15 % of the viewport width on either side, the system SHALL turn the page; a tap anywhere else on the page SHALL do nothing.
+- `[ ]` **LAYOUT-007**: While a passage page is shown, when the learner swipes left or taps a non-glyph point within the outer 15 % of the viewport width on the right, the system SHALL turn forward; when the learner swipes right or taps a non-glyph point within the outer 15 % on the left, the system SHALL turn back; a tap anywhere else on the page SHALL do nothing.
 - `[ ]` **LAYOUT-011**: The system SHALL open the library (the list of bundled and pasted passages with the paste action) in one tap from the reader controls.
 
 ## Quiz Screen

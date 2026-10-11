@@ -11,8 +11,7 @@ All learner state lives on the device. Storage can be unavailable, cleared or co
 
 ## Storage
 
-- **localStorage** for progress (learned letters, peek counts, quiz rings, hint and welcome flags) and settings, under versioned keys (`script-ramp:v1:progress`, `script-ramp:v1:settings`).
-- **IndexedDB** for pasted passages, which can be larger than localStorage comfortably holds.
+- **localStorage** for every slice, under versioned keys: progress (`script-ramp:v1:progress`: learned letters, peek counts, quiz rings, hint and welcome flags), content (`script-ramp:v1:content`: current passage, positions, pasted passages) and settings (`script-ramp:v1:settings`). The `content` segment caps each paste at 100,000 characters, which keeps pasted text well inside the roughly 5 MB localStorage budget.
 - Every storage access is wrapped so a thrown error becomes a handled state, never a crash.
 
 Each segment owns the shape of its own state; persistence stores and restores it as an opaque **slice** under its own key and validates it with the owning segment's validator. Progress is the first slice; settings and pasted passages join when `layout` and `content` are built.
@@ -44,6 +43,7 @@ Importing a valid export asks for confirmation, then replaces the current state 
 | Sync | Manual JSON export/import | Cloud sync | No backend in v1 (HLD option B) |
 | Slice ownership | Each segment owns its state shape and validator | One central schema in persistence | Keeps the state shape next to the logic that uses it; persistence stays a thin, reusable layer |
 | Unreadable data | Start fresh, keep a backup copy, tell the learner | Refuse to start; silently start fresh | Refusing strands the learner; silent reset loses progress with no explanation and no way back |
+| Storage engine | localStorage for every slice | IndexedDB for pasted passages | One synchronous save path for all slices; with the paste cap, pasted text never approaches the localStorage budget, so IndexedDB's extra room would cost asynchronous startup for nothing |
 | Write timing | Write on every change | Debounced or on page hide | Changes are small and infrequent; a write on every change cannot lose the last tap when iOS kills a backgrounded tab |
 | Import confirmation | In-app confirm step | Browser `confirm()` dialog | Matches the reset confirmation and works in installed Home Screen apps |
 

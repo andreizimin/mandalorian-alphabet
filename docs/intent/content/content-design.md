@@ -17,7 +17,7 @@ Content supplies what to read and turns it into pages. Passages must be long eno
 | 2 | *Treasure Island*, ch. 1–2 (R. L. Stevenson, 1883) | ~4,500 | ~8 | A young narrator, a menacing outlaw, a sea-chest; the closest public-domain match to a bounty-hunter story |
 | 3 | *The War of the Worlds*, ch. 1–2 (H. G. Wells, 1898) | ~3,600 | ~10 | Aliens arrive; the science-fiction pick, harder prose for later in the ramp |
 
-All three are public domain and come from Project Gutenberg with its header, footer and trademark stripped. Each excerpt starts at a chapter opening and ends at a chapter end. Hard line wraps are joined into paragraphs and typographic quotes are kept. Each passage contains every letter a–z several times, so no glyph lacks exposure. The conversion is a script checked into `scripts/`, so a passage can be regenerated and its provenance checked.
+All three are public domain and come from Project Gutenberg with its header, footer and trademark stripped. Each excerpt starts at a chapter opening and ends at a chapter end. Hard line wraps are joined into paragraphs and typographic quotes are kept. The words are verbatim, including period language: *The Call of the Wild* calls one character a "half-breed" and shows a dog beaten with a club, and both stay as written. Each passage contains every letter a–z several times, so no glyph lacks exposure. The conversion is a script checked into `scripts/`, so a passage can be regenerated and its provenance checked.
 
 ## Passage Model
 
@@ -60,6 +60,7 @@ Gestures for turning pages belong to `layout`; content exposes forward and back.
 | First launch | Open the first bundled passage | Open the library; show an onboarding flow | Reading is the product; a list or a tour delays the first page. The welcome card (owned by `progression`) explains advance in place |
 | Bundled tone | Public-domain adventure and science fiction | Classic literary prose; franchise text | Keeps a young reader reading; franchise text cannot be redistributed, and pasting covers it |
 | Bundled picks | *Call of the Wild*, *Treasure Island*, *War of the Worlds* | *A Princess of Mars*; *The Lost World* | *Princess of Mars* reads at grade 13 or above; *The Lost World* opens with a drawing-room romance and reaches the adventure only in later chapters |
+| Bundled text fidelity | Verbatim, period language included | Lightly adapt dated terms | The excerpts are short and the reader can handle them; editing classic text makes it no longer the book, and the passages are presented as what they are |
 | Position | Paragraph and word index | Page number; character offset | Page numbers break on rotation and text-size change; a word index survives them and cannot land mid-word |
 | Counting pages read | Only forward turns past the furthest point reached | Every forward turn | Flicking back and forth would fire the reading hint without any new reading |
 | Measuring fit | Caller-supplied measuring function | Estimating characters per page | Glyph and reading-font widths differ and change as letters are learned; only real layout is reliable. Injecting the measure also keeps pagination testable |

@@ -1,3 +1,4 @@
+import { initialContent } from '../content/reading';
 import { initialProgress } from '../progression/progression';
 import { buildExport, deliverExport, parseImport } from './exportImport';
 
@@ -43,6 +44,35 @@ describe('parseImport', () => {
     ['invalid progress', JSON.stringify({ app: 'script-ramp', version: 1, progress: { ...progress, learned: ['e', 'e'] } })],
   ])('rejects %s', (_label, text) => {
     expect(parseImport(text)).toEqual({ ok: false });
+  });
+});
+
+describe('content in export and import', () => {
+  const content = {
+    ...initialContent,
+    currentId: 'p1',
+    positions: { p1: { paragraph: 0, word: 1 } },
+    pasted: [{ id: 'p1', title: 'Mine', source: 'pasted' as const, paragraphs: ['hello there'] }],
+  };
+
+  // @spec PERS-002
+  it('includes current passage, positions and pasted passages in the export', () => {
+    const parsed = JSON.parse(buildExport({ progress, content }, new Date('2026-10-10T18:00:00Z')).json);
+    expect(parsed.content).toEqual(content);
+  });
+
+  // @spec PERS-003
+  it('imports valid content alongside progress', () => {
+    expect(parseImport(buildExport({ progress, content }, new Date()).json)).toEqual({
+      ok: true,
+      data: { progress, content },
+    });
+  });
+
+  // @spec PERS-007
+  it('rejects an export whose content is invalid', () => {
+    const bad = JSON.stringify({ app: 'script-ramp', version: 1, progress, content: { ...content, currentId: 7 } });
+    expect(parseImport(bad)).toEqual({ ok: false });
   });
 });
 

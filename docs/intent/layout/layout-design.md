@@ -27,7 +27,7 @@ The quiz is a separate full-screen view opened in one tap from the reader contro
 
 ## Platform
 
-Tap targets at least 44 by 44 pt. Respect safe areas and system light or dark appearance. Page turns by horizontal swipe, or by a tap on a non-glyph point in the outer 15 % of the viewport width on either side; a tap on a glyph anywhere is a peek (owned by `reader`), and a tap elsewhere does nothing.
+Tap targets at least 44 by 44 pt. Respect safe areas and system light or dark appearance. Page turns follow book direction: swipe left or tap the right edge zone to go forward, swipe right or tap the left edge zone to go back. Edge zones are the outer 15 % of the viewport width on each side, and only non-glyph points in them turn pages; a tap on a glyph anywhere is a peek (owned by `reader`), and a tap elsewhere does nothing.
 
 ## Reader Controls
 
