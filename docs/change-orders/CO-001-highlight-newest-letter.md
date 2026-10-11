@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | In progress |
 | Requested | 2026-10-11 |
-| Approved | |
+| Approved | 2026-10-11 |
 | Completed | |
 | Ticket | None |
 

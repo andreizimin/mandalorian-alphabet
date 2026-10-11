@@ -49,6 +49,8 @@ The quiz is a separate full-screen view replacing the reader, opened in one tap 
 
 Every interactive control is at least 44 by 44 pt. The layout respects safe areas (notch, home indicator) and follows the system light or dark appearance.
 
+The newest-letter highlight color is the app's warm accent: brown on the light page and gold in dark appearance, each with a contrast ratio of at least 4.5:1 against the page background.
+
 ## Verification
 
 Width-dependent placement, sizes and real pagination depend on the browser's layout engine, which the unit-test environment does not have. These are verified by browser tests (Playwright) running WebKit, the engine behind iPhone and iPad Safari, at an iPhone, an iPad and a laptop viewport.

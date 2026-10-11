@@ -16,7 +16,7 @@ The learned set starts empty, so the first page is plain English. A one-time wel
 
 ## 4. The first letter
 
-They tap *advance*. An intro card shows the glyph for E, the letter E, and up to 3 words from this passage that contain it (PROG-002, PROG-003). After the card, every E on the page is a Mandalorian glyph and everything else is untouched (READ-001). Copy, paste and find-in-page still return English because the text underneath stays Latin (READ-002).
+They tap *advance*. An intro card shows the glyph for E, the letter E, and up to 3 words from this passage that contain it (PROG-002, PROG-003). After the card, every E on the page is a Mandalorian glyph and everything else is untouched (READ-001). The newest letter's glyphs are drawn in the app's accent color, the same color the intro card used, so the letter being learned is easy to spot; older glyphs stay in the text color (READ-008, PROG-015). Copy, paste and find-in-page still return English because the text underneath stays Latin (READ-002).
 
 ## 5. Reading, peeking, getting the hint
 
@@ -24,7 +24,7 @@ They read. When a glyph trips them up they tap it, wherever it sits on the page;
 
 ## 6. Second letter: the quiz unlocks
 
-They advance to T. The quiz button in the controls, visible all along but disabled with "learn 2 letters first", becomes active (QUIZ-001, QUIZ-002). Tapping it opens a full-screen quiz of 10 questions, each with 4 big choices in a 2 by 2 grid in the lower half of the phone (LAYOUT-008, LAYOUT-009, QUIZ-004). With two letters learned every question is a letter question, "which letter is this glyph?" or "which glyph is T?", and the next unlearned letters fill out the four choices (QUIZ-008, QUIZ-009, QUIZ-015). At least 3 of the 10 target T, the newest letter (QUIZ-011). Right or wrong shows at once, a wrong answer shows the right one, and there is no timer (QUIZ-019, QUIZ-020). The result screen shows the score and the letters missed, with *again* and a return to reading (QUIZ-021).
+They advance to T, and the highlight moves from E to T (READ-008). The quiz button in the controls, visible all along but disabled with "learn 2 letters first", becomes active (QUIZ-001, QUIZ-002). Tapping it opens a full-screen quiz of 10 questions, each with 4 big choices in a 2 by 2 grid in the lower half of the phone (LAYOUT-008, LAYOUT-009, QUIZ-004). With two letters learned every question is a letter question, "which letter is this glyph?" or "which glyph is T?", and the next unlearned letters fill out the four choices (QUIZ-008, QUIZ-009, QUIZ-015). At least 3 of the 10 target T, the newest letter (QUIZ-011). Right or wrong shows at once, a wrong answer shows the right one, and there is no timer (QUIZ-019, QUIZ-020). The result screen shows the score and the letters missed, with *again* and a return to reading (QUIZ-021).
 
 ## 7. The quiz feeds progression
 

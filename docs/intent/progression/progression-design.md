@@ -30,7 +30,7 @@ The learned set starts empty and the first letter waits for a tap like every oth
 
 ## Introducing a Letter
 
-A new letter is introduced with a one-line intro card: glyph, Latin letter, and up to 3 example words from the current passage.
+A new letter is introduced with a one-line intro card: glyph, Latin letter, and up to 3 example words from the current passage. The card draws the new glyph in the newest-letter highlight color, so the color the learner then sees on the page already means "your new letter".
 
 ## Readiness Hint
 
@@ -47,7 +47,7 @@ Thresholds are configuration, not code. Advancing is available whenever a next l
 
 ## Controls
 
-Advance, step back one letter, reset (with confirmation), and a legend of learned letters.
+Advance, step back one letter, reset (with confirmation), and a legend of learned letters. The legend draws the newest letter's glyph in the highlight color.
 
 - **Step back** removes the newest letter and clears its peek count and quiz ring, so re-advancing it starts fresh.
 - **Reset** clears the learned set, all peek counts and all quiz rings.

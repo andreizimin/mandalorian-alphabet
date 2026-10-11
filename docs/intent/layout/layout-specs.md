@@ -31,3 +31,4 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 ## Platform
 
 - `[x]` **LAYOUT-005**: The system SHALL respect device safe areas and the system light or dark appearance.
+- `[ ]` **LAYOUT-015**: The system SHALL define the newest-letter highlight color for both light and dark appearance with a contrast ratio of at least 4.5:1 against the page background.

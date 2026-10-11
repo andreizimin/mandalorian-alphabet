@@ -51,3 +51,4 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 - `[x]` **QUIZ-024**: The system SHALL bundle a lowercase word pool of 3- to 6-letter words in two groups, everyday English and galaxy vocabulary, each entry a single word or name.
 - `[x]` **QUIZ-025**: The system SHALL render every glyph and glyph word in the quiz through the reader substitution renderer, passing the letters of the item being shown as the substitution set.
+- `[ ]` **QUIZ-026**: The quiz SHALL render every glyph without the newest-letter highlight (READ-008).

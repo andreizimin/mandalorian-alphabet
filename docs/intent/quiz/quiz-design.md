@@ -66,7 +66,7 @@ Per-letter recent accuracy, kept by `progression` in `Progress.quizByLetter`, is
 
 ## Rendering
 
-Glyphs and glyph words are rendered by the `reader` substitution renderer with an explicit letter set, so the quiz and the passage always look identical. The quiz passes the set of letters in the item being rendered, not the learned set; for pool words that is every letter, and for filler choices it may include letters not yet learned.
+Glyphs and glyph words are rendered by the `reader` substitution renderer with an explicit letter set, so the quiz and the passage always look identical. The quiz never passes a highlight letter: highlighting the newest letter would reveal which letter a question is about. The quiz passes the set of letters in the item being rendered, not the learned set; for pool words that is every letter, and for filler choices it may include letters not yet learned.
 
 ## Layout
 

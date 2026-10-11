@@ -20,6 +20,8 @@ Tokenize text into characters. Wrap each letter in the substitution set in `<spa
 
 The renderer takes the substitution set as an explicit parameter. The reader passes the learned set; the `quiz` passes the letters of the item it is showing, which may include letters not yet learned.
 
+The renderer also takes an optional highlight letter. Its glyphs, in upper and lower case, get an extra class drawn in the newest-letter highlight color (defined by `layout`). The passage page passes the newest learned letter, so the letter currently being learned is easy to spot on every page; the highlight moves when the learned set changes. The highlight changes color only, never size, weight or spacing, so pagination (owned by `content`), which measures glyph widths, is unaffected.
+
 ## Peek
 
 Tapping a glyph shows its Latin letter in a small popover for 1.5 s. A tap on a glyph is always a peek, even inside the page-edge zones that `layout` uses for page turns; the glyph target wins. Each peek is counted per letter and feeds the readiness hint in `progression`.
@@ -31,6 +33,7 @@ Tapping a glyph shows its Latin letter in a small popover for 1.5 s. A tap on a 
 | Glyph rendering | Font-styled spans over Latin text | Images per glyph; Unicode private-use codepoints | Keeps DOM text Latin for copy, search, screen readers; scales with text size |
 | Case handling | Same glyph for upper and lower case; DOM keeps original case | Distinct capitals; a marker for capitalized words | The Mandalorian script has one case; punctuation and spacing still mark sentences, so a capital cue is not worth an invented mark |
 | Peek gesture | Tap on the glyph | Long-press (400 ms) | Long-press on iOS triggers text selection and the callout menu; suppressing them would break the copy and selection promise. Tap conflicts with page-edge taps only on glyphs in the edge zone, which the glyph-wins rule settles |
+| Newest-letter highlight | Accent color on the newest letter's glyphs, always on until the learned set changes | Color plus underline; tinted background; bold or larger glyphs; highlight only for the first pages | Color alone keeps a page of frequent letters calm; bold or larger glyphs would change text width and break pagination; a highlight that fades would hide the newest letter exactly when the learner looks for it |
 | Substitution set | Explicit parameter | Renderer reads the learned set itself | The quiz renders letters outside the learned set; one renderer with a parameter keeps passage and quiz glyphs identical |
 
 ## Open Questions & Future Decisions
