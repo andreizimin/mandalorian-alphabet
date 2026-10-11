@@ -12,12 +12,12 @@ All state lives on the device. Storage can be unavailable or cleared, so the app
 ## Storage
 
 - localStorage for progress (including per-letter peek counts and quiz rings) and settings.
-- IndexedDB for pasted texts and, if uploaded, the font blob.
+- IndexedDB for pasted texts.
 - All storage access wrapped in try/catch.
 
 ## Export and Import
 
-All state (font excluded) exports as one JSON file and imports after confirmation.
+All learner state exports as one JSON file and imports after confirmation. The font ships with the app and is never part of an export.
 
 ## Decisions & Alternatives
 

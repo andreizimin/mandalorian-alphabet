@@ -71,7 +71,8 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 - **Letter order:** English letter frequency by default (E, T, A, O, I, N...), so new glyphs get maximum exposure.
 - **Progression control:** the learner advances; the app suggests readiness but never forces it. Readiness draws on two signals: few peeks on the newest letter while reading, and quick-quiz results on that letter. Gating advancement on a passed quiz was rejected because a stuck learner would lose control of their own pace.
 - **Quiz is optional and separate:** the quiz is its own screen, never injected into a passage. It feeds the readiness hint and nothing else; it does not change the learned set.
-- **Font source:** open. Bundle the font if its license allows web embedding; otherwise the learner uploads it once and it stays on-device. See `alphabet` LLD.
+- **Font source:** the app bundles Mando AF Regular, a public-domain (CC0) font that draws the Mandalorian alphabet as seen in *The Clone Wars* and *The Mandalorian*. Nothing to upload or install. See `alphabet` LLD.
+- **One case:** the Mandalorian script has no upper and lower case, so both cases of a letter draw the same glyph. The underlying text keeps its original case for copy, search and screen readers.
 
 ## Open Questions
 
@@ -90,8 +91,8 @@ Falsification signals: learners stall before about 10 letters; peek rates for a 
 ## References
 
 - Diglot weave: the language-teaching technique of progressively substituting target-language elements into native-language text, which this app applies at the script level.
-- Mandalorian font: source and license still open; see the `alphabet` LLD.
-- WebKit storage policy: Safari may evict script-writable storage for sites not used within 7 days unless the site is installed to the Home Screen; see the `offline` and `alphabet` LLDs.
+- Mando AF font by AurekFonts (CC0): https://github.com/AurekFonts/AurekFonts.github.io; provenance in `public/fonts/README.md`.
+- WebKit storage policy: Safari may evict script-writable storage for sites not used within 7 days unless the site is installed to the Home Screen; see the `offline` LLD.
 
 ## Glossary
 

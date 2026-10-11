@@ -4,7 +4,7 @@ The journey of the primary user — a young Star Wars fan — from first open to
 
 ## 1. First open
 
-They open the link in Safari on their iPhone. The app loads once and from then on works offline (OFF-001). If the Mandalorian font is bundled it is already there; if its license forces the upload path, they are asked to add the font file once and it stays on the device (ALPHA-001 to ALPHA-004). Until a font is loaded, substitution and the quiz are both off, with a prompt to add one (ALPHA-004, QUIZ-003).
+They open the link in Safari on their iPhone. The app loads once and from then on works offline (OFF-001). The Mandalorian font ships with the app, so there is nothing to upload or install (ALPHA-001). In the moment before it loads, text shows in the normal font and the quiz is off (ALPHA-004, QUIZ-003); if it ever fails, a message offers a retry (ALPHA-003).
 
 ## 2. Straight into a passage
 

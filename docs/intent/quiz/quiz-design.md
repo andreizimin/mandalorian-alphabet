@@ -14,7 +14,7 @@ Reading builds recognition; the quiz checks it. A quick quiz is a short, self-co
 The quiz button is always visible from the reader controls. It is disabled, with a one-line reason, while any of these hold:
 
 - fewer than 2 letters are learned ("learn 2 letters first");
-- no glyph font is loaded (the same condition that disables substitution in `alphabet`).
+- the bundled Mandalorian font is loading or has failed to load (the same condition that disables substitution in `alphabet`).
 
 ## Question Types
 

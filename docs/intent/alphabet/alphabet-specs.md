@@ -8,10 +8,10 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Font Loading
 
-- `[ ]` **ALPHA-001**: When the learner uploads a TTF, OTF or WOFF2 file, the system SHALL load it with the FontFace API and store it on-device.
-- `[ ]` **ALPHA-002**: The system SHALL never transmit an uploaded font file off the device.
-- `[ ]` **ALPHA-003**: If the font fails to load, then the system SHALL render all text in the reading font and show an error naming the file.
-- `[ ]` **ALPHA-004**: While no font is loaded, the system SHALL disable substitution and show a prompt to add one.
+- `[ ]` **ALPHA-001**: When the app starts, the system SHALL load the bundled Mando AF Regular font from the app's own origin with the FontFace API.
+- `[ ]` **ALPHA-003**: If the bundled font fails to load, then the system SHALL render all text in the reading font and show a non-blocking message with a retry action.
+- `[ ]` **ALPHA-004**: While the bundled font is loading or has failed to load, the system SHALL disable substitution.
+- `[ ]` **ALPHA-006**: The system SHALL load the font without any request to a host other than the app's own origin.
 
 ## Order
 

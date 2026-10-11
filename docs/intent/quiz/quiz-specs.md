@@ -10,7 +10,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 - `[ ]` **QUIZ-001**: The system SHALL show a quiz button in the reader controls at all times.
 - `[ ]` **QUIZ-002**: While fewer than 2 letters are learned, the system SHALL disable the quiz button and show the reason "learn 2 letters first".
-- `[ ]` **QUIZ-003**: While no glyph font is loaded, the system SHALL disable the quiz button.
+- `[ ]` **QUIZ-003**: While the bundled Mandalorian font is loading or has failed to load, the system SHALL disable the quiz button.
 
 ## Session
 

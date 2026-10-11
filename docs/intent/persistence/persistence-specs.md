@@ -13,5 +13,5 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Export and Import
 
-- `[ ]` **PERS-002**: When the learner exports, the system SHALL download one JSON file with all state except the font.
+- `[ ]` **PERS-002**: When the learner exports, the system SHALL download one JSON file with all learner state (progress, settings, current passage and position, pasted passages).
 - `[ ]` **PERS-003**: When the learner imports a valid export, the system SHALL replace current state after confirmation.
