@@ -41,3 +41,18 @@ export function renderPassage(...) { /* ... */ }
 ```
 
 Place the annotation at the entry point of the behavior's implementation graph, not every helper.
+
+## Commands
+
+| Task | Command |
+|---|---|
+| Run locally | `npm run dev` |
+| Unit tests (Vitest, jsdom) | `npm test` |
+| Browser tests (Playwright: WebKit at iPhone, iPad, laptop; Chromium for offline) | `npm run test:e2e` |
+| Typecheck | `npm run typecheck` |
+| Deploy a throwaway stage | `npm run deploy` |
+| Deploy production (`learn-mandalorian.andreizimin.com`) | `npm run deploy:prod` |
+| Regenerate bundled passages | `python3 -I scripts/build_passages.py <gutenberg-dir> src/content/bundled` |
+| Regenerate icons | `python3 -I scripts/build_icons.py public/fonts/mando-af-regular.woff2 public/icons` |
+
+Layout and pagination specs are verified by the browser tests; jsdom has no layout engine.

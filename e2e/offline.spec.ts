@@ -15,7 +15,7 @@ async function goOffline(page: import('@playwright/test').Page) {
 // @spec OFF-001
 test('opens and shows the bundled passage with no network', async ({ page }) => {
   await goOffline(page);
-  await expect(page.locator('.page-area p').first()).toContainText('Buck');
+  await expect(page.locator('.page-area p').first()).toContainText('Old longings nomadic leap');
   await expect(page.locator('.font-status')).toHaveCount(0);
 });
 
