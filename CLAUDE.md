@@ -19,6 +19,7 @@ The skill guides the agent through HLD check → LLD check → EARS → intent-n
 | What you need | Where to look |
 |---|---|
 | High-level design | `docs/high-level-design.md` |
+| User flow (narrative over the specs) | `docs/user-flow.md` |
 | Low-level designs | `docs/intent/<node>/<node>-design.md` |
 | EARS specs | `docs/intent/<node>/<node>-specs.md` |
 
