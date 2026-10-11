@@ -85,3 +85,28 @@ describe('PassagePage', () => {
     });
   });
 });
+
+describe('PassagePage newest-letter highlight', () => {
+  const highlighted = (el: HTMLElement) =>
+    Array.from(el.querySelectorAll('.g.g-new')).map((g) => g.textContent!.toLowerCase());
+
+  // @spec READ-008
+  it('highlights every occurrence of the newest learned letter and no other glyph', () => {
+    const { container } = renderPage({ newestLetter: 't' });
+    expect(highlighted(container)).toEqual(['t', 't', 't', 't']); // The, east, gate, Enter
+    expect(container.querySelectorAll('.g')).toHaveLength(11);
+  });
+
+  // @spec READ-008
+  it('moves the highlight when the newest letter changes, and shows none without one', () => {
+    const { container, rerender } = renderPage({ newestLetter: 't' });
+    rerender(
+      <PassagePage paragraphs={paragraphs} learnedSet={learned} newestLetter="e" onPeek={() => {}} onPageTurn={() => {}} />,
+    );
+    expect(new Set(highlighted(container))).toEqual(new Set(['e']));
+    expect(highlighted(container)).toHaveLength(7);
+
+    rerender(<PassagePage paragraphs={paragraphs} learnedSet={learned} onPeek={() => {}} onPageTurn={() => {}} />);
+    expect(highlighted(container)).toEqual([]);
+  });
+});

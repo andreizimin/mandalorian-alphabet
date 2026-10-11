@@ -60,3 +60,28 @@ describe('Substituted renderer', () => {
     expect(container.textContent).toBe('plain');
   });
 });
+
+describe('Substituted highlight', () => {
+  const highlighted = (el: HTMLElement) => Array.from(el.querySelectorAll('.g.g-new')).map((g) => g.textContent);
+
+  // @spec READ-009
+  it('marks only the highlight letter, in both cases, and keeps every glyph a plain glyph otherwise', () => {
+    const { container } = render(<Substituted text="Eve tea" letters={set('et')} highlight="e" />);
+
+    expect(highlighted(container)).toEqual(['E', 'e', 'e']);
+    expect(glyphs(container)).toEqual(['E', 'e', 't', 'e']);
+    expect(container.textContent).toBe('Eve tea');
+  });
+
+  // @spec READ-009
+  it('changes no size, weight or spacing: the highlight is a class with no inline style', () => {
+    const { container } = render(<Substituted text="tea" letters={set('et')} highlight="t" />);
+    for (const g of Array.from(container.querySelectorAll('.g'))) expect(g.getAttribute('style')).toBeNull();
+  });
+
+  // @spec READ-009
+  it('marks nothing without a highlight letter, or when that letter is not substituted', () => {
+    expect(highlighted(render(<Substituted text="tea" letters={set('et')} />).container)).toEqual([]);
+    expect(highlighted(render(<Substituted text="tea" letters={set('t')} highlight="e" />).container)).toEqual([]);
+  });
+});

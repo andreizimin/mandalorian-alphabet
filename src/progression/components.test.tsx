@@ -148,3 +148,22 @@ describe('WelcomeCard', () => {
     expect(onDismiss).toHaveBeenCalled();
   });
 });
+
+describe('newest-letter highlight on the intro card and legend', () => {
+  // @spec PROG-015
+  it('draws every glyph on the intro card, letter and example words, in the highlight', () => {
+    const { container } = render(
+      <IntroCard letter="e" passageText="The east gate stood open." onClose={() => {}} />,
+    );
+    const glyphs = Array.from(container.querySelectorAll('.g'));
+    expect(glyphs.length).toBeGreaterThan(1);
+    expect(glyphs.every((g) => g.classList.contains('g-new'))).toBe(true);
+  });
+
+  // @spec PROG-015
+  it("highlights only the legend's entry for the newest letter", () => {
+    const { container } = render(<Legend learned={['e', 't', 'a']} />);
+    const marked = Array.from(container.querySelectorAll('li')).map((li) => li.querySelector('.g')!.classList.contains('g-new'));
+    expect(marked).toEqual([false, false, true]);
+  });
+});

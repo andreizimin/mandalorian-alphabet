@@ -194,3 +194,17 @@ describe('QuizButton', () => {
     expect(screen.getByRole('button', { name: /quiz/i })).toBeDisabled();
   });
 });
+
+describe('QuizScreen and the newest-letter highlight', () => {
+  // @spec QUIZ-026
+  it('renders glyphs without the highlight on every question', async () => {
+    const user = userEvent.setup();
+    const session = expectedSession(7);
+    const { container } = renderQuiz();
+    for (const q of session) {
+      expect(container.querySelectorAll('.g').length).toBeGreaterThan(0);
+      expect(container.querySelectorAll('.g-new')).toHaveLength(0);
+      await answer(user, q.answer);
+    }
+  });
+});

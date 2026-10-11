@@ -180,3 +180,39 @@ test('keeps the learner on their word when the window resizes', async ({ page },
 
   await expect.poll(() => pageText(page)).toContain(word);
 });
+
+// @spec READ-008, LAYOUT-015
+test('highlights the newest letter in a readable accent color, light and dark, without breaking pages', async ({ page }) => {
+  await learn(page, 2); // e, then t: t is newest
+  const newest = page.locator('.page-area .g.g-new');
+  await expect(newest.first()).toBeVisible();
+  expect(new Set((await newest.allInnerTexts()).map((t) => t.toLowerCase()))).toEqual(new Set(['t']));
+
+  const contrast = () =>
+    page.evaluate(() => {
+      const rgb = (c: string) => c.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+      const lum = ([r, g, b]: number[]) =>
+        [r, g, b]
+          .map((v) => v / 255)
+          .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+          .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+      const newestColor = getComputedStyle(document.querySelector('.page-area .g.g-new')!).color;
+      const otherColor = getComputedStyle(document.querySelector('.page-area .g:not(.g-new)')!).color;
+      const bg = getComputedStyle(document.body).backgroundColor;
+      const [a, b] = [lum(rgb(newestColor)), lum(rgb(bg))].sort((x, y) => y - x);
+      return { differs: newestColor !== otherColor, ratio: (a + 0.05) / (b + 0.05) };
+    });
+
+  for (const scheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const { differs, ratio } = await contrast();
+    expect(differs).toBe(true);
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  }
+
+  for (let i = 0; i < 3; i++) {
+    const overflow = await page.locator('.page-area').evaluate((el) => el.scrollHeight - el.clientHeight);
+    expect(overflow).toBeLessThanOrEqual(1);
+    await page.getByRole('button', { name: 'Next page' }).click();
+  }
+});
