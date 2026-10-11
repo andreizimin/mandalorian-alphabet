@@ -5,6 +5,7 @@ import {
   progressReducer,
   readinessSignals,
   showWelcome,
+  validateProgress,
   visibleHint,
   type ProgressEvent,
   type ProgressState,
@@ -195,6 +196,33 @@ describe('step back and reset', () => {
     expect(reset.peeksByLetter).toEqual({});
     expect(reset.quizByLetter).toEqual({});
     expect(reset.newestPagePeeks).toEqual([]);
+  });
+});
+
+describe('validateProgress', () => {
+  const valid = run([advance, advance, peek('e'), quiz('t', true, false), pageRead, { type: 'dismissWelcome' }]);
+
+  // @spec PERS-003, PERS-006
+  it('accepts initial and real progress, including after a JSON round trip', () => {
+    expect(validateProgress(initialProgress)).toBe(true);
+    expect(validateProgress(JSON.parse(JSON.stringify(valid)))).toBe(true);
+  });
+
+  // @spec PERS-003, PERS-006
+  it.each<[string, unknown]>([
+    ['null', null],
+    ['a missing field', { ...valid, welcomeSeen: undefined }],
+    ['a repeated learned letter', { ...valid, learned: ['e', 'e'] }],
+    ['a learned item that is not a letter a-z', { ...valid, learned: ['e', 'é'] }],
+    ['a negative peek count', { ...valid, peeksByLetter: { e: -1 } }],
+    ['a fractional peek count', { ...valid, peeksByLetter: { e: 1.5 } }],
+    ['peeks on a letter not learned', { ...valid, peeksByLetter: { z: 1 } }],
+    ['a quiz ring longer than 5', { ...valid, quizByLetter: { t: [true, true, true, true, true, true] } }],
+    ['a quiz ring with non-booleans', { ...valid, quizByLetter: { t: [1] } }],
+    ['an unknown hint signal', { ...valid, hintDismissedFor: ['vibes'] }],
+    ['a negative page peek count', { ...valid, newestPagePeeks: [-1] }],
+  ])('rejects %s', (_label, value) => {
+    expect(validateProgress(value)).toBe(false);
   });
 });
 

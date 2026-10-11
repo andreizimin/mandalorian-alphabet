@@ -20,6 +20,8 @@ Progression decides which letter comes next and when to suggest advancing. The l
 - `hintDismissedFor` lists the signals the learner has dismissed the hint for on the current newest letter.
 - `welcomeSeen` records that the first-launch welcome card has been dismissed.
 
+Progression also owns the validator for its persisted state (`validateProgress`), which `persistence` uses when restoring saved progress and checking an import.
+
 Progression state changes only through named events (advance, step back, reset, peek, page read, quiz answers recorded, hint dismissed, welcome dismissed), so the same logic serves the reader, the quiz and persistence.
 
 ## First Launch
