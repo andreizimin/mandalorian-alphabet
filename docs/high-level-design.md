@@ -50,6 +50,8 @@ The product is a client-only installable web app (PWA) with no backend; learner 
 
 B is chosen because offline reading on a phone is a core goal and it adds no server to operate.
 
+**Stack:** Vite, React and TypeScript, tested with Vitest, Testing Library and jsdom. Each design-tree node is a directory under `src/` with the same name, so a spec prefix maps to one folder. React is chosen over a plain-DOM or Svelte build for ecosystem familiarity; the bundle-size cost is acceptable for a text app that is precached once.
+
 ### Design Tree
 
 | Node | Prefix | Owns |
