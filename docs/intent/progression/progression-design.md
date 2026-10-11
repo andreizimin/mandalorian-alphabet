@@ -11,9 +11,16 @@ Progression decides which letter comes next and when to suggest advancing. The l
 
 ## Data
 
-`Progress { order[], learnedCount, peeksByLetter{}, pagesSinceAdvance, quizByLetter{}, hintDismissedFor }`
+`Progress { learned[], peeksByLetter{}, newestPagePeeks[], currentPagePeeks, quizByLetter{}, hintDismissedFor[], welcomeSeen }`
 
-`quizByLetter[letter]` is a ring of the last 5 quiz answers that targeted the letter, newest last. The `quiz` node appends to it; progression reads it. `hintDismissedFor` records which signals the learner has dismissed the hint for on the current newest letter.
+- `learned` is the list of learned letters in the order they were added; the last entry is the newest letter. The next letter to introduce is the first letter of the alphabet's current order (owned by `alphabet`) that is not in `learned`, so editing the order changes what comes next without changing what has been learned.
+- `peeksByLetter[letter]` counts all peeks on a letter while it is learned.
+- `currentPagePeeks` counts peeks on the newest letter on the page being read. When a page is read, it is appended to `newestPagePeeks`, which therefore holds one entry per page read since the newest letter was introduced. A page counts as read when the learner turns forward past it.
+- `quizByLetter[letter]` is a ring of the last 5 quiz answers that targeted the letter, newest last. The `quiz` node appends to it; progression reads it.
+- `hintDismissedFor` lists the signals the learner has dismissed the hint for on the current newest letter.
+- `welcomeSeen` records that the first-launch welcome card has been dismissed.
+
+Progression state changes only through named events (advance, step back, reset, peek, page read, quiz answers recorded, hint dismissed, welcome dismissed), so the same logic serves the reader, the quiz and persistence.
 
 ## First Launch
 
@@ -53,6 +60,7 @@ Advance, step back one letter, reset (with confirmation), and a legend of learne
 | Combining signals | Either signal triggers the hint; one hint names both when both hold | Both required; two separate hints | Requiring both would make the quiz mandatory for ever seeing a hint; two banners compete for a phone screen |
 | Reading signal window | Pages read since the letter was introduced, minimum 2 | Last 2 pages regardless of introduction | A just-introduced letter has 0 peeks on the previous pages, which would fire the hint instantly |
 | Hint dismissal | Per signal, until the next advance | Never dismissible; dismiss forever | A hint that returns every page nags; one that never returns loses the second signal's evidence |
+| Learned set storage | List of learned letters | Count of letters learned from the front of the order | A count silently changes which letters are learned when the order is edited |
 | Quiz accuracy window | Last 5 answers per letter | All-time accuracy | Recent answers reflect current recognition; early misses should not haunt a letter |
 | Step back | Clears the letter's peek count and quiz ring | Keep history and resume on re-add | Stepping back is the learner saying the letter came too soon; stale answers could fire the quiz hint the moment it is re-added |
 
