@@ -109,29 +109,11 @@ describe('alphabet font loading', () => {
 });
 
 describe('alphabet letter order', () => {
-  // @spec ALPHA-005
-  it('defaults to English frequency order', () => {
+  // @spec PROG-001
+  it('is English frequency order covering all 26 letters once', () => {
     const alphabet = createAlphabet({ registry: fakeRegistry() });
     expect(alphabet.order()).toEqual(FREQUENCY_ORDER);
     expect(FREQUENCY_ORDER.slice(0, 6)).toEqual(['e', 't', 'a', 'o', 'i', 'n']);
     expect([...FREQUENCY_ORDER].sort()).toEqual('abcdefghijklmnopqrstuvwxyz'.split(''));
-  });
-
-  // @spec ALPHA-005
-  it('uses an edited order for all future lookups', () => {
-    const alphabet = createAlphabet({ registry: fakeRegistry() });
-    const edited = [...FREQUENCY_ORDER].reverse();
-
-    alphabet.setOrder(edited);
-
-    expect(alphabet.order()).toEqual(edited);
-  });
-
-  // @spec ALPHA-005
-  it('rejects an order that is not a permutation of the 26 letters', () => {
-    const alphabet = createAlphabet({ registry: fakeRegistry() });
-    expect(() => alphabet.setOrder(['e', 't'])).toThrow();
-    expect(() => alphabet.setOrder([...FREQUENCY_ORDER.slice(0, 25), 'e'])).toThrow();
-    expect(alphabet.order()).toEqual(FREQUENCY_ORDER);
   });
 });

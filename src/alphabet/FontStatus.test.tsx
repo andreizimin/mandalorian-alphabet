@@ -12,7 +12,6 @@ function fakeAlphabet(state: FontState) {
     retry: vi.fn(async () => {}),
     isSubstitutionEnabled: () => state === 'loaded',
     order: () => [],
-    setOrder: () => {},
   } satisfies Alphabet;
 }
 

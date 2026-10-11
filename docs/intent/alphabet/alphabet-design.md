@@ -27,6 +27,7 @@ At startup, register the bundled font with the FontFace API and wait for it to l
 |---|---|---|---|
 | Mapping | Identity map plus cipher font | Unicode codepoint map | Mandalorian has no Unicode block |
 | Scope | Mandalorian only, with an alphabet id in the data | Alphabet-agnostic engine from the start | Polish for one alphabet beats generality for none; the id keeps the door open at no cost |
+| Letter order | Fixed English frequency order | Learner-editable order | Frequency order gives each new glyph the most exposure; a reorder screen adds complexity for a young learner with nothing to gain |
 | Font source | Bundle a public-domain font | Learner uploads a font file once | A CC0 font with distinct glyphs exists, so bundling removes the upload step for a young learner and the risk of iOS evicting an uploaded font from storage |
 | Font choice | Mando AF Regular (v002) | Mando AF v001; Mando AF Classic; freeware fonts (Erik Stormtrooper "Mandalorian", Iconian "Mandalore") | v001 draws i/j and w/x identically, which makes those letters unlearnable; Classic follows the older *Attack of the Clones* style a fan of the show will not recognize; the freeware fonts are personal-use only and cannot be redistributed |
 

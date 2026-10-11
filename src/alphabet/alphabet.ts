@@ -17,7 +17,6 @@ export interface Alphabet {
   retry(): Promise<void>;
   isSubstitutionEnabled(): boolean;
   order(): readonly string[];
-  setOrder(order: readonly string[]): void;
 }
 
 export const browserFontRegistry: FontRegistry = {
@@ -28,14 +27,9 @@ export const browserFontRegistry: FontRegistry = {
   },
 };
 
-function isPermutationOfAlphabet(order: readonly string[]) {
-  return order.length === 26 && [...order].sort().join('') === 'abcdefghijklmnopqrstuvwxyz';
-}
-
-// @spec ALPHA-001, ALPHA-003, ALPHA-004, ALPHA-005, ALPHA-006
+// @spec ALPHA-001, ALPHA-003, ALPHA-004, ALPHA-006, PROG-001
 export function createAlphabet({ registry }: { registry: FontRegistry }): Alphabet {
   let state: FontState = 'loading';
-  let letterOrder: readonly string[] = FREQUENCY_ORDER;
   const listeners = new Set<() => void>();
 
   function setState(next: FontState) {
@@ -63,12 +57,6 @@ export function createAlphabet({ registry }: { registry: FontRegistry }): Alphab
     start: load,
     retry: load,
     isSubstitutionEnabled: () => state === 'loaded',
-    order: () => letterOrder,
-    setOrder(order) {
-      if (!isPermutationOfAlphabet(order)) {
-        throw new Error('Letter order must contain each of the 26 letters exactly once');
-      }
-      letterOrder = [...order];
-    },
+    order: () => FREQUENCY_ORDER,
   };
 }

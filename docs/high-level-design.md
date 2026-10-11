@@ -68,7 +68,7 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 ## Key Decisions
 
 - **Rendering:** each letter in the learned set renders as a span styled with the target font; all other characters render in the reading font. Underlying text stays Latin, so copy, search and screen readers keep working. Browsers load the font as a standard web font; nothing is installed on the device.
-- **Letter order:** English letter frequency by default (E, T, A, O, I, N...), so new glyphs get maximum exposure.
+- **Letter order:** fixed English letter frequency (E, T, A, O, I, N...), so new glyphs get maximum exposure. The learner does not reorder letters.
 - **Progression control:** the learner advances; the app suggests readiness but never forces it. Readiness draws on two signals: few peeks on the newest letter while reading, and quick-quiz results on that letter. Gating advancement on a passed quiz was rejected because a stuck learner would lose control of their own pace.
 - **Quiz is optional and separate:** the quiz is its own screen, never injected into a passage. It feeds the readiness hint and nothing else; it does not change the learned set.
 - **Font source:** the app bundles Mando AF Regular, a public-domain (CC0) font that draws the Mandalorian alphabet as seen in *The Clone Wars* and *The Mandalorian*. Nothing to upload or install. See `alphabet` LLD.

@@ -64,7 +64,7 @@ function omit<T>(record: Readonly<Record<string, T>>, key: string): Record<strin
   return rest;
 }
 
-// @spec PROG-001, ALPHA-005, PROG-013
+// @spec PROG-001, PROG-013
 export function nextLetter(state: ProgressState, order: readonly string[]): string | null {
   return order.find((letter) => !state.learned.includes(letter)) ?? null;
 }

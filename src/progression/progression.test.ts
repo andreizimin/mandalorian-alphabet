@@ -37,17 +37,6 @@ describe('order and advancing', () => {
     expect(progressReducer(before, advance).learned).toHaveLength(before.learned.length + 1);
   });
 
-  // @spec ALPHA-005
-  it('uses an edited order for future advances without changing letters already learned', () => {
-    const learnedTwo = run([advance, advance]); // e, t
-    const edited = ['z', 'e', 'q', ...ORDER.filter((l) => !'zeq'.includes(l))];
-
-    const next = progressReducer(learnedTwo, { type: 'advance', order: edited });
-
-    expect(next.learned).toEqual(['e', 't', 'z']);
-    expect(nextLetter(next, edited)).toBe('q');
-  });
-
   // @spec PROG-010
   it('allows advancing at any time, with or without a readiness hint', () => {
     const justAdvanced = run([advance]);

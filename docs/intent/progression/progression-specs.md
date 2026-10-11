@@ -8,7 +8,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Order and Advancing
 
-- `[x]` **PROG-001**: The system SHALL introduce letters in the active alphabet's order, defaulting to English frequency order.
+- `[x]` **PROG-001**: The system SHALL introduce letters in English letter frequency order (E, T, A, O, I, N, ...).
 - `[x]` **PROG-002**: When the learner advances, the system SHALL add exactly one letter to the learned set and show its intro card.
 - `[x]` **PROG-003**: The intro card SHALL show the glyph, its Latin letter and up to 3 words from the current passage containing it.
 - `[x]` **PROG-010**: While at least one letter in the order is not yet learned, the system SHALL allow the learner to advance at any time, whether or not a readiness hint is showing.
