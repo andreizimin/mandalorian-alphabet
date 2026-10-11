@@ -40,7 +40,7 @@ Ordered; when two conflict, the higher one wins.
 
 ## System Design
 
-The product is a client-only installable web app (PWA) with no backend; learner state lives on the device. It is hosted as static files at `learn-mandalorian.andreizimin.com`.
+The product is a client-only installable web app (PWA) with no backend; learner state lives on the device. It is hosted as static files at `learn-mandalorian.andreizimin.com`; hosting and updates are in the `offline` LLD.
 
 | Option | What it is | Cost | Verdict |
 |---|---|---|---|

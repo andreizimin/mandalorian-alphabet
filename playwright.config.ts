@@ -13,8 +13,10 @@ export default defineConfig({
     timeout: 120_000,
   },
   projects: [
-    { name: 'iphone', use: { ...devices['iPhone 13'] } },
-    { name: 'ipad', use: { ...devices['iPad (gen 7)'] } },
-    { name: 'laptop', use: { ...devices['Desktop Safari'], viewport: { width: 1280, height: 800 } } },
+    { name: 'iphone', use: { ...devices['iPhone 13'] }, testIgnore: /offline/ },
+    { name: 'ipad', use: { ...devices['iPad (gen 7)'] }, testIgnore: /offline/ },
+    { name: 'laptop', use: { ...devices['Desktop Safari'], viewport: { width: 1280, height: 800 } }, testIgnore: /offline/ },
+    // Service workers only run in Playwright's Chromium.
+    { name: 'offline', use: { ...devices['Desktop Chrome'] }, testMatch: /offline/ },
   ],
 });
