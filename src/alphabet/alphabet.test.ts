@@ -1,132 +1,117 @@
-import { createAlphabet, FREQUENCY_ORDER, type FontRegistry, type FontStore } from './alphabet';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { createAlphabet, FONT_URL, FREQUENCY_ORDER, type FontRegistry } from './alphabet';
 
-function fakeStore(initial: { blob: Blob; name: string } | null = null) {
-  let stored = initial;
-  const store: FontStore & { saves: number } = {
-    saves: 0,
-    async save(blob, name) {
-      store.saves += 1;
-      stored = { blob, name };
-    },
-    async load() {
-      return stored;
-    },
-  };
-  return store;
+function deferred() {
+  let resolveFn!: () => void;
+  let rejectFn!: (e: Error) => void;
+  const promise = new Promise<void>((res, rej) => {
+    resolveFn = res;
+    rejectFn = rej;
+  });
+  return { promise, resolve: resolveFn, reject: rejectFn };
 }
 
-function fakeRegistry(opts: { fail?: boolean } = {}) {
-  const registry: FontRegistry & { registered: string[] } = {
-    registered: [],
-    async register(family) {
-      if (opts.fail) throw new Error('bad font data');
-      registry.registered.push(family);
+function fakeRegistry(outcomes: Array<'ok' | 'fail'> = ['ok']) {
+  const calls: Array<{ family: string; url: string }> = [];
+  const registry: FontRegistry & { calls: typeof calls } = {
+    calls,
+    async register(family, url) {
+      calls.push({ family, url });
+      const outcome = outcomes[Math.min(calls.length - 1, outcomes.length - 1)];
+      if (outcome === 'fail') throw new Error('font failed to load');
     },
   };
   return registry;
 }
 
-function fontFile(name: string, type = 'font/ttf') {
-  return new File([new Uint8Array([0, 1, 0, 0])], name, { type });
-}
-
 describe('alphabet font loading', () => {
   // @spec ALPHA-001
-  it('loads a TTF through the FontFace registry and stores it on device', async () => {
-    const store = fakeStore();
+  it('loads the bundled font through the FontFace registry on start', async () => {
     const registry = fakeRegistry();
-    const alphabet = createAlphabet({ store, registry });
+    const alphabet = createAlphabet({ registry });
 
-    await alphabet.loadFromFile(fontFile('mando.ttf'));
+    await alphabet.start();
 
-    expect(registry.registered).toEqual([alphabet.fontFamily]);
-    expect(store.saves).toBe(1);
-    expect(alphabet.status()).toEqual({ state: 'loaded', fileName: 'mando.ttf' });
+    expect(registry.calls).toEqual([{ family: alphabet.fontFamily, url: FONT_URL }]);
+    expect(alphabet.status()).toBe('loaded');
     expect(alphabet.isSubstitutionEnabled()).toBe(true);
   });
 
   // @spec ALPHA-001
-  it.each(['mando.otf', 'mando.woff2', 'MANDO.TTF'])('accepts %s', async (name) => {
-    const alphabet = createAlphabet({ store: fakeStore(), registry: fakeRegistry() });
-    await alphabet.loadFromFile(fontFile(name, ''));
-    expect(alphabet.status().state).toBe('loaded');
+  it('ships the bundled font as a WOFF2 file at the path it loads from', () => {
+    expect(FONT_URL).toBe('/fonts/mando-af-regular.woff2');
+    const bytes = readFileSync(resolve(__dirname, '../../public', FONT_URL.slice(1)));
+    expect(bytes.subarray(0, 4).toString('latin1')).toBe('wOF2');
   });
 
-  // @spec ALPHA-001
-  it('restores a previously stored font on startup', async () => {
-    const store = fakeStore({ blob: fontFile('kept.ttf'), name: 'kept.ttf' });
-    const registry = fakeRegistry();
-    const alphabet = createAlphabet({ store, registry });
-
-    await alphabet.restore();
-
-    expect(registry.registered).toHaveLength(1);
-    expect(alphabet.status()).toEqual({ state: 'loaded', fileName: 'kept.ttf' });
-  });
-
-  // @spec ALPHA-002
-  it('makes no network request while loading or restoring a font', async () => {
+  // @spec ALPHA-006
+  it('loads the font from the app origin and makes no other network request', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('network used'));
-    const xhrSpy = vi.spyOn(XMLHttpRequest.prototype, 'open');
-    const beacon = vi.fn();
-    Object.defineProperty(navigator, 'sendBeacon', { value: beacon, configurable: true });
-
-    const store = fakeStore();
-    const alphabet = createAlphabet({ store, registry: fakeRegistry() });
-    await alphabet.loadFromFile(fontFile('mando.ttf'));
-    await createAlphabet({ store, registry: fakeRegistry() }).restore();
-
-    expect(fetchSpy).not.toHaveBeenCalled();
-    expect(xhrSpy).not.toHaveBeenCalled();
-    expect(beacon).not.toHaveBeenCalled();
-    fetchSpy.mockRestore();
-    xhrSpy.mockRestore();
-  });
-
-  // @spec ALPHA-003
-  it('enters an error state naming the file and disables substitution when the font fails to load', async () => {
-    const alphabet = createAlphabet({ store: fakeStore(), registry: fakeRegistry({ fail: true }) });
-
-    await alphabet.loadFromFile(fontFile('broken.ttf'));
-
-    expect(alphabet.status()).toMatchObject({ state: 'error', fileName: 'broken.ttf' });
-    expect(alphabet.isSubstitutionEnabled()).toBe(false);
-  });
-
-  // @spec ALPHA-003
-  it('treats an unsupported file type as a load failure naming the file', async () => {
     const registry = fakeRegistry();
-    const alphabet = createAlphabet({ store: fakeStore(), registry });
 
-    await alphabet.loadFromFile(fontFile('notes.txt', 'text/plain'));
+    await createAlphabet({ registry }).start();
 
-    expect(registry.registered).toEqual([]);
-    expect(alphabet.status()).toMatchObject({ state: 'error', fileName: 'notes.txt' });
+    const resolved = new URL(registry.calls[0].url, window.location.href);
+    expect(resolved.origin).toBe(window.location.origin);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
   });
 
-  // @spec ALPHA-004
-  it('starts with no font and substitution disabled', () => {
-    const alphabet = createAlphabet({ store: fakeStore(), registry: fakeRegistry() });
-    expect(alphabet.status()).toEqual({ state: 'none' });
+  // @spec ALPHA-003
+  it('enters the failed state and keeps substitution off when the font fails to load', async () => {
+    const alphabet = createAlphabet({ registry: fakeRegistry(['fail']) });
+
+    await alphabet.start();
+
+    expect(alphabet.status()).toBe('failed');
     expect(alphabet.isSubstitutionEnabled()).toBe(false);
   });
 
+  // @spec ALPHA-003
+  it('retries after a failure and recovers when the retry succeeds', async () => {
+    const registry = fakeRegistry(['fail', 'ok']);
+    const alphabet = createAlphabet({ registry });
+    await alphabet.start();
+
+    await alphabet.retry();
+
+    expect(registry.calls).toHaveLength(2);
+    expect(alphabet.status()).toBe('loaded');
+    expect(alphabet.isSubstitutionEnabled()).toBe(true);
+  });
+
   // @spec ALPHA-004
-  it('notifies subscribers as status changes', async () => {
-    const alphabet = createAlphabet({ store: fakeStore(), registry: fakeRegistry() });
+  it('keeps substitution off while the font is loading', async () => {
+    const gate = deferred();
+    const alphabet = createAlphabet({ registry: { register: () => gate.promise } });
+
+    const started = alphabet.start();
+    expect(alphabet.status()).toBe('loading');
+    expect(alphabet.isSubstitutionEnabled()).toBe(false);
+
+    gate.resolve();
+    await started;
+    expect(alphabet.isSubstitutionEnabled()).toBe(true);
+  });
+
+  // @spec ALPHA-004
+  it('notifies subscribers on each status change', async () => {
+    const alphabet = createAlphabet({ registry: fakeRegistry(['fail', 'ok']) });
     const seen: string[] = [];
-    alphabet.subscribe(() => seen.push(alphabet.status().state));
+    alphabet.subscribe(() => seen.push(alphabet.status()));
 
-    await alphabet.loadFromFile(fontFile('mando.ttf'));
+    await alphabet.start();
+    await alphabet.retry();
 
-    expect(seen).toEqual(['loading', 'loaded']);
+    expect(seen).toEqual(['loading', 'failed', 'loading', 'loaded']);
   });
 });
 
 describe('alphabet letter order', () => {
   // @spec ALPHA-005
   it('defaults to English frequency order', () => {
-    const alphabet = createAlphabet({ store: fakeStore(), registry: fakeRegistry() });
+    const alphabet = createAlphabet({ registry: fakeRegistry() });
     expect(alphabet.order()).toEqual(FREQUENCY_ORDER);
     expect(FREQUENCY_ORDER.slice(0, 6)).toEqual(['e', 't', 'a', 'o', 'i', 'n']);
     expect([...FREQUENCY_ORDER].sort()).toEqual('abcdefghijklmnopqrstuvwxyz'.split(''));
@@ -134,7 +119,7 @@ describe('alphabet letter order', () => {
 
   // @spec ALPHA-005
   it('uses an edited order for all future lookups', () => {
-    const alphabet = createAlphabet({ store: fakeStore(), registry: fakeRegistry() });
+    const alphabet = createAlphabet({ registry: fakeRegistry() });
     const edited = [...FREQUENCY_ORDER].reverse();
 
     alphabet.setOrder(edited);
@@ -144,7 +129,7 @@ describe('alphabet letter order', () => {
 
   // @spec ALPHA-005
   it('rejects an order that is not a permutation of the 26 letters', () => {
-    const alphabet = createAlphabet({ store: fakeStore(), registry: fakeRegistry() });
+    const alphabet = createAlphabet({ registry: fakeRegistry() });
     expect(() => alphabet.setOrder(['e', 't'])).toThrow();
     expect(() => alphabet.setOrder([...FREQUENCY_ORDER.slice(0, 25), 'e'])).toThrow();
     expect(alphabet.order()).toEqual(FREQUENCY_ORDER);
