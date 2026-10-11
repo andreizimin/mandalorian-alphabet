@@ -6,13 +6,13 @@ The journey of the primary user — a young Star Wars fan — from first open to
 
 They open the link in Safari on their iPhone. The app loads once and from then on works offline (OFF-001). If the Mandalorian font is bundled it is already there; if its license forces the upload path, they are asked to add the font file once and it stays on the device (ALPHA-001 to ALPHA-004). Until a font is loaded, substitution and the quiz are both off, with a prompt to add one (ALPHA-004, QUIZ-003).
 
-## 2. Picking something to read
+## 2. Straight into a passage
 
-Two or three bundled public-domain adventure or science-fiction passages of about 3,000 words, or any English text pasted in: fan fiction, a wiki article, a favorite chapter (TEXT-001, TEXT-002). The passage opens paginated, single column, never split mid-word (TEXT-003, LAYOUT-001).
+The app opens directly into the first bundled passage (TEXT-005): paginated, single column, never split mid-word (TEXT-003, LAYOUT-001). The library, one tap from the controls, lists the two or three bundled public-domain adventure or science-fiction passages and holds the paste action for any English text: fan fiction, a wiki article, a favorite chapter (TEXT-001, TEXT-002, TEXT-006, LAYOUT-011).
 
 ## 3. Reading with no glyphs
 
-The learned set starts empty, so the first page is plain English. The reader is the same one used throughout; nothing is substituted yet.
+The learned set starts empty, so the first page is plain English. A one-time welcome card points at *advance* and says what it will do; nothing is substituted until they tap it (PROG-014).
 
 ## 4. The first letter
 
@@ -20,7 +20,7 @@ They tap *advance*. An intro card shows the glyph for E, the letter E, and up to
 
 ## 5. Reading, peeking, getting the hint
 
-They read. When a glyph trips them up they tap it; the Latin letter appears for 1.5 seconds and the peek is counted for that letter (READ-004). After two pages with fewer than 2 peeks on E, a non-blocking hint says they are ready for the next letter and names reading as the reason (PROG-004). They can ignore it, or advance at any time with or without a hint (PROG-010). On the phone the controls sit in a bottom bar within thumb reach (LAYOUT-002); pages turn by swipe or edge tap (LAYOUT-007).
+They read. When a glyph trips them up they tap it, wherever it sits on the page; the Latin letter appears for 1.5 seconds and the peek is counted for that letter (READ-004). After two pages read since E arrived with fewer than 2 peeks on it, a non-blocking hint says they are ready for the next letter and names reading as the reason (PROG-004). They can dismiss it, which keeps it away until they advance (PROG-012), or advance at any time with or without a hint (PROG-010). On the phone the controls sit in a bottom bar within thumb reach (LAYOUT-002); pages turn by swipe, or by a tap on the outer edges of the page away from any glyph (LAYOUT-007).
 
 ## 6. Second letter: the quiz unlocks
 
@@ -28,7 +28,7 @@ They advance to T. The quiz button in the controls, visible all along but disabl
 
 ## 7. The quiz feeds progression
 
-Each answer is recorded against the letter it targeted, in a ring of the last 5 per letter (QUIZ-023, PROG-009). Once 4 of the last 5 answers on T are correct, the readiness hint fires and names the quiz as the reason (PROG-008). Either signal, reading or quiz, is enough on its own; neither is required to advance.
+Each answer is recorded against the letter it targeted, in a ring of the last 5 per letter (QUIZ-023, PROG-009). Once 4 of the last 5 answers on T are correct, the readiness hint fires and names the quiz as the reason (PROG-008). Either signal, reading or quiz, is enough on its own; when both hold, one hint names both (PROG-011). Neither is required to advance.
 
 ## 8. A few letters in: word questions
 
@@ -40,11 +40,11 @@ The same app, no account, on the iPad: controls move to a top bar, the reading c
 
 ## 10. Stumbling, stepping back, resetting
 
-If a letter arrived too soon, *step back* removes the newest one (PROG-005). *Reset*, after confirmation, clears the learned set and peek counts (PROG-006). The legend of learned letters is one tap away at all times (PROG-007).
+If a letter arrived too soon, *step back* removes the newest one and forgets its peeks and quiz answers, so it starts fresh next time (PROG-005). *Reset*, after confirmation, clears the learned set, peek counts and quiz rings (PROG-006). The legend of learned letters is one tap away at all times (PROG-007).
 
 ## 11. About two hours in
 
-All 26 letters render as glyphs. Success is reading a fully substituted page at near their normal pace, with quiz accuracy on letters learned a while ago staying high (HLD, Success Metrics).
+All 26 letters render as glyphs; *advance* is disabled and the hint retires (PROG-013). Success is reading a fully substituted page at near their normal pace, with quiz accuracy on letters learned a while ago staying high (HLD, Success Metrics).
 
 ## 12. Keeping it
 
@@ -52,9 +52,4 @@ They install the app to the Home Screen so it launches full screen and iOS does 
 
 ## Open Questions
 
-Steps where the journey is not yet backed by a spec:
-
-1. **First-launch screen.** Whether the app opens to a passage list, a start card, or straight into a bundled passage is unspecified.
-2. **Introducing the first letter.** PROG-002 covers each advance, but nothing says whether the first letter is introduced automatically or waits for a tap.
-3. **Hint lifecycle.** Whether the readiness hint can be dismissed, and whether it returns on the next page, is unspecified.
-4. **Navigation beyond the reader.** How the learner reaches paste-text and passage switching from the reader is unspecified beyond "reader controls".
+None: every step above is backed by a spec. Add to this list when a step in the journey outruns the specs.

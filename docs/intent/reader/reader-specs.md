@@ -17,4 +17,4 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Peek
 
-- `[ ]` **READ-004**: When the learner taps a glyph in a passage page (not in the quiz), the system SHALL show its Latin letter for 1.5 s and increment that letter's peek count.
+- `[ ]` **READ-004**: When the learner taps a glyph in a passage page (not in the quiz), wherever on the page the glyph sits, the system SHALL show its Latin letter for 1.5 s and increment that letter's peek count, and SHALL NOT turn the page.

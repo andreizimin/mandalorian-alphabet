@@ -27,7 +27,11 @@ The quiz is a separate full-screen view opened in one tap from the reader contro
 
 ## Platform
 
-Tap targets at least 44 by 44 pt. Respect safe areas and system light or dark appearance. Page turns by horizontal swipe or edge tap.
+Tap targets at least 44 by 44 pt. Respect safe areas and system light or dark appearance. Page turns by horizontal swipe, or by a tap on a non-glyph point in the outer 15 % of the viewport width on either side; a tap on a glyph anywhere is a peek (owned by `reader`), and a tap elsewhere does nothing.
+
+## Reader Controls
+
+The reader controls bar (bottom on phones, top on wider viewports) reaches each secondary screen in one tap: the legend, the quiz and the library.
 
 ## Decisions & Alternatives
 
@@ -35,8 +39,9 @@ Tap targets at least 44 by 44 pt. Respect safe areas and system light or dark ap
 |---|---|---|---|
 | Breakpoints | By width | By user agent | Handles Split View and future devices |
 | iPad layout | Single column | Two columns in landscape | Simpler pagination; comfortable line length |
+| Edge-zone width | Outer 15 % of viewport width | Fixed 44 pt strips | A proportional zone stays reachable on iPad and leaves most of a phone page for peeks |
 
 ## Open Questions & Future Decisions
 
-### Deferred
-1. Edge-tap zones vs glyph peek: proposed outer 15% of width turns pages (see reader LLD).
+### Resolved
+1. ✅ Edge-tap zones are the outer 15 % of width; a glyph tap inside them is a peek, not a page turn.
