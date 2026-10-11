@@ -71,6 +71,10 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 - **Quiz is optional and separate:** the quiz is its own screen, never injected into a passage. It feeds the readiness hint and nothing else; it does not change the learned set.
 - **Font source:** open. Bundle the font if its license allows web embedding; otherwise the learner uploads it once and it stays on-device. See `alphabet` LLD.
 
+## Open Questions
+
+1. Analytics with a young primary user: the convenience tenet allows it, but the app should carry a short privacy note and a setting to turn analytics off. Decide whether this becomes its own `analytics` node or a setting under `persistence` when analytics is first added.
+
 ## Success Metrics
 
 - **Time to full substitution:** a learner who reads regularly reaches all 26 letters within about 2 hours of cumulative reading time.

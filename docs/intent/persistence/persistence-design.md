@@ -11,7 +11,7 @@ All state lives on the device. Storage can be unavailable or cleared, so the app
 
 ## Storage
 
-- localStorage for progress and settings.
+- localStorage for progress (including per-letter peek counts and quiz rings) and settings.
 - IndexedDB for pasted texts and, if uploaded, the font blob.
 - All storage access wrapped in try/catch.
 

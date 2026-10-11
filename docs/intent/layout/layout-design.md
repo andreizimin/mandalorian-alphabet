@@ -21,6 +21,10 @@ One codebase serves iPhone and iPad. Layout responds to width, not device type, 
 
 Single column, max line length about 65 characters, so iPad never shows ultra-wide lines. Text size 16 to 32 px, applied to both fonts equally.
 
+## Quiz Screen
+
+The quiz is a separate full-screen view opened in one tap from the reader controls. Its 4 answer choices form a 2 by 2 grid: in the lower half of the viewport under 600 px so one thumb reaches all four, centered under the prompt at wider widths.
+
 ## Platform
 
 Tap targets at least 44 by 44 pt. Respect safe areas and system light or dark appearance. Page turns by horizontal swipe or edge tap.
