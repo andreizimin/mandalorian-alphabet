@@ -3,6 +3,7 @@ import { browserFontRegistry, createAlphabet } from './alphabet/alphabet';
 import { FontStatus } from './alphabet/FontStatus';
 import { useFontState } from './alphabet/useFontState';
 import { EndCard, Library } from './content/components';
+import { useFeedbackWidget } from './feedback/useFeedbackWidget';
 import { pageBlocks, pageIndexFor } from './content/paginate';
 import { BUNDLED_PASSAGES } from './content/passages';
 import {
@@ -18,7 +19,7 @@ import {
 import { usePagination } from './content/usePagination';
 import { usePageGestures } from './layout/gestures';
 import { useArrowKeyPageTurns } from './layout/pageTurning';
-import { BottomBar, MenuSheet, TopBar, type ReaderActions } from './layout/ReaderChrome';
+import { BottomBar, MenuSheet, TitleBar, TopBar, type ReaderActions } from './layout/ReaderChrome';
 import { stepTextSize } from './layout/settings';
 import { DataPanel, StorageNotice } from './persistence/components';
 import { buildExport, deliverExport } from './persistence/exportImport';
@@ -45,6 +46,7 @@ export function App() {
   const { progress, dispatch } = progressStore;
   const { content, update } = contentStore;
   const settings = settingsStore.value;
+  const feedback = useFeedbackWidget();
 
   const [view, setView] = useState<'reader' | 'library' | 'quiz'>('reader');
   const [introLetter, setIntroLetter] = useState<string | null>(null);
@@ -101,7 +103,9 @@ export function App() {
     setView('reader');
   }
 
-  const reading = view === 'reader' && !menuOpen && !introLetter && !ended && !showWelcome(progress);
+  // @spec FEED-004
+  const reading =
+    view === 'reader' && !menuOpen && !introLetter && !ended && !showWelcome(progress) && !feedback.isOpen;
   useArrowKeyPageTurns({ enabled: reading, onBack: back, onForward: forward });
   usePageGestures({ enabled: reading, onBack: back, onForward: forward });
 
@@ -112,6 +116,7 @@ export function App() {
     learnedCount: progress.learned.length,
     fontReady: fontState === 'loaded',
     textSize: settings.textSize,
+    feedbackReady: feedback.ready,
     onAdvance: advance,
     onStepBack: () => dispatch({ type: 'stepBack' }),
     onReset: () => dispatch({ type: 'reset' }),
@@ -121,6 +126,7 @@ export function App() {
     onTextSize: (direction) => settingsStore.update((s) => stepTextSize(s, direction)),
     onBack: back,
     onForward: forward,
+    onFeedback: feedback.open,
   };
 
   const notice = progressStore.notice ?? contentStore.notice ?? settingsStore.notice;
@@ -178,7 +184,7 @@ export function App() {
         <>
           <header className="reader-header">
             <TopBar {...actions} />
-            <p className="passage-title">{passage.title}</p>
+            <TitleBar title={passage.title} feedbackReady={feedback.ready} onFeedback={feedback.open} />
             {legendOpen && <Legend learned={progress.learned} />}
             <HintBanner signals={visibleHint(progress)} onDismiss={() => dispatch({ type: 'dismissHint' })} />
           </header>

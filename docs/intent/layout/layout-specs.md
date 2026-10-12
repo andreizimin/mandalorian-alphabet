@@ -14,8 +14,8 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 ## Controls
 
 - `[x]` **LAYOUT-002**: While the viewport is under 600 px wide, the system SHALL show a bottom bar with the back page-turn button, Next letter, Quiz, a menu button and the forward page-turn button, and SHALL place Step back, Reset, Legend, Library and text size in a menu sheet opened from that bar.
-- `[ ]` **LAYOUT-003**: While the viewport is 600 px or wider, the system SHALL place Next letter, Quiz, Step back, Reset, Legend, Library, text size and Feedback in a top bar, and only the page-turn buttons in the bottom bar.
-- `[ ]` **LAYOUT-016**: The system SHALL show the Feedback button inline among the reader controls, styled like them and never floating over the page: in the top bar at 600 px or wider, and at the right end of the passage-title line at the top of the screen under 600 px.
+- `[x]` **LAYOUT-003**: While the viewport is 600 px or wider, the system SHALL place Next letter, Quiz, Step back, Reset, Legend, Library, text size and Feedback in a top bar, and only the page-turn buttons in the bottom bar.
+- `[x]` **LAYOUT-016**: The system SHALL show the Feedback button inline among the reader controls, styled like them and never floating over the page: in the top bar at 600 px or wider, and at the right end of the passage-title line at the top of the screen under 600 px.
 - `[x]` **LAYOUT-014**: When the learner chooses Step back, Reset, Legend or Library in the phone menu sheet, or taps outside it, the system SHALL close the sheet; the text-size buttons SHALL leave it open so the size can be stepped repeatedly.
 - `[x]` **LAYOUT-004**: The system SHALL make every interactive control at least 44 by 44 pt.
 - `[x]` **LAYOUT-007**: While a passage page is shown, when the learner swipes left (at least 50 px horizontally, more horizontal than vertical) or taps a non-glyph point within the outer 15 % of the viewport width on the right, the system SHALL turn forward; when the learner swipes right or taps a non-glyph point within the outer 15 % on the left, the system SHALL turn back; a tap anywhere else on the page SHALL do nothing.

@@ -77,5 +77,5 @@ test('ignores taps on the feedback form, even near the screen edges', async ({ p
 test('shows Feedback disabled with a reason when the widget cannot load', async ({ page }) => {
   await start(page);
   await expect(feedbackButton(page)).toBeDisabled();
-  await expect(page.getByText('Feedback needs a connection').first()).toBeVisible();
+  await expect(page.getByText('Feedback needs a connection').filter({ visible: true })).toHaveCount(1);
 });

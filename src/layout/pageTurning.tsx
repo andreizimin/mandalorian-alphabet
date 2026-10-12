@@ -31,7 +31,11 @@ function isTextField(target: EventTarget | null) {
   return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
 }
 
-// @spec LAYOUT-013
+/** Keys typed in the feedback form arrive targeted at the widget's host element (shadow DOM). */
+const fromFeedbackWidget = (target: EventTarget | null) =>
+  target instanceof HTMLElement && target.closest('#feedback-widget-host') !== null;
+
+// @spec LAYOUT-013, FEED-004
 export function useArrowKeyPageTurns({
   enabled,
   onBack,
@@ -47,7 +51,8 @@ export function useArrowKeyPageTurns({
   useEffect(() => {
     if (!enabled) return;
     function onKeyDown(event: KeyboardEvent) {
-      if (event.metaKey || event.ctrlKey || event.altKey || isTextField(event.target)) return;
+      if (event.metaKey || event.ctrlKey || event.altKey || isTextField(event.target) || fromFeedbackWidget(event.target))
+        return;
       if (event.key === 'ArrowRight') {
         event.preventDefault();
         handlers.current.onForward();

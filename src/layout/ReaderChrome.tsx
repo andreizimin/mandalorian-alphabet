@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FeedbackButton } from '../feedback/FeedbackButton';
 import { Controls } from '../progression/components';
 import { QuizButton } from '../quiz/QuizScreen';
 import { PageTurnBar } from './pageTurning';
@@ -11,6 +12,7 @@ export interface ReaderActions {
   learnedCount: number;
   fontReady: boolean;
   textSize: number;
+  feedbackReady: boolean;
   onAdvance: () => void;
   onStepBack: () => void;
   onReset: () => void;
@@ -20,6 +22,7 @@ export interface ReaderActions {
   onTextSize: (direction: 1 | -1) => void;
   onBack: () => void;
   onForward: () => void;
+  onFeedback: () => void;
 }
 
 // @spec LAYOUT-006
@@ -43,7 +46,7 @@ export function TextSizeControl({
 }
 
 /** Every reader control, for viewports 600 px and wider (hidden below by CSS). */
-// @spec LAYOUT-003, LAYOUT-008, LAYOUT-011, PROG-007
+// @spec LAYOUT-003, LAYOUT-008, LAYOUT-011, LAYOUT-016, PROG-007
 export function TopBar(a: ReaderActions) {
   return (
     <nav className="top-bar" aria-label="Reader controls">
@@ -62,7 +65,21 @@ export function TopBar(a: ReaderActions) {
       </button>
       <QuizButton learnedCount={a.learnedCount} fontReady={a.fontReady} onOpen={a.onQuiz} />
       <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
+      <FeedbackButton ready={a.feedbackReady} onOpen={a.onFeedback} />
     </nav>
+  );
+}
+
+/** The passage title; on phones, which have no top bar, Feedback sits at its right end. */
+// @spec LAYOUT-016
+export function TitleBar({ title, feedbackReady, onFeedback }: { title: string; feedbackReady: boolean; onFeedback: () => void }) {
+  return (
+    <div className="title-line">
+      <p className="passage-title">{title}</p>
+      <div className="phone-only">
+        <FeedbackButton ready={feedbackReady} onOpen={onFeedback} />
+      </div>
+    </div>
   );
 }
 

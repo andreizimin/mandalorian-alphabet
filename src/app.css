@@ -554,3 +554,26 @@ button.primary {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* Title line: passage title, with Feedback at its right end on phones (LAYOUT-016). */
+.title-line {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-line .phone-only {
+  flex: none;
+}
+
+.feedback-button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.feedback-reason {
+  color: var(--muted);
+  font: 13px/1.2 system-ui, sans-serif;
+}

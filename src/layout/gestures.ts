@@ -34,13 +34,15 @@ export function classifyGesture({
 }
 
 /** Controls and overlays keep their own taps; gestures never start on them. */
-const NOT_THE_PAGE = 'button, a, input, textarea, select, nav, [role="dialog"], .overlay, .menu-backdrop';
+// The feedback widget's shadow DOM makes its events arrive targeted at its host element.
+const NOT_THE_PAGE =
+  'button, a, input, textarea, select, nav, [role="dialog"], .overlay, .menu-backdrop, #feedback-widget-host';
 
 /**
  * Swipes and edge taps anywhere on the reading screen. Edge zones are measured
  * against the viewport, so on a wide screen they sit outside the text column.
  */
-// @spec LAYOUT-007
+// @spec LAYOUT-007, FEED-004
 export function usePageGestures({
   enabled,
   onBack,
