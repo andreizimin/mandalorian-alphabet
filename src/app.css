@@ -577,3 +577,18 @@ button.primary {
   color: var(--muted);
   font: 13px/1.2 system-ui, sans-serif;
 }
+
+/* @spec OFF-008 */
+/* Dev builds only: a small tag after the passage title. */
+.dev-marker {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--bg);
+  font: 700 11px/1.4 system-ui, sans-serif;
+  font-style: normal;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}

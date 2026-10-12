@@ -73,21 +73,27 @@ export function TopBar(a: ReaderActions) {
 }
 
 /** The passage title; on phones, which have no top bar, Feedback sits at its right end. */
-// @spec LAYOUT-016
+// @spec LAYOUT-016, OFF-008
 export function TitleBar({
   title,
   feedbackReady,
   feedbackReason,
   onFeedback,
+  dev = false,
 }: {
   title: string;
   feedbackReady: boolean;
   feedbackReason?: string;
   onFeedback: () => void;
+  /** A dev build: show the DEV marker after the title (OFF-008). */
+  dev?: boolean;
 }) {
   return (
     <div className="title-line">
-      <p className="passage-title">{title}</p>
+      <p className="passage-title">
+        {title}
+        {dev && <span className="dev-marker">DEV</span>}
+      </p>
       <div className="phone-only">
         <FeedbackButton ready={feedbackReady} reason={feedbackReason} onOpen={onFeedback} />
       </div>

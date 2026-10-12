@@ -4,6 +4,7 @@
  */
 
 export const DOMAIN = 'learn-mandalorian.andreizimin.com';
+export const DEV_DOMAIN = 'learn-mandalorian-dev.andreizimin.com';
 
 /** Checked on every launch, so a phone finds new versions. */
 export const NO_CACHE = 'public,max-age=0,no-cache';
@@ -37,5 +38,7 @@ export const cacheRules: CacheRule[] = [
 
 // @spec OFF-006
 export function domainFor(stage: string): string | undefined {
-  return stage === 'production' ? DOMAIN : undefined;
+  if (stage === 'production') return DOMAIN;
+  if (stage === 'dev') return DEV_DOMAIN;
+  return undefined;
 }

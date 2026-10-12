@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
  * year under one shared address, so an unversioned URL could serve a stale widget cached by
  * another app; a versioned URL is a different cache entry.
  */
-export const FEEDBACK_SCRIPT_URL = 'https://feedback.andreizimin.com/widget.js?v=1.1.0';
+export const FEEDBACK_SCRIPT_URL = 'https://feedback.andreizimin.com/widget.js?v=1.1.1';
 export const FEEDBACK_PROJECT = 'learn-mandalorian';
 export const FEEDBACK_ACCENT = '#8a5a2b';
 /** The element the widget renders into; events from inside its shadow DOM arrive targeted at it. */

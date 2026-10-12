@@ -21,6 +21,7 @@ import { usePageGestures } from './layout/gestures';
 import { useArrowKeyPageTurns } from './layout/pageTurning';
 import { BottomBar, MenuSheet, TitleBar, TopBar, type ReaderActions } from './layout/ReaderChrome';
 import { stepTextSize } from './layout/settings';
+import { currentStage, isDevStage } from './stage';
 import { DataPanel, StorageNotice } from './persistence/components';
 import { buildExport, deliverExport } from './persistence/exportImport';
 import { settingsSlice } from './persistence/settingsSlice';
@@ -190,6 +191,7 @@ export function App() {
               feedbackReady={feedback.ready}
               feedbackReason={feedback.reason}
               onFeedback={feedback.open}
+              dev={isDevStage(currentStage())}
             />
             {legendOpen && <Legend learned={progress.learned} />}
             <HintBanner signals={visibleHint(progress)} onDismiss={() => dispatch({ type: 'dismissHint' })} />

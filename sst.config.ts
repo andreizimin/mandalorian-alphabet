@@ -13,12 +13,15 @@ export default $config({
   async run() {
     const { cacheRules, domainFor } = await import('./deploy/hosting');
 
-    // The custom domain is attached only on the `production` stage, so other
-    // stages deploy to throwaway CloudFront URLs. SST provisions the ACM
+    // `production` and `dev` get their own custom domains; any other stage
+    // deploys to a throwaway CloudFront URL. SST provisions the ACM
     // certificate and the Route 53 record in the existing andreizimin.com zone.
+    // The stage is baked into the build, which decides the installed app's
+    // name, the DEV marker and whether search engines may index the site.
     const domain = domainFor($app.stage);
     const site = new sst.aws.StaticSite('Reader', {
       build: { command: 'npm run build', output: 'dist' },
+      environment: { VITE_STAGE: $app.stage },
       domain: domain ? { name: domain } : undefined,
       assets: {
         fileOptions: cacheRules.map(({ files, cacheControl }) => ({ files, cacheControl })),
