@@ -6,10 +6,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "Reader": {
-      "type": "sst.aws.StaticSite"
-      "url": string
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />
