@@ -86,3 +86,22 @@ describe('useArrowKeyPageTurns', () => {
     expect(onBack).not.toHaveBeenCalled();
   });
 });
+
+describe('keys from the feedback widget', () => {
+  // @spec FEED-004
+  it('never turns pages on keys typed inside the feedback widget', () => {
+    const onBack = vi.fn();
+    const onForward = vi.fn();
+    renderHook(() => useArrowKeyPageTurns({ enabled: true, onBack, onForward }));
+    const host = document.createElement('div');
+    host.id = 'feedback-widget-host';
+    document.body.append(host);
+
+    fireEvent.keyDown(host, { key: 'ArrowRight' });
+    fireEvent.keyDown(host, { key: 'ArrowLeft' });
+
+    expect(onForward).not.toHaveBeenCalled();
+    expect(onBack).not.toHaveBeenCalled();
+    host.remove();
+  });
+});

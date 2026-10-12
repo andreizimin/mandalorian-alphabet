@@ -2,8 +2,17 @@ import { expect, type Page, type TestInfo } from '@playwright/test';
 
 export const isPhone = (info: TestInfo) => info.project.name === 'iphone';
 
-/** Opens the app fresh and dismisses the welcome card. */
-export async function start(page: Page) {
+/**
+ * Opens the app fresh and dismisses the welcome card. The real feedback domain is
+ * never reached, so no test can file a real ticket: by default it is blocked, and
+ * `feedbackWidget` serves a stand-in script in place of widget.js.
+ */
+export async function start(page: Page, { feedbackWidget }: { feedbackWidget?: string } = {}) {
+  await page.route('https://feedback.andreizimin.com/**', (route) =>
+    feedbackWidget && route.request().url().endsWith('/widget.js')
+      ? route.fulfill({ contentType: 'text/javascript', body: feedbackWidget })
+      : route.abort(),
+  );
   await page.goto('/');
   await page.getByRole('button', { name: 'Start reading' }).click();
   await expect(page.locator('.page-area p').first()).toBeVisible();

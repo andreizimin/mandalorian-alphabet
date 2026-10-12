@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BottomBar, MenuSheet, TextSizeControl, TopBar, type ReaderActions } from './ReaderChrome';
+import { BottomBar, MenuSheet, TextSizeControl, TitleBar, TopBar, type ReaderActions } from './ReaderChrome';
 
 function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
   return {
@@ -10,6 +10,7 @@ function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
     learnedCount: 3,
     fontReady: true,
     textSize: 20,
+    feedbackReady: true,
     onAdvance: vi.fn(),
     onStepBack: vi.fn(),
     onReset: vi.fn(),
@@ -19,6 +20,7 @@ function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
     onTextSize: vi.fn(),
     onBack: vi.fn(),
     onForward: vi.fn(),
+    onFeedback: vi.fn(),
     ...overrides,
   };
 }
@@ -122,5 +124,43 @@ describe('TextSizeControl', () => {
     expect(screen.getByRole('button', { name: /smaller text/i })).toBeDisabled();
     rerender(<TextSizeControl textSize={32} onTextSize={onTextSize} />);
     expect(screen.getByRole('button', { name: /larger text/i })).toBeDisabled();
+  });
+});
+
+describe('Feedback among the reader controls', () => {
+  // @spec LAYOUT-003, LAYOUT-016
+  it('sits in the top bar as an ordinary button', async () => {
+    const a = actions();
+    render(<TopBar {...a} />);
+    const bar = screen.getByRole('navigation', { name: /reader controls/i });
+
+    await userEvent.click(within(bar).getByRole('button', { name: 'Feedback' }));
+
+    expect(a.onFeedback).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec LAYOUT-016
+  it('sits at the right end of the title line for phones', async () => {
+    const a = actions();
+    render(<TitleBar title="Treasure Island" {...a} />);
+    const line = screen.getByText('Treasure Island').closest('.title-line') as HTMLElement;
+    const phoneButton = within(line).getByRole('button', { name: 'Feedback' });
+
+    expect(phoneButton.closest('.phone-only')).not.toBeNull();
+    expect(line.lastElementChild).toContainElement(phoneButton);
+    await userEvent.click(phoneButton);
+    expect(a.onFeedback).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec LAYOUT-016, FEED-003
+  it('is disabled in both places while the widget is unavailable', () => {
+    const a = actions({ feedbackReady: false });
+    render(
+      <>
+        <TopBar {...a} />
+        <TitleBar title="Treasure Island" {...a} />
+      </>,
+    );
+    for (const button of screen.getAllByRole('button', { name: 'Feedback' })) expect(button).toBeDisabled();
   });
 });
