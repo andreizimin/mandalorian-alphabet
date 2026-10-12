@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | In progress |
+| Status | Done |
 | Requested | 2026-10-12 |
 | Approved | 2026-10-12 |
-| Completed | |
+| Completed | 2026-10-12 |
 | Ticket | [ZZF-56](https://linear.app/zizify-workshop/issue/ZZF-56) |
 
 ## Request
@@ -118,4 +118,45 @@ All four answered on 2026-10-12, each with the recommended option: extend the sh
 
 ## Outcome
 
-To be filled in when the change is complete.
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | 2 changes | 2 changes | Design Tree row and Key Decision, as predicted |
+| LLDs | 1 new, 3 changed (4 sections) | 1 new, 3 changed (4 sections) | As predicted |
+| Specs | +5 ~1–2 −0 | +5 ~1 −0 | LAYOUT-002 needed no change, since phones got Feedback in the title line rather than the menu |
+| Tests | 4 files | 7 files | +11 unit, +11 browser; see Surprises 3 and 4 |
+| Code | 6 files | 7 files | `src/app.css` for the title line |
+| Other | widget change, user flow | widget change, user flow, `CLAUDE.md` | New design node added to the `CLAUDE.md` node list |
+
+### Surprises
+
+1. **The other repo had rules the first draft missed.** The feedback platform's constitution and agent rules (pull request only; your merge auto-deploys) came to light while the change order was being written. The prediction was corrected before approval, so it stands, but it shows a cross-repo change order has to read the other repo's own instructions first.
+2. **The dependency cleared mid-change.** The widget pull request was merged while the tests were being written, so the app could be checked against the real deployed widget 1.1.0, not only the stand-in.
+3. **Safety reached every browser test.** Once the app loads the real widget at startup, every existing browser test would have loaded it too. The shared `e2e/helpers.ts` now blocks the feedback domain by default and serves a stand-in only when asked, so no test can file a real ticket. That made 3 test files beyond the prediction: the helpers, the stand-in widget, and the keyboard check, which belongs in `pageTurning.test.tsx`.
+4. **Test-environment traps.**
+   - jsdom has no `PointerEvent`, so the gesture test dispatches mouse events with pointer event types.
+   - Playwright checks the most recently added route handler first, which would have let the default block override the stand-in. That was caught before the first run.
+   - On the iPhone, a text match picked the top bar's hidden copy of the "needs a connection" reason.
+5. **Styles were not free.** The prediction assumed the button would reuse existing styles, but putting it on the title line needed a small layout rule in `src/app.css`.
+6. **A platform issue surfaced.** The feedback platform serves the unversioned `widget.js` with `cache-control: max-age=31536000, immutable`. A browser that loaded an older widget can keep it for up to a year, so widget fixes and features may not reach returning visitors. This is outside this change; it needs a feedback-platform ticket.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `9408f18` | CO-002 proposed: feedback button in the top bar (ZZF-56) |
+| `0d8396e` | CO-002: design and specs for the Feedback button (ZZF-56) |
+| `59fc1c1` | CO-002: tests for the Feedback button (ZZF-56) |
+| `bf2d0a3` | CO-002: implement the Feedback button (ZZF-56) |
+| feedback-platform `d80a21e` (merged as `837c789`) | Inline trigger: data-launcher="none", host API and open/close events (ZZF-57) |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 245 → 256, browser 38 → 49 |
+| Lines changed (this repo) | +131 −8 (code, 7 files), +303 −4 (tests, 7 files), +88 −4 (design docs, specs, user flow, `CLAUDE.md`) |
+| Lines changed (feedback-platform) | +70 −5 (widget and `EMBED.md`) |
+| Agent time | about 25 minutes from approval (15:22) to completion (about 15:50), across two repos, with no review stops after approval |
+| Deployed | Widget: 2026-10-12 by the merge. App: not yet |

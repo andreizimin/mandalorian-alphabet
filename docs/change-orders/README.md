@@ -19,4 +19,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | ID | Title | Type | Status | Specs predicted | Specs actual |
 |---|---|---|---|---|---|
 | [CO-001](CO-001-highlight-newest-letter.md) | Highlight the newest letter | Feature | Done | +5 | +5 (1 reworded) |
-| [CO-002](CO-002-feedback-button.md) | Feedback button in the top bar ([ZZF-56](https://linear.app/zizify-workshop/issue/ZZF-56)) | Feature | In progress | +5 ~1–2 | |
+| [CO-002](CO-002-feedback-button.md) | Feedback button in the top bar ([ZZF-56](https://linear.app/zizify-workshop/issue/ZZF-56)) | Feature | Done | +5 ~1–2 | +5 ~1 |
