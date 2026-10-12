@@ -127,3 +127,8 @@ All answered on 2026-10-12. Decisions 1–4 took the recommended option: a widge
 ## Outcome
 
 To be filled in when the change is complete.
+
+### Departures recorded during the work
+
+- **Widget pin bumped to `?v=1.1.1`** (FEED-001 revised), so the widget labels dev submissions as dev; needed widget PR #2 (ZZF-63) live first, because the widget CDN ignores the query string.
+- **Hosting dropped unlisted files** (OFF-006 revised; `deploy/hosting.ts`, `deploy/hosting.test.ts`, offline design). The first dev deploy answered `robots.txt` with 403: SST uploads only the files some caching rule covers. The same gap hid `workbox-*.js`, which the service worker imports, so **production's service worker has never installed and offline has never worked there** since the first deploy. The browser tests run against a local server, which serves every file, so they could not see it. Fix: the rules now cover `robots.txt` and `workbox-*.js` and start with a `no-cache` catch-all.
