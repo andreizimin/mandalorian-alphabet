@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Bug |
-| Status | In progress |
+| Status | Done |
 | Requested | 2026-10-12 |
 | Approved | 2026-10-12 |
-| Completed | |
+| Completed | 2026-10-12 |
 | Ticket | [ZZF-61](https://linear.app/zizify-workshop/issue/ZZF-61) |
 
 ## Request
@@ -95,4 +95,34 @@ Both answered on 2026-10-12 with the recommended option: versioned URL now (ZZF-
 
 ## Outcome
 
-To be filled in when the change is complete.
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | 0 | 0 | |
+| LLDs | 3 sections of `feedback` | 3 sections | As predicted |
+| Specs | +1 ~1 −0 | +1 ~1 −0 | FEED-005 added, FEED-001 revised |
+| Tests | 3 files + the 1.0.0 fixture | 3 files + the fixture | As predicted |
+| Code | 2–3 files | 4 files | `src/layout/ReaderChrome.tsx` passes the new reason to both Feedback buttons |
+
+### Surprises
+
+1. **The reason had to travel further than predicted.** A second unavailable reason means the reason, not just a ready flag, flows from the hook through `App.tsx` and `ReaderChrome.tsx` to both Feedback buttons (top bar and title line).
+2. **A test found a latent race.** If the widget's `feedback:ready` event fires before the app starts listening, the app relied only on a check at mount. The load handler now also marks the widget ready when its API is present. CO-002's tests had not exercised that ordering.
+3. **The lesson behind the bug is about test state, not code.** Every CO-002 check used a fresh browser profile. Returning-visitor states (anything cached by an earlier visit, here or on another app) are now covered by a browser test that serves the real 1.0.0 widget, and the realistic check (stale copy at the old address, real CDN for the versioned one) passed.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `122d80b` | CO-003 proposed: stale cached feedback widget breaks the Feedback button (ZZF-61) |
+| `f61809a` | CO-003: load a versioned feedback widget and hide stale ones (ZZF-61) |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 256 → 259, browser 49 → 52 |
+| Lines changed | +64 −13 (code, 4 files), +57 −2 (tests, 3 files) plus a 346-line fixture (the 1.0.0 widget), +8 −2 (design doc and specs) |
+| Agent time | about 5 minutes from approval (16:02) to completion (16:07) |
+| Deployed | Not yet |
