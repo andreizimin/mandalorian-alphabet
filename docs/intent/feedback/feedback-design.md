@@ -13,7 +13,7 @@ Learners can send a feature idea or a bug report without leaving the app. Feedba
 
 At startup the app adds the platform's script tag once:
 
-- `src`: `https://feedback.andreizimin.com/widget.js?v=1.1.0`, naming the minimum widget version this app needs
+- `src`: `https://feedback.andreizimin.com/widget.js?v=1.1.1`, naming the minimum widget version this app needs (1.1.1 labels feedback from `learn-mandalorian-dev.andreizimin.com` as `Env: dev`)
 - `data-project`: `learn-mandalorian` (the Linear label and title prefix)
 - `data-launcher`: `none`, so the widget draws no floating button
 - `data-accent`: the app's accent color (`#8a5a2b`), so the form's buttons match the app
