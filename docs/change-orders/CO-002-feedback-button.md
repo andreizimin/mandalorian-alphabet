@@ -139,7 +139,7 @@ All four answered on 2026-10-12, each with the recommended option: extend the sh
    - Playwright checks the most recently added route handler first, which would have let the default block override the stand-in. That was caught before the first run.
    - On the iPhone, a text match picked the top bar's hidden copy of the "needs a connection" reason.
 5. **Styles were not free.** The prediction assumed the button would reuse existing styles, but putting it on the title line needed a small layout rule in `src/app.css`.
-6. **A platform issue surfaced.** The feedback platform serves the unversioned `widget.js` with `cache-control: max-age=31536000, immutable`. A browser that loaded an older widget can keep it for up to a year, so widget fixes and features may not reach returning visitors. This is outside this change; it needs a feedback-platform ticket.
+6. **A platform issue surfaced.** The feedback platform serves the unversioned `widget.js` with `cache-control: max-age=31536000, immutable`. A browser that loaded an older widget can keep it for up to a year, so widget fixes and features may not reach returning visitors. This is outside this change; filed as ZZF-58.
 
 ### Commits
 
@@ -159,4 +159,4 @@ All four answered on 2026-10-12, each with the recommended option: extend the sh
 | Lines changed (this repo) | +131 −8 (code, 7 files), +303 −4 (tests, 7 files), +88 −4 (design docs, specs, user flow, `CLAUDE.md`) |
 | Lines changed (feedback-platform) | +70 −5 (widget and `EMBED.md`) |
 | Agent time | about 25 minutes from approval (15:22) to completion (about 15:50), across two repos, with no review stops after approval |
-| Deployed | Widget: 2026-10-12 by the merge. App: not yet |
+| Deployed | Widget: 2026-10-12 by the merge. App: 2026-10-12 to learn-mandalorian.andreizimin.com, verified by one real submission from the live app (ZZF-59, closed as a verification ticket) |
