@@ -13,15 +13,16 @@ One codebase serves iPhone, iPad and a laptop. Layout responds to viewport width
 
 | Width | Typical device | Controls |
 |---|---|---|
-| < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest |
+| < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest; Feedback at the right end of the title line |
 | ≥ 600 px | iPad, laptop | Top bar with every reader control; bottom bar holds ← and → |
 
 ## Reader Controls
 
-The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library and text size.
+The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size and Feedback (owned by `feedback`).
 
 - **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library and text size. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size buttons leave it open so the size can be stepped several times.
 - **Wider screens (≥ 600 px):** a top bar shows every reader control; the bottom bar holds only the page-turn buttons.
+- **Feedback:** an ordinary button styled like the others, never floating over the page. On wider screens it sits in the top bar; on phones, where there is no top bar and the bottom bar is full, a compact Feedback button sits at the right end of the passage-title line at the top of the screen.
 
 The passage title sits above the page on every width.
 
@@ -40,6 +41,7 @@ Every way of turning a page maps to the same two actions, forward and back, whic
 - **Buttons:** ← and → at the two ends of the bottom bar, fixed to the bottom of the viewport (above the safe area) at every width. They never move with the length of the text. The back button is disabled on the first page.
 - **Touch:** swipe left to go forward and swipe right to go back, following book direction. A swipe is a horizontal movement of at least 50 px that is larger than its vertical movement. A tap (movement under 10 px) on a non-glyph point in the outer 15 % of the viewport width turns the page: the right zone forward, the left zone back. A tap on a glyph anywhere is a peek (owned by `reader`); any other tap does nothing.
 - **Keyboard:** Right Arrow turns forward and Left Arrow turns back. Keys are ignored while focus is in a text field and when Cmd, Ctrl or Alt is held.
+- **While the feedback form is open** (see `feedback`), every page-turn input is paused, and events arriving from the feedback widget's host element never turn pages.
 
 ## Quiz Screen
 

@@ -15,6 +15,7 @@ Reading on a phone often happens without a reliable connection. After the first 
 - **Manifest:** name "Learn Mandalorian", short name "Mando" (what iOS shows under the icon), `display: standalone`, start URL `/`, background and theme colors matching the reading page.
 - **Icons:** a Mandalorian glyph drawn from the bundled font on the app's reading background, at 180 px (`apple-touch-icon`, used by iOS) and 192 and 512 px (manifest). No franchise artwork or logos.
 - Installing to the Home Screen also protects on-device storage from Safari's eviction of sites unused for 7 days.
+- The shared feedback widget (see `feedback`) loads from another origin and is not precached; sending feedback needs a connection, and its button says so while offline.
 
 ## Updates
 

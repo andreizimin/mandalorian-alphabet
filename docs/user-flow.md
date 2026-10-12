@@ -42,6 +42,10 @@ The same app, no account, on the iPad: controls move to a top bar, the reading c
 
 If a letter arrived too soon, *step back* removes the newest one and forgets its peeks and quiz answers, so it starts fresh next time (PROG-005). *Reset*, after confirmation, clears the learned set, peek counts and quiz rings (PROG-006). The legend of learned letters is one tap away at all times (PROG-007).
 
+## 10b. Sending feedback
+
+If something is confusing or broken, or they have an idea, they tap **Feedback**: in the top bar on an iPad or laptop, at the top right of the title line on a phone (LAYOUT-016). The shared feedback form opens over the page, and page turns pause until it closes (FEED-002, FEED-004). Offline, the button is greyed out with "Feedback needs a connection" (FEED-003).
+
 ## 11. About two hours in
 
 All 26 letters render as glyphs; *advance* is disabled and the hint retires (PROG-013). Success is reading a fully substituted page at near their normal pace, with quiz accuracy on letters learned a while ago staying high (HLD, Success Metrics).

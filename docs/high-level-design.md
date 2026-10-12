@@ -64,6 +64,7 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 | [persistence](intent/persistence/persistence-design.md) | PERS | On-device state, export and import |
 | [layout](intent/layout/layout-design.md) | LAYOUT | Responsive layout for iPhone and iPad |
 | [offline](intent/offline/offline-design.md) | OFF | Service worker, installability |
+| [feedback](intent/feedback/feedback-design.md) | FEED | In-app feedback through the shared feedback platform |
 
 ## Key Decisions
 
@@ -72,6 +73,7 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 - **Progression control:** the learner advances; the app suggests readiness but never forces it. Readiness draws on two signals: few peeks on the newest letter while reading, and quick-quiz results on that letter. Gating advancement on a passed quiz was rejected because a stuck learner would lose control of their own pace.
 - **Quiz is optional and separate:** the quiz is its own screen, never injected into a passage. It feeds the readiness hint and nothing else; it does not change the learned set.
 - **Font source:** the app bundles Mando AF Regular, a public-domain (CC0) font that draws the Mandalorian alphabet as seen in *The Clone Wars* and *The Mandalorian*. Nothing to upload or install. See `alphabet` LLD.
+- **Feedback:** learners send ideas and bug reports through the shared feedback platform used by every app on andreizimin.com, opened from an ordinary Feedback button among the reader controls. Submissions become Linear tickets labelled `learn-mandalorian`. See `feedback` LLD.
 - **One case:** the Mandalorian script has no upper and lower case, so both cases of a letter draw the same glyph. The underlying text keeps its original case for copy, search and screen readers.
 
 ## Open Questions

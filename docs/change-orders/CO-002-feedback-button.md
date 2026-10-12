@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | In progress |
 | Requested | 2026-10-12 |
-| Approved | |
+| Approved | 2026-10-12 |
 | Completed | |
 | Ticket | [ZZF-56](https://linear.app/zizify-workshop/issue/ZZF-56) |
 
@@ -90,6 +90,8 @@ Net: +5 new, ~1–2 revised, 0 deleted.
 - **feedback-platform (another repo):** the widget change above. This app's change depends on it shipping first.
 
 ## Decisions Needed
+
+All four answered on 2026-10-12, each with the recommended option: extend the shared widget; on phones a compact button at the right end of the passage-title line; the label "Feedback"; a separate ticket for the widget change.
 
 1. **How to get an inline button.** *Recommended:* extend the shared widget with a hidden-launcher option and a public `open()`, which every app can reuse. *Alternatives:* reach into the widget's shadow DOM from this app to hide its button and click it programmatically (no widget change, but breaks whenever the widget's internals change); or build an in-app form that posts to the platform's endpoint (duplicates the widget, which its own docs advise against).
 2. **Phones.** Below 600 px there is no top bar; the bottom bar is full. *Recommended:* a compact Feedback button at the right end of the passage-title line at the top, which keeps it "on the top, in line". *Alternatives:* inside the ⋯ menu sheet (one more tap); or desktop and tablet only.
