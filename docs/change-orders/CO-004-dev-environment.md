@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | In progress |
+| Status | Done |
 | Requested | 2026-10-12 |
 | Approved | 2026-10-12 |
-| Completed | |
+| Completed | 2026-10-12 |
 | Ticket | [ZZF-62](https://linear.app/zizify-workshop/issue/ZZF-62) |
 
 ## Request
@@ -126,7 +126,48 @@ All answered on 2026-10-12. Decisions 1–4 took the recommended option: a widge
 
 ## Outcome
 
-To be filled in when the change is complete.
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | System Design: both addresses and the change flow | As predicted | |
+| LLDs | 4 sections in `offline`, `layout`, `feedback` | 4 sections, plus `offline` caching rules | Caching rules not predicted (surprise 2) |
+| Specs | +2–3 ~1 −0 | +2 ~2 −0 | OFF-007, OFF-008 added; OFF-006 revised (domains as predicted, then "publish every build file"); FEED-001 revised (widget pin), not predicted; FEED-006 not needed |
+| Tests | 4 files | 6 files | Also `src/feedback/feedback.test.tsx` (pin) and a new OFF-006 case in `deploy/hosting.test.ts` |
+| Code | 7 files | 9 files, plus CSS | Also `src/App.tsx` (passes the stage to the title line) and `src/feedback/useFeedbackWidget.ts` (pin); `src/app.css` styles the marker |
+| Other | CI, `CLAUDE.md`, branch flow, AWS dev stage, a widget PR | As predicted | Widget PR on its own ticket (ZZF-63); old test stage removed |
+
+### Surprises
+
+1. **The widget pin had to move, and in a set order.** Labelling dev feedback needed widget 1.1.1, so the app's pin moved from `?v=1.1.0` to `?v=1.1.1` (FEED-001). Because the widget CDN ignores the query string (ZZF-58), the widget release had to be live before any app build pinning it was deployed.
+2. **The first dev deploy found a production bug that predates this change.** SST uploads only files some caching rule covers. `robots.txt` (new here) and `workbox-*.js` (there since the first deploy) matched no rule, so neither was published. Without the Workbox runtime the service worker never installs, so **offline had never worked in production**. Every browser test passed because they run against a local server that serves every file. The fix covers both files, adds a catch-all rule first, and adds a test that unknown files are still published. The check that caught it was the live-site check from Verification; checks against a deployed stage are now part of every change.
+3. **A merge raced a push.** PR #1 was merged 31 seconds before the hosting fix reached the branch, so the fix went to `main` through a second pull request (#2). Production was deployed only after both were in.
+4. **The flow's first run was partly direct.** This change order's proposal was committed straight to `main` (the last direct commit); everything after approval went through the branch.
+5. **Fresh DNS names are cached as missing.** Right after the first dev deploy, local and some public resolvers still answered "no such host" from a negative cache, though the record existed; checks pinned the address until it cleared.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `f95c2f1` | CO-004 proposed (on `main`) |
+| `5da44ac` | CO-004 approved: start on branch zzf-62-dev-environment |
+| `ad551d4` | CO-004: design and specs for the dev environment and branch flow (ZZF-62) |
+| `8f3f711` | CO-004: dev stage, stage-aware builds, DEV marker and CI (ZZF-62) |
+| `da40bd5` | Merge pull request #1 |
+| `56f44fd` | CO-004: publish every build file (robots.txt, Workbox runtime) |
+| `cce65a7` | Merge pull request #2 |
+
+Widget side (feedback-platform, ZZF-63): PR #2, released as 1.1.1.
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 259 → 266, browser 52 → 52 |
+| Lines changed | +120 −22 (code, 9 files), +89 −13 (tests, 5 files), +31 −2 (CI and config, 3 files), +26 −10 (design docs, specs, `CLAUDE.md`) |
+| CI | 4 runs on the branch and `main`, all green |
+| Agent time | about 30 minutes from approval (16:16) to completion (16:46), including the widget release and two merges |
+| Deployed | 2026-10-12: dev at learn-mandalorian-dev.andreizimin.com from the branch; production at learn-mandalorian.andreizimin.com from `main` (`cce65a7`). Live checks on production: `workbox-*.js` and `robots.txt` (`Allow: /`) served, no `noindex`, installed name "Mando", widget `?v=1.1.1`, service worker activates and the page reloads offline. Old test stage `andreizimin` removed. |
 
 ### Departures recorded during the work
 
