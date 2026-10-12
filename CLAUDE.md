@@ -25,6 +25,15 @@ The skill guides the agent through HLD check → LLD check → EARS → intent-n
 
 The point is to measure how well intent predicts code, so record predictions honestly and never revise the Predicted Impact after approval; differences belong in Outcome.
 
+### "process ZZF-NN"
+
+Requests arrive as Linear tickets (team Zizify-team, project Feedback Collector, label `learn-mandalorian`, title `[learn-mandalorian] [<Type>] …`). When asked to **process** a ticket:
+
+1. Read the ticket and write its change order as above, with the ticket identifier in the Ticket field, and commit it.
+2. Paste the full change order into the conversation.
+3. Post it as a comment on the ticket, with a link to the file on GitHub, and leave the ticket's own description untouched.
+4. Stop for approval. When the change order's status changes (approved, done), add a short comment to the ticket saying so.
+
 ### Navigation
 
 | What you need | Where to look |
