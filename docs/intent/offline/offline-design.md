@@ -33,7 +33,7 @@ The app is static files served by SST's `StaticSite` on AWS (S3 behind CloudFron
 
 Different addresses are different browser origins, so each stage has its own learner data, its own service worker and its own offline cache. The stage is baked into each build (`VITE_STAGE`), which decides the installed app's name, the DEV marker and whether search engines may index the site: every build other than production is marked `noindex` and ships a `robots.txt` that disallows all crawling.
 
-Hashed build assets are cached long-term. The service worker file, the manifest and `index.html` are served with `no-cache`, so a phone checks for a new version on every launch with a connection. The custom domains are attached only on their own stages, so no other stage can claim them.
+Hashed build assets (the bundle, the stylesheet and the Workbox runtime the service worker imports) are cached long-term. The service worker file, the manifest, `index.html` and `robots.txt` are served with `no-cache`, so a phone checks for a new version on every launch with a connection. The host publishes only the files a caching rule covers, so the rules end with a `no-cache` catch-all: a file the build adds later is still published, and a service worker whose import is missing never installs. The custom domains are attached only on their own stages, so no other stage can claim them.
 ## Verification
 
 Playwright's WebKit build does not run service workers, so the offline browser test runs in Chromium: load once, go offline, reload, read and finish a quiz. Behavior on iOS Safari is checked on the device after deploy.
