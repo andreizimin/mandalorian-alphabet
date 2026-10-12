@@ -22,7 +22,7 @@ describe('loading the widget', () => {
 
     expect(scripts()).toHaveLength(1);
     const script = scripts()[0] as HTMLScriptElement;
-    expect(FEEDBACK_SCRIPT_URL).toBe('https://feedback.andreizimin.com/widget.js?v=1.1.0');
+    expect(FEEDBACK_SCRIPT_URL).toBe('https://feedback.andreizimin.com/widget.js?v=1.1.1');
     expect(script.dataset).toMatchObject({ project: 'learn-mandalorian', launcher: 'none', accent: FEEDBACK_ACCENT });
     expect(FEEDBACK_ACCENT).toBe('#8a5a2b');
   });

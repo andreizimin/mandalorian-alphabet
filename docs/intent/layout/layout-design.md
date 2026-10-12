@@ -24,7 +24,7 @@ The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, t
 - **Wider screens (≥ 600 px):** a top bar shows every reader control; the bottom bar holds only the page-turn buttons.
 - **Feedback:** an ordinary button styled like the others, never floating over the page. On wider screens it sits in the top bar; on phones, where there is no top bar and the bottom bar is full, a compact Feedback button sits at the right end of the passage-title line at the top of the screen.
 
-The passage title sits above the page on every width.
+The passage title sits above the page on every width. On the dev stage a small "DEV" marker follows the title, so a dev copy is never mistaken for the live app.
 
 ## Reading Column
 

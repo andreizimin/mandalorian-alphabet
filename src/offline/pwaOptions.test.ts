@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { pwaOptions } from './pwaOptions';
+import { pwaOptions, pwaOptionsFor } from './pwaOptions';
 
 /** Width and height from a PNG file's IHDR chunk. */
 function pngSize(publicPath: string) {
@@ -51,5 +51,15 @@ describe('service worker', () => {
     expect(pwaOptions.registerType).toBe('prompt');
     expect(pwaOptions.workbox.skipWaiting).toBe(false);
     expect(pwaOptions.workbox.clientsClaim).toBe(false);
+  });
+});
+
+describe('manifest per stage', () => {
+  // @spec OFF-008
+  it('names the installed app "Mando Dev" on dev and keeps the production names elsewhere', () => {
+    expect(pwaOptionsFor('dev').manifest).toMatchObject({ name: 'Learn Mandalorian (Dev)', short_name: 'Mando Dev' });
+    expect(pwaOptionsFor('production').manifest).toMatchObject({ name: 'Learn Mandalorian', short_name: 'Mando' });
+    expect(pwaOptionsFor('local').manifest.short_name).toBe('Mando');
+    expect(pwaOptions.manifest.short_name).toBe('Mando');
   });
 });

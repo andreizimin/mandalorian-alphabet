@@ -19,4 +19,6 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Hosting
 
-- `[x]` **OFF-006**: The hosting SHALL serve the service worker, the manifest and `index.html` with `Cache-Control: no-cache`, serve hashed build assets with long-term caching, and attach `learn-mandalorian.andreizimin.com` only on the `production` stage.
+- `[x]` **OFF-006**: The hosting SHALL serve the service worker, the manifest and `index.html` with `Cache-Control: no-cache`, serve hashed build assets with long-term caching, and attach `learn-mandalorian.andreizimin.com` to the `production` stage, `learn-mandalorian-dev.andreizimin.com` to the `dev` stage, and no custom domain to any other stage.
+- `[x]` **OFF-007**: While the app is built for any stage other than `production`, the system SHALL tell search engines not to index it, with a `noindex` meta tag and a `robots.txt` that disallows all crawling.
+- `[x]` **OFF-008**: While the app is built for the `dev` stage, the system SHALL name the installable app "Learn Mandalorian (Dev)" with short name "Mando Dev" and show a "DEV" marker after the passage title.

@@ -164,3 +164,15 @@ describe('Feedback among the reader controls', () => {
     for (const button of screen.getAllByRole('button', { name: 'Feedback' })) expect(button).toBeDisabled();
   });
 });
+
+describe('DEV marker', () => {
+  // @spec OFF-008
+  it('follows the passage title on dev builds only', () => {
+    const { rerender } = render(<TitleBar title="Treasure Island" feedbackReady onFeedback={() => {}} dev />);
+    const marker = screen.getByText('DEV');
+    expect(marker.closest('.title-line')).toContainElement(screen.getByText('Treasure Island'));
+
+    rerender(<TitleBar title="Treasure Island" feedbackReady onFeedback={() => {}} />);
+    expect(screen.queryByText('DEV')).not.toBeInTheDocument();
+  });
+});

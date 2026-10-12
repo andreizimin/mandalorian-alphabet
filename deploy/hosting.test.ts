@@ -1,4 +1,4 @@
-import { NO_CACHE, IMMUTABLE, cacheRules, domainFor } from './hosting';
+import { DEV_DOMAIN, NO_CACHE, IMMUTABLE, cacheRules, domainFor } from './hosting';
 
 const ruleFor = (file: string) => cacheRules.find((r) => r.matches(file))?.cacheControl;
 
@@ -19,9 +19,10 @@ describe('hosting', () => {
   });
 
   // @spec OFF-006
-  it('attaches the custom domain only on the production stage', () => {
+  it('attaches the production domain to production and the dev domain to dev only', () => {
     expect(domainFor('production')).toBe('learn-mandalorian.andreizimin.com');
-    expect(domainFor('dev')).toBeUndefined();
-    expect(domainFor('pr-12')).toBeUndefined();
+    expect(DEV_DOMAIN).toBe('learn-mandalorian-dev.andreizimin.com');
+    expect(domainFor('dev')).toBe(DEV_DOMAIN);
+    for (const stage of ['pr-12', 'andreizimin', 'staging']) expect(domainFor(stage)).toBeUndefined();
   });
 });

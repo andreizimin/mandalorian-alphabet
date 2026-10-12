@@ -40,7 +40,9 @@ Ordered; when two conflict, the higher one wins.
 
 ## System Design
 
-The product is a client-only installable web app (PWA) with no backend; learner state lives on the device. It is hosted as static files at `learn-mandalorian.andreizimin.com`; hosting and updates are in the `offline` LLD.
+The product is a client-only installable web app (PWA) with no backend; learner state lives on the device. It is hosted as static files at `learn-mandalorian.andreizimin.com`, with a dev copy at `learn-mandalorian-dev.andreizimin.com` for checking changes first; hosting and updates are in the `offline` LLD.
+
+**Change flow:** each change order is worked on its own branch, with a pull request into `main` on which continuous integration runs the typecheck, unit tests and browser tests. The branch is deployed to dev and checked there; the pull request is merged on the requester's go, and production is deployed from `main`.
 
 | Option | What it is | Cost | Verdict |
 |---|---|---|---|
