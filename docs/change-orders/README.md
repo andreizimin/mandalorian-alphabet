@@ -21,3 +21,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-001](CO-001-highlight-newest-letter.md) | Highlight the newest letter | Feature | Done | +5 | +5 (1 reworded) |
 | [CO-002](CO-002-feedback-button.md) | Feedback button in the top bar ([ZZF-56](https://linear.app/zizify-workshop/issue/ZZF-56)) | Feature | Done | +5 ~1–2 | +5 ~1 |
 | [CO-003](CO-003-stale-feedback-widget.md) | Stale cached feedback widget breaks the Feedback button ([ZZF-61](https://linear.app/zizify-workshop/issue/ZZF-61)) | Bug | Done | +1 ~1 | +1 ~1 |
+| [CO-004](CO-004-dev-environment.md) | Dev environment ([ZZF-62](https://linear.app/zizify-workshop/issue/ZZF-62)) | Feature | Proposed | +2–3 ~1 | |
