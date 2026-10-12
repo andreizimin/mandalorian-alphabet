@@ -125,4 +125,4 @@ Both answered on 2026-10-12 with the recommended option: versioned URL now (ZZF-
 | Tests before → after | unit 256 → 259, browser 49 → 52 |
 | Lines changed | +64 −13 (code, 4 files), +57 −2 (tests, 3 files) plus a 346-line fixture (the 1.0.0 widget), +8 −2 (design doc and specs) |
 | Agent time | about 5 minutes from approval (16:02) to completion (16:07) |
-| Deployed | Not yet |
+| Deployed | 2026-10-12, to learn-mandalorian.andreizimin.com (live bundle confirmed to load widget.js?v=1.1.0) |
