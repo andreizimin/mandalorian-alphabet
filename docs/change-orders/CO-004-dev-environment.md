@@ -1,4 +1,4 @@
-# CO-004: Dev environment
+# CO-004: Dev environment and branch flow
 
 | | |
 |---|---|
@@ -13,9 +13,18 @@
 
 "I need a dev env - learn-mandalorian-dev.andreizimin.com to test out changes before they go into production"
 
+Then, while reviewing this change order: "all changes first go to a feature branch - right?" They had not: every change so far was committed straight to `main`. Answered: a branch and pull request per change, with tests run automatically; the agent merges on the requester's go; no branch protection; folded into this change order.
+
 ## Intent
 
 Every change can be tried on a real phone and laptop at a stable dev address before it reaches the live app. Dev is a full copy of the app, deployed from the same code with its own storage and its own offline cache, clearly marked as dev so it is never mistaken for production.
+
+Each change order lives on its own branch until it is accepted:
+
+1. A branch per change order, named after its ticket (for example `zzf-62-dev-environment`).
+2. A pull request into `main` linking the change order. Continuous integration runs the typecheck, unit tests and browser tests on every push.
+3. The branch is deployed to dev; the requester checks it there.
+4. On the requester's go, the agent merges the pull request; production deploys from `main` after the merge, again on the requester's go.
 
 ## Findings That Shape the Plan
 
@@ -28,7 +37,7 @@ Every change can be tried on a real phone and laptop at a stable dev address bef
 
 ### HLD
 
-- System Design: hosting names both addresses, production and dev, and the deploy flow (dev first, then production).
+- System Design: hosting names both addresses, production and dev, and the change flow (branch, pull request with CI, dev deploy, merge, production deploy).
 
 ### LLDs
 
@@ -73,7 +82,9 @@ Net: +2 or +3 new, ~1 revised, 0 deleted.
 
 ### Other
 
-- **Process:** `CLAUDE.md` (Commands; Change Orders step 4) records the new flow: every change deploys to dev, is checked there, then goes to production.
+- **CI:** `.github/workflows/ci.yml` (new) runs the typecheck, unit tests and browser tests (WebKit and Chromium) on every push and pull request.
+- **Process:** `CLAUDE.md` records the branch, pull request, dev and production flow in the Change Orders section and Commands; the fixed commit command pushes the current branch (`git push -u origin HEAD`).
+- **This change order is the first to use the flow:** its work happens on branch `zzf-62-dev-environment`.
 - **AWS:** a new `dev` stage (S3, CloudFront, certificate, a DNS record in the `andreizimin.com` zone) created by the first dev deploy, which needs your approval like any deploy. Removing the old personal test stage (decision 4) also needs approval.
 - **feedback-platform:** only if decision 1 picks the widget change (one more PR).
 
@@ -90,7 +101,7 @@ Net: +2 or +3 new, ~1 revised, 0 deleted.
 2. **Telling dev apart.** *Recommended:* a small "DEV" marker on the title line and the installed name "Mando Dev". *Alternative:* no visible difference beyond the address.
 3. **Search engines.** *Recommended:* dev is marked `noindex` and disallowed in `robots.txt`. *Alternative:* leave it indexable.
 4. **The old test stage** at `d3timh0n9to9fe.cloudfront.net`. *Recommended:* remove it once dev is live; dev replaces it. *Alternative:* keep it.
-5. **The flow for future changes.** *Recommended:* every change order deploys to dev first; you check there; production follows on your go. *Alternative:* dev is optional, used only when you ask.
+5. **The flow for future changes.** Answered on 2026-10-12: a branch and pull request per change order, CI on every push, a dev deploy from the branch for checking, the agent merges on the requester's go, production from `main`; no branch protection on `main`.
 
 ## Risks and Edge Cases
 
@@ -98,12 +109,15 @@ Net: +2 or +3 new, ~1 revised, 0 deleted.
 - **Shared AWS account:** the dev stage lives beside production in the same account and region; it uses `removal: remove`, so tearing it down never touches production, whose resources are retained.
 - **Two installed apps on one phone:** distinct names and the DEV marker keep them apart; each has its own data.
 - **Feedback tickets from dev** land in the same Linear project; decision 1 decides how they are labelled.
+- **No branch protection:** the flow is a convention recorded in `CLAUDE.md`; nothing technical stops a direct push to `main`.
+- **Browser tests in CI:** WebKit and Chromium run on GitHub's Linux machines, not on macOS or iOS, so CI catches layout regressions but not every Safari difference; the dev deploy on a real device covers that.
 - **Build-time stage:** the stage is baked into each build, so a dev build can never be deployed as production by mistake without being rebuilt; the production deploy rebuilds with `VITE_STAGE=production`.
 
 ## Verification
 
 - Unit tests for domains per stage, manifest names, the stage reader and the DEV marker.
 - Browser tests still run against local builds, which behave as non-production builds.
+- CI passes on the pull request for this change.
 - After the first dev deploy (with your approval): `learn-mandalorian-dev.andreizimin.com` serves the app over HTTPS, shows the DEV marker, sends `noindex`, and production is unchanged.
 
 ---
