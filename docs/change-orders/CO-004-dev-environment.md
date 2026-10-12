@@ -97,6 +97,8 @@ Net: +2 or +3 new, ~1 revised, 0 deleted.
 
 ## Decisions Needed
 
+All answered on 2026-10-12. Decisions 1–4 took the recommended option: a widget pull request so `-dev.` hostnames count as dev (on its own ticket); a DEV marker plus the installed name "Mando Dev"; `noindex` on non-production builds; remove the old test stage once dev is live. Decision 5 is recorded below.
+
 1. **Feedback sent from dev.** *Recommended:* a one-line widget change so hostnames containing `-dev.` (and `-staging.`, `-preview.`) count as dev, so dev feedback arrives as `Env: dev` for every app that uses this naming; a PR on its own ticket, like ZZF-57. *Alternatives:* accept dev feedback marked `Env: prod` (the DEV marker and URL in the ticket still show where it came from); hide the Feedback button on dev; or use `dev.learn-mandalorian.andreizimin.com`, which the widget already recognises, instead of the requested name.
 2. **Telling dev apart.** *Recommended:* a small "DEV" marker on the title line and the installed name "Mando Dev". *Alternative:* no visible difference beyond the address.
 3. **Search engines.** *Recommended:* dev is marked `noindex` and disallowed in `robots.txt`. *Alternative:* leave it indexable.
