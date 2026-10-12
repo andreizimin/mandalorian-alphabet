@@ -13,12 +13,14 @@ Learners can send a feature idea or a bug report without leaving the app. Feedba
 
 At startup the app adds the platform's script tag once:
 
-- `src`: `https://feedback.andreizimin.com/widget.js`
+- `src`: `https://feedback.andreizimin.com/widget.js?v=1.1.0`, naming the minimum widget version this app needs
 - `data-project`: `learn-mandalorian` (the Linear label and title prefix)
 - `data-launcher`: `none`, so the widget draws no floating button
 - `data-accent`: the app's accent color (`#8a5a2b`), so the form's buttons match the app
 
 The widget renders its form inside its own shadow DOM, so it cannot clash with the app's styles.
+
+The version in the URL matters. The platform serves `widget.js` as cacheable for a year, and every andreizimin.com app uses the same address, so a browser that loaded an older widget for another app would keep using it here. A URL naming the version is a different address to the browser cache, so it always fetches a widget at least that new. When this app starts relying on a newer widget feature, the version in the URL is bumped.
 
 ## Opening the Form
 
@@ -27,6 +29,8 @@ The Feedback button is an ordinary app button among the reader controls (placeme
 ## Availability
 
 The widget comes from another origin and is not part of the offline cache. Until it reports ready (offline, blocked by a content blocker, or failed to load), the Feedback button is disabled and says why: "Feedback needs a connection". Reading, the quiz and everything else keep working.
+
+If a widget loads without the host API (a version older than 1.1.0, for example from a cache between the browser and the platform that ignores the version in the URL), the app hides the widget's host element, so its floating button never appears over the page, and shows the Feedback button disabled with "Feedback is unavailable right now". An old widget cannot be opened from the app's button anyway.
 
 ## Keeping Reading Quiet
 
@@ -43,6 +47,7 @@ Only when the learner presses Send: the message, the Feature or Bug choice, opti
 | Feedback channel | The shared feedback platform's widget | An in-app form posting to the platform; email link | One pipeline for every app, already delivering to Linear; the platform's docs ask embedders not to build their own form |
 | Entry point | An app button among the reader controls, the widget's floating button hidden | The widget's floating corner button | A floating button sits over the reading page; an inline button matches the rest of the controls |
 | Opening the form | The widget's public `open()` and events | Reaching into the widget's shadow DOM to click its hidden button | The public API is a contract the platform keeps; internals can change without notice |
+| Stale cached widget | Load a versioned URL; hide any widget that lacks the host API | Rely on the platform fixing its cache headers; let an old widget's floating button show | Browsers that already cached the old widget keep it until it expires, whatever the platform does next; a floating button is what the app was asked never to show |
 | Offline | Button disabled with a reason | Hide the button; queue feedback for later | A visible, explained state beats a button that silently does nothing; queueing would duplicate the platform's delivery |
 
 ## Open Questions & Future Decisions

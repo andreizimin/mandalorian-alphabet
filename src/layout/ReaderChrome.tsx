@@ -13,6 +13,8 @@ export interface ReaderActions {
   fontReady: boolean;
   textSize: number;
   feedbackReady: boolean;
+  /** Why Feedback is unavailable, shown while it is disabled. */
+  feedbackReason?: string;
   onAdvance: () => void;
   onStepBack: () => void;
   onReset: () => void;
@@ -65,19 +67,29 @@ export function TopBar(a: ReaderActions) {
       </button>
       <QuizButton learnedCount={a.learnedCount} fontReady={a.fontReady} onOpen={a.onQuiz} />
       <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
-      <FeedbackButton ready={a.feedbackReady} onOpen={a.onFeedback} />
+      <FeedbackButton ready={a.feedbackReady} reason={a.feedbackReason} onOpen={a.onFeedback} />
     </nav>
   );
 }
 
 /** The passage title; on phones, which have no top bar, Feedback sits at its right end. */
 // @spec LAYOUT-016
-export function TitleBar({ title, feedbackReady, onFeedback }: { title: string; feedbackReady: boolean; onFeedback: () => void }) {
+export function TitleBar({
+  title,
+  feedbackReady,
+  feedbackReason,
+  onFeedback,
+}: {
+  title: string;
+  feedbackReady: boolean;
+  feedbackReason?: string;
+  onFeedback: () => void;
+}) {
   return (
     <div className="title-line">
       <p className="passage-title">{title}</p>
       <div className="phone-only">
-        <FeedbackButton ready={feedbackReady} onOpen={onFeedback} />
+        <FeedbackButton ready={feedbackReady} reason={feedbackReason} onOpen={onFeedback} />
       </div>
     </div>
   );

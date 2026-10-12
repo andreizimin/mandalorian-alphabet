@@ -22,7 +22,7 @@ describe('loading the widget', () => {
 
     expect(scripts()).toHaveLength(1);
     const script = scripts()[0] as HTMLScriptElement;
-    expect(FEEDBACK_SCRIPT_URL).toBe('https://feedback.andreizimin.com/widget.js');
+    expect(FEEDBACK_SCRIPT_URL).toBe('https://feedback.andreizimin.com/widget.js?v=1.1.0');
     expect(script.dataset).toMatchObject({ project: 'learn-mandalorian', launcher: 'none', accent: FEEDBACK_ACCENT });
     expect(FEEDBACK_ACCENT).toBe('#8a5a2b');
   });
@@ -81,5 +81,51 @@ describe('opening the form', () => {
 
     act(() => emit('feedback:close'));
     expect(result.current.isOpen).toBe(false);
+  });
+});
+
+describe('a stale widget without the host API', () => {
+  // @spec FEED-005
+  it('hides the old widget and gives the button a reason when the script loads without the API', () => {
+    const { result } = renderHook(() => useFeedbackWidget());
+    const host = document.createElement('div');
+    host.id = 'feedback-widget-host'; // what an old widget creates while its script runs
+    document.body.append(host);
+
+    act(() => {
+      scripts()[0].dispatchEvent(new Event('load'));
+    });
+
+    expect(host.style.display).toBe('none');
+    expect(result.current.ready).toBe(false);
+    expect(result.current.reason).toBe('Feedback is unavailable right now');
+    host.remove();
+  });
+
+  // @spec FEED-003, FEED-005
+  it('explains each unavailable state on the button', () => {
+    const { rerender } = render(<FeedbackButton ready={false} onOpen={() => {}} />);
+    expect(screen.getByText('Feedback needs a connection')).toBeInTheDocument();
+
+    rerender(<FeedbackButton ready={false} reason="Feedback is unavailable right now" onOpen={() => {}} />);
+    expect(screen.getByText('Feedback is unavailable right now')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Feedback' })).toBeDisabled();
+  });
+
+  // @spec FEED-005
+  it('does not hide a widget that loads with the API', () => {
+    const { result } = renderHook(() => useFeedbackWidget());
+    const host = document.createElement('div');
+    host.id = 'feedback-widget-host';
+    document.body.append(host);
+
+    act(() => {
+      window.FeedbackWidget = fakeWidget();
+      scripts()[0].dispatchEvent(new Event('load'));
+    });
+
+    expect(host.style.display).toBe('');
+    expect(result.current.ready).toBe(true);
+    host.remove();
   });
 });

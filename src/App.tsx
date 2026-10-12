@@ -117,6 +117,7 @@ export function App() {
     fontReady: fontState === 'loaded',
     textSize: settings.textSize,
     feedbackReady: feedback.ready,
+    feedbackReason: feedback.reason,
     onAdvance: advance,
     onStepBack: () => dispatch({ type: 'stepBack' }),
     onReset: () => dispatch({ type: 'reset' }),
@@ -184,7 +185,12 @@ export function App() {
         <>
           <header className="reader-header">
             <TopBar {...actions} />
-            <TitleBar title={passage.title} feedbackReady={feedback.ready} onFeedback={feedback.open} />
+            <TitleBar
+              title={passage.title}
+              feedbackReady={feedback.ready}
+              feedbackReason={feedback.reason}
+              onFeedback={feedback.open}
+            />
             {legendOpen && <Legend learned={progress.learned} />}
             <HintBanner signals={visibleHint(progress)} onDismiss={() => dispatch({ type: 'dismissHint' })} />
           </header>

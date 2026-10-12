@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { firstWord, isPhone, start } from './helpers';
 
 const fixture = readFileSync(new URL('./fixtures/feedback-widget.js', import.meta.url), 'utf8');
+const staleWidget = readFileSync(new URL('./fixtures/feedback-widget-1.0.0.js', import.meta.url), 'utf8');
 
 const feedbackButton = (page: Page) => page.getByRole('button', { name: 'Feedback', exact: true });
 
@@ -78,4 +79,12 @@ test('shows Feedback disabled with a reason when the widget cannot load', async 
   await start(page);
   await expect(feedbackButton(page)).toBeDisabled();
   await expect(page.getByText('Feedback needs a connection').filter({ visible: true })).toHaveCount(1);
+});
+
+// @spec FEED-005
+test('hides a stale 1.0.0 widget and explains the disabled button', async ({ page }) => {
+  await start(page, { feedbackWidget: staleWidget });
+  await expect(page.locator('#feedback-widget-host')).toBeHidden();
+  await expect(feedbackButton(page)).toBeDisabled();
+  await expect(page.getByText('Feedback is unavailable right now').filter({ visible: true })).toHaveCount(1);
 });

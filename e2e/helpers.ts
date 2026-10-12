@@ -9,7 +9,7 @@ export const isPhone = (info: TestInfo) => info.project.name === 'iphone';
  */
 export async function start(page: Page, { feedbackWidget }: { feedbackWidget?: string } = {}) {
   await page.route('https://feedback.andreizimin.com/**', (route) =>
-    feedbackWidget && route.request().url().endsWith('/widget.js')
+    feedbackWidget && new URL(route.request().url()).pathname === '/widget.js'
       ? route.fulfill({ contentType: 'text/javascript', body: feedbackWidget })
       : route.abort(),
   );

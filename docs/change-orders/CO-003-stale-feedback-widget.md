@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Type | Bug |
-| Status | Proposed |
+| Status | In progress |
 | Requested | 2026-10-12 |
-| Approved | |
+| Approved | 2026-10-12 |
 | Completed | |
 | Ticket | [ZZF-61](https://linear.app/zizify-workshop/issue/ZZF-61) |
 
@@ -74,6 +74,8 @@ Net: +1 new, ~1 revised, 0 deleted.
 - **feedback-platform:** none required. If ZZF-58 is fixed later, the versioned URL keeps working; bumping `?v=` is then needed only when this app starts relying on a newer widget feature.
 
 ## Decisions Needed
+
+Both answered on 2026-10-12 with the recommended option: versioned URL now (ZZF-58 as the platform-wide follow-up); hide an old widget and show the button disabled with a reason.
 
 1. **How to defeat the stale cache.** *Recommended:* load `widget.js?v=1.1.0` from this app now. *Alternatives:* wait for ZZF-58 alone (does not help browsers that already cached 1.0.0, which keep it until it expires); or do both, ZZF-58 for every app plus the versioned URL here (recommended as the follow-up).
 2. **If an old widget still loads anyway** (for example a cache in between that ignores query strings). *Recommended:* hide the old widget entirely and show the button disabled with "Feedback is unavailable right now". *Alternative:* let the old floating button show as a fallback, so feedback still works, but floating, which the original request ruled out.
