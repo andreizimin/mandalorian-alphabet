@@ -11,7 +11,7 @@ Reading on a phone often happens without a reliable connection. After the first 
 
 ## Mechanism
 
-- **Service worker:** generated at build time by `vite-plugin-pwa` (Workbox). It precaches every file the build produces: the app shell, the JavaScript bundle (which contains the bundled passages and the quiz word pool), the stylesheet, the Mandalorian font and the icons. Navigation requests fall back to the cached `index.html`, so the app opens offline from any URL.
+- **Service worker:** generated at build time by `vite-plugin-pwa` (Workbox). It precaches every file the build produces: the app shell, the JavaScript bundle (which contains the bundled passages and the quiz word pool), the stylesheet, the Mandalorian font and the icons. Navigation requests fall back to the cached `index.html`, so the app opens offline from any URL. The app registers the service worker itself (`src/offline/updates.ts`) rather than through the plugin's generated script, because it adds the foreground check and the reload rule in **Updates**.
 - **Manifest:** name "Learn Mandalorian", short name "Mando" (what iOS shows under the icon; "Learn Mandalorian (Dev)" and "Mando Dev" on the dev stage, so the two installed apps are never confused), `display: standalone`, start URL `/`, background and theme colors matching the reading page.
 - **Icons:** a Mandalorian glyph drawn from the bundled font on the app's reading background, at 180 px (`apple-touch-icon`, used by iOS) and 192 and 512 px (manifest). No franchise artwork or logos.
 - Installing to the Home Screen also protects on-device storage from Safari's eviction of sites unused for 7 days.
@@ -19,7 +19,16 @@ Reading on a phone often happens without a reliable connection. After the first 
 
 ## Updates
 
-A new version is downloaded in the background the next time the app is opened with a connection. It takes over on the following launch, never mid-session, so a page never changes under the learner. Learner state lives in on-device storage, not in the cache, so updates never touch progress.
+The app looks for a new version every time it opens and every time it returns to the foreground. The second matters on iPhone: a Home Screen app is usually suspended rather than closed, and a resumed app shows the same page without loading it, so the browser's own check on page load never runs. The check is a no-cache request for the service worker file and fails quietly with no connection.
+
+A new version downloads in the background and takes control as soon as it is ready (Workbox `skipWaiting` and `clientsClaim`). Taking control does not change the page already on screen, which keeps running the code it loaded; this is safe because the build is one script and one stylesheet, both loaded before the learner sees anything. If the build ever splits code into files loaded later, an old page could ask for a file the new version has removed, and this rule needs revisiting.
+
+Whether the learner sees the new version at once depends on when it arrives:
+
+- **In the opening window** (within 10 seconds of opening or of returning to the foreground, and before any tap, click, scroll or key press since then), the app reloads once into the new version. The screen blinks and the learner lands on the same passage and position, which are saved across reloads (`persistence`).
+- **Any later**, the page on screen stays as it is, and the new version is used from the next opening.
+
+A page never changes under a learner who has started reading. The very first install also takes control of the page, but nothing changes for the learner then, so it never triggers a reload. At most one automatic reload happens per opening, so deploys landing close together cannot chain reloads. Learner state lives in on-device storage, not in the cache, so updates never touch progress.
 
 ## Hosting
 
@@ -52,7 +61,7 @@ The live-site check (`e2e/live.spec.ts`, `npm run test:live`) runs against the d
 
 ## Verification
 
-Playwright's WebKit build does not run service workers, so the offline browser test runs in Chromium: load once, go offline, reload, read and finish a quiz. After every deploy the pipeline runs the live-site check against the deployed address. Behavior on iOS Safari is checked on the device, on dev, before a change reaches production.
+Playwright's WebKit build does not run service workers, so the offline browser test runs in Chromium: load once, go offline, reload, read and finish a quiz. The update path is tested there too, by serving a changed service worker file: the page reloads into it in the opening window and stays put after an interaction. After every deploy the pipeline runs the live-site check against the deployed address. Behavior on iOS Safari is checked on the device, on dev, before a change reaches production.
 
 ## Decisions & Alternatives
 
@@ -60,7 +69,7 @@ Playwright's WebKit build does not run service workers, so the offline browser t
 |---|---|---|---|
 | Caching | Precache every build file at install | Runtime cache only | Guarantees offline after first load; the whole app is a few hundred KB |
 | Service worker source | `vite-plugin-pwa` (Workbox) | Hand-written service worker | The plugin knows the hashed file names from the build; a hand-written list would drift |
-| Update timing | New version takes over on the next launch | Prompt to reload; take over immediately | A prompt interrupts reading; an immediate takeover could swap code mid-page. State is in storage, so a quiet next-launch update loses nothing |
+| Update timing | Take control as soon as downloaded; reload once only in the 10-second opening window before any interaction | Wait until every copy of the app closes; never reload; a "tap to update" note | Waiting left iPhone Home Screen apps on an old version for several openings, because suspended apps are rarely closed. Never reloading still shows a change one launch late, as a Home Screen app has no reload button. A note interrupts reading. Reloading before the learner starts loses nothing, as position is saved |
 | Hosting | SST `StaticSite` on AWS | GitHub Pages; Vercel | Matches the existing portfolio deployment and its Route 53 zone; one way to deploy across personal sites |
 | Where deploys run | GitHub Actions, signed in through OpenID Connect | `sst deploy` from a laptop | Every deploy follows passing tests, uses no stored keys, and does not depend on one machine; the laptop scripts stay as a fallback |
 | Production trigger | A merge into `main` deploys production | A GitHub "approve deployment" button; a manual workflow run | The requester's go on the dev site is the one approval; a second button would only repeat it. A revert undoes a bad deploy the same way |

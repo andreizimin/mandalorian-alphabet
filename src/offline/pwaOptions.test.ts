@@ -47,10 +47,11 @@ describe('service worker', () => {
   });
 
   // @spec OFF-004
-  it('waits for the next launch to switch versions', () => {
-    expect(pwaOptions.registerType).toBe('prompt');
-    expect(pwaOptions.workbox.skipWaiting).toBe(false);
-    expect(pwaOptions.workbox.clientsClaim).toBe(false);
+  it('lets a new version take control as soon as it is ready, registered by the app itself', () => {
+    expect(pwaOptions.workbox.skipWaiting).toBe(true);
+    expect(pwaOptions.workbox.clientsClaim).toBe(true);
+    // The plugin's own registration script would reload or prompt by its own rules; src/offline/updates.ts registers instead.
+    expect(pwaOptions.injectRegister).toBe(false);
   });
 });
 

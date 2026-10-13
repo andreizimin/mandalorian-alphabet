@@ -6,10 +6,10 @@
 export function pwaOptionsFor(stage: string) {
   const dev = stage === 'dev';
   return {
-  // 'prompt' never forces a reload; with skipWaiting off, a new version waits
-  // in the background and takes over on the next launch.
+  // A new version takes control as soon as it is downloaded; src/offline/updates.ts
+  // registers the service worker and decides whether the page on screen reloads.
   registerType: 'prompt' as const,
-  injectRegister: 'script' as const,
+  injectRegister: false as const,
   manifest: {
     name: dev ? 'Learn Mandalorian (Dev)' : 'Learn Mandalorian',
     short_name: dev ? 'Mando Dev' : 'Mando',
@@ -28,8 +28,8 @@ export function pwaOptionsFor(stage: string) {
     globPatterns: ['**/*.{js,css,html,woff2,png,webmanifest}'],
     navigateFallback: '/index.html',
     cleanupOutdatedCaches: true,
-    skipWaiting: false,
-    clientsClaim: false,
+    skipWaiting: true,
+    clientsClaim: true,
   },
 };
 }

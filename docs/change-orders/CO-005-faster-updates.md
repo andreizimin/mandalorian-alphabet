@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | Done |
 | Requested | 2026-10-12 |
-| Approved | |
-| Completed | |
+| Approved | 2026-10-12 |
+| Completed | 2026-10-12 |
 | Ticket | [ZZF-65](https://linear.app/zizify-workshop/issue/ZZF-65) |
 
 ## Request
@@ -81,6 +81,8 @@ Net: +2 new, ~1 revised, 0 deleted.
 
 ## Decisions Needed
 
+Answered on 2026-10-12, both as recommended: reload once in the opening window; check on every return to the foreground.
+
 1. **When the new version appears.**
    - *Recommended:* on the opening that finds it. If the download finishes within 10 seconds of opening (or of coming back from the background) and the learner hasn't touched anything yet, the app reloads once; the screen blinks and the learner lands on the same page. Otherwise it waits for the next opening.
    - *Alternative:* never reload. The new version takes control quietly and shows up on the next opening or reload; on an iPhone Home Screen app this is still one launch late, but more reliably than today.
@@ -110,4 +112,39 @@ Net: +2 new, ~1 revised, 0 deleted.
 
 ## Outcome
 
-To be filled in when the change is complete.
+Written before the requester's dev check; the production run is reported on the ticket. This is the first change order through the CO-006 pipeline.
+
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | None | None | |
+| LLDs | 4 changes in `offline` | 4: Updates rewritten, Mechanism, the "Update timing" row, Verification | As predicted |
+| Specs | +2 ~1 | +2 ~1 (OFF-009, OFF-010 added; OFF-004 revised) | OFF-010 also names the first install, which the prediction listed only as a risk |
+| Tests | 3 files | 4 files | `e2e/helpers.ts`: `start()` can open another address, for the update tests' own server |
+| Code | 3 files | 3 files (`updates.ts`, `pwaOptions.ts`, `main.tsx`) | As predicted |
+| Other | `registerSW.js` no longer built; its hosting rule left in place | As predicted | |
+
+### Surprises
+
+1. **The browser's own update check isn't enough.** The first browser test never saw the new version: Chromium throttles the check it makes on page load. OFF-004 says the app checks on opening, so `updates.ts` now calls `registration.update()` on every opening as well as on each return to the foreground. Without the test, this would have reached iPhones as "updates sometimes still late".
+2. **Playwright can't fake a new service worker.** Routing doesn't reach the browser's fetch of the service worker file, so a routed "new version" was never seen. The update tests now run their own small server over a copy of the build and change its `sw.js` mid-test, the way a deploy does.
+3. **A test passed for the wrong reason.** The first "after an interaction" test checked for the new version by fetching `sw.js` itself, which the route always answered with new content, so it passed whatever the app did. The check now asks the page which version controls it (`/__version`, answered only by the new service worker). Both update tests were then confirmed by breaking the code on purpose: without the reload, the first fails; ignoring interactions, the second fails.
+4. **A test fake copied a getter once.** Building the fake document with `Object.assign` froze `visibilityState` at "visible", so a correct check looked wrong. The fake uses `defineProperty` now.
+5. **No stops on the way.** The two decisions were asked in one round at the start, and nothing else needed the requester before dev.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `03dcaa2` | CO-005 proposed: keep offline, with faster updates (ZZF-65) |
+| (this commit) | CO-005: faster updates, with a reload only in the opening window (ZZF-65) |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 266 → 279, browser 52 → 54 |
+| Lines changed | +108 −5 (code, 3 files), +270 −9 (tests, 4 files), +16 −5 (design doc and specs) |
+| Agent time | about 25 minutes from the decisions (22:11) to the outcome (22:38) |
+| Deployed | dev from the branch by the pipeline; production when the pull request merges |

@@ -10,7 +10,9 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 - `[x]` **OFF-001**: After first load, the system SHALL open and display bundled passages with no network.
 - `[x]` **OFF-003**: After first load, the system SHALL run a complete quiz session with no network, including the bundled word pool.
-- `[x]` **OFF-004**: When a new version is available, the system SHALL download it in the background and use it from the next launch, without reloading or changing the current session.
+- `[x]` **OFF-004**: When the app opens or returns to the foreground with a connection, the system SHALL check for a new version, download it in the background and let it take control as soon as it is ready.
+- `[x]` **OFF-009**: When a new version takes control within 10 seconds of the app opening or returning to the foreground, and the learner has not tapped, clicked, scrolled or pressed a key since then, the system SHALL reload once into the new version, keeping the current passage and position.
+- `[x]` **OFF-010**: When a new version takes control at any other time, or on the app's first install, the system SHALL leave the page on screen unchanged and use the new version from the next opening.
 
 ## Installing
 
