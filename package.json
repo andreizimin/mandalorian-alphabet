@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:live": "playwright test --project live",
     "typecheck": "tsc -b",
     "deploy": "sst deploy --stage dev",
     "deploy:dev": "sst deploy --stage dev",

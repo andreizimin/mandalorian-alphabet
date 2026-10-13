@@ -42,7 +42,7 @@ Ordered; when two conflict, the higher one wins.
 
 The product is a client-only installable web app (PWA) with no backend; learner state lives on the device. It is hosted as static files at `learn-mandalorian.andreizimin.com`, with a dev copy at `learn-mandalorian-dev.andreizimin.com` for checking changes first; hosting and updates are in the `offline` LLD.
 
-**Change flow:** each change order is worked on its own branch, with a pull request into `main` on which continuous integration runs the typecheck, unit tests and browser tests. The branch is deployed to dev and checked there; the pull request is merged on the requester's go, and production is deployed from `main`.
+**Change flow:** each change order is worked on its own branch, with a pull request into `main`. A pipeline on GitHub Actions tests every push (typecheck, unit tests, browser tests), deploys a passing branch to dev and checks the live dev site. The requester's check on dev is the one manual step: on their go the pull request is merged, and the merge deploys production and checks the live production site. The pipeline is described in the `offline` LLD.
 
 | Option | What it is | Cost | Verdict |
 |---|---|---|---|

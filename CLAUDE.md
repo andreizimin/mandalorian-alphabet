@@ -20,11 +20,11 @@ The skill guides the agent through HLD check → LLD check → EARS → intent-n
 
 0. Work on a branch: every change order gets its own branch, named after its ticket (for example `zzf-62-dev-environment`), created before any change.
 1. Copy `docs/change-orders/TEMPLATE.md` to `docs/change-orders/CO-NNN-short-slug.md` (next unused number) and fill in the predicted impact at every level of the arrow, cross-segment effects, decisions needed, risks and verification. Status: *Proposed*. Add its row to the index in `docs/change-orders/README.md`.
-2. Stop and present it. Work begins only after the requester approves it (status *Approved*).
-3. Walk the LID arrow as predicted. If the work departs from the prediction, update the change order as it happens.
-4. Open a pull request into `main` linking the change order; CI (`.github/workflows/ci.yml`) runs the typecheck, unit tests and browser tests. Deploy the branch to dev (`npm run deploy:dev`) and ask the requester to check it at `learn-mandalorian-dev.andreizimin.com`.
-5. Merge the pull request only on the requester's go; deploy production (`npm run deploy:prod`) from `main`, again on their go.
-6. When done, fill in the Outcome section (predicted vs actual per level, surprises, commits, measurements), set status *Done*, and update the index row.
+2. If the change order has Decisions Needed, ask them all in one round (multiple choice, recommendation first) before working; that is the only stop before the dev check. With the answers recorded, the change order is *Approved*; otherwise it is approved as written.
+3. Walk the LID arrow as predicted, without stopping between phases (the requester's standing override of the LID phase stops). If the work departs from the prediction, update the change order as it happens.
+4. Fill in the Outcome (predicted vs actual per level, surprises, commits, measurements) before the dev check, so nothing is left to commit after the merge.
+5. Push and open a pull request into `main` linking the change order. The pipeline (`.github/workflows/ci.yml`) tests the push, deploys it to dev and runs the live-site check. When it passes, tell the requester it is on dev, naming the commit, and present the change order with it. **The requester's check on dev is the one manual step.**
+6. On their go, merge the pull request (`gh pr merge --merge --delete-branch`) if the branch head is still the commit they checked; if it has moved, say so and ask again. The merge deploys production and runs the live-site check there. When that run passes, set status *Done* on the ticket and report the run; a failed production run is reported at once and undone with a revert pull request.
 
 The point is to measure how well intent predicts code, so record predictions honestly and never revise the Predicted Impact after approval; differences belong in Outcome.
 
@@ -35,7 +35,7 @@ Requests arrive as Linear tickets (team Zizify-team, project Feedback Collector,
 1. Read the ticket and write its change order as above, with the ticket identifier in the Ticket field, and commit it.
 2. Paste the full change order into the conversation.
 3. Post it as a comment on the ticket, with a link to the file on GitHub, and leave the ticket's own description untouched.
-4. Stop for approval. When the change order's status changes (approved, done), add a short comment to the ticket saying so.
+4. Ask any Decisions Needed in one round, then carry the change to dev without further stops. When the change order's status changes (approved, on dev, done), add a short comment to the ticket saying so.
 
 ### Navigation
 
@@ -75,8 +75,9 @@ Place the annotation at the entry point of the behavior's implementation graph, 
 | Unit tests (Vitest, jsdom) | `npm test` |
 | Browser tests (Playwright: WebKit at iPhone, iPad, laptop; Chromium for offline) | `npm run test:e2e` |
 | Typecheck | `npm run typecheck` |
-| Deploy the current branch to dev (`learn-mandalorian-dev.andreizimin.com`) | `npm run deploy:dev` |
-| Deploy production (`learn-mandalorian.andreizimin.com`), from `main` only | `npm run deploy:prod` |
+| Deploy | Automatic: a pushed branch → dev (`learn-mandalorian-dev.andreizimin.com`); a merge into `main` → production (`learn-mandalorian.andreizimin.com`) |
+| Live-site check against a deployed address | `LIVE_URL=https://… LIVE_STAGE=dev npm run test:live` (needs the matching build in `dist/`) |
+| Fallback deploy from a laptop, only if GitHub Actions is unavailable | `npm run deploy:dev`; `npm run deploy:prod` (from `main` only) |
 | Regenerate bundled passages | `python3 -I scripts/build_passages.py <gutenberg-dir> src/content/bundled` |
 | Regenerate icons | `python3 -I scripts/build_icons.py public/fonts/mando-af-regular.woff2 public/icons` |
 

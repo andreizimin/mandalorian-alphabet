@@ -34,9 +34,25 @@ The app is static files served by SST's `StaticSite` on AWS (S3 behind CloudFron
 Different addresses are different browser origins, so each stage has its own learner data, its own service worker and its own offline cache. The stage is baked into each build (`VITE_STAGE`), which decides the installed app's name, the DEV marker and whether search engines may index the site: every build other than production is marked `noindex` and ships a `robots.txt` that disallows all crawling.
 
 Hashed build assets (the bundle, the stylesheet and the Workbox runtime the service worker imports) are cached long-term. The service worker file, the manifest, `index.html` and `robots.txt` are served with `no-cache`, so a phone checks for a new version on every launch with a connection. The host publishes only the files a caching rule covers, so the rules end with a `no-cache` catch-all: a file the build adds later is still published, and a service worker whose import is missing never installs. The custom domains are attached only on their own stages, so no other stage can claim them.
+
+### Deploy pipeline
+
+Deploys run on GitHub Actions (`.github/workflows/ci.yml`), not from a laptop:
+
+| Push to | Runs | Then |
+|---|---|---|
+| any branch other than `main` | typecheck, unit tests, browser tests | deploy to `dev`, check the live dev site |
+| `main` (a merged pull request) | the same tests | deploy to `production`, check the live production site |
+
+The workflow signs in to AWS through GitHub's OpenID Connect provider and the role `gha-deploy-mandalorian-alphabet`, which trusts only this repository's GitHub environments `dev` and `production`; no AWS keys are stored anywhere. The `production` environment accepts only `main`. Deploys to one stage queue rather than overlap, so a later push never interleaves with an earlier deploy; `dev` shows the branch pushed last.
+
+The live-site check (`e2e/live.spec.ts`, `npm run test:live`) runs against the deployed address, because a local server serves every file and cannot show what the host actually publishes. It requests every file of the build, checks the no-cache headers, the stage's names and indexing rules, and opens the app, goes offline and reloads it. A failed check fails the run; a bad production deploy is undone by reverting the pull request, which deploys the previous version the same way.
+
+`npm run deploy:dev` and `npm run deploy:prod` deploy from a laptop with the same result, as a fallback when GitHub Actions is unavailable.
+
 ## Verification
 
-Playwright's WebKit build does not run service workers, so the offline browser test runs in Chromium: load once, go offline, reload, read and finish a quiz. Behavior on iOS Safari is checked on the device after deploy.
+Playwright's WebKit build does not run service workers, so the offline browser test runs in Chromium: load once, go offline, reload, read and finish a quiz. After every deploy the pipeline runs the live-site check against the deployed address. Behavior on iOS Safari is checked on the device, on dev, before a change reaches production.
 
 ## Decisions & Alternatives
 
@@ -46,4 +62,6 @@ Playwright's WebKit build does not run service workers, so the offline browser t
 | Service worker source | `vite-plugin-pwa` (Workbox) | Hand-written service worker | The plugin knows the hashed file names from the build; a hand-written list would drift |
 | Update timing | New version takes over on the next launch | Prompt to reload; take over immediately | A prompt interrupts reading; an immediate takeover could swap code mid-page. State is in storage, so a quiet next-launch update loses nothing |
 | Hosting | SST `StaticSite` on AWS | GitHub Pages; Vercel | Matches the existing portfolio deployment and its Route 53 zone; one way to deploy across personal sites |
+| Where deploys run | GitHub Actions, signed in through OpenID Connect | `sst deploy` from a laptop | Every deploy follows passing tests, uses no stored keys, and does not depend on one machine; the laptop scripts stay as a fallback |
+| Production trigger | A merge into `main` deploys production | A GitHub "approve deployment" button; a manual workflow run | The requester's go on the dev site is the one approval; a second button would only repeat it. A revert undoes a bad deploy the same way |
 | Name | "Learn Mandalorian", short name "Mando" | "Script Ramp"; "Mando Reader" | Matches the domain and tells the learner exactly what it is |
