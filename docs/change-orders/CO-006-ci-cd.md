@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | In progress |
+| Status | Done |
 | Requested | 2026-10-12 |
 | Approved | 2026-10-12 |
-| Completed | |
+| Completed | 2026-10-12 |
 | Ticket | [ZZF-66](https://linear.app/zizify-workshop/issue/ZZF-66) |
 
 ## Request
@@ -123,4 +123,43 @@ The pipeline itself (OFF-011, OFF-012) is verified by its first runs on this bra
 
 ## Outcome
 
-To be filled in when the change is complete.
+Written before the requester's dev check, as the new flow requires; the production run is reported on the ticket.
+
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | "Change flow" rewritten | As predicted | |
+| LLDs | 3 changes in `offline` | 3: Deploy pipeline subsection, Verification, 2 decision rows | As predicted |
+| Specs | +3 | +3 (OFF-011, OFF-012, OFF-013) | As predicted |
+| Tests | `e2e/live.spec.ts`, `playwright.config.ts` | Those, plus `e2e/helpers.ts` and `e2e/layout.spec.ts` | Two existing browser tests had a race the pipeline exposed (surprise 3) |
+| Code | `ci.yml`, `package.json` | As predicted | |
+| Other | AWS role, GitHub environments and variable, `CLAUDE.md`, memory | As predicted | The role's trust condition needed the repository's immutable IDs (surprise 2) |
+
+### Surprises
+
+1. **A missing file doesn't return an error.** The first draft of the live check compared status codes only. To test the check, I ran it against a build with an extra file the site lacked, and it still passed: for a missing file at the top level, the site's router answers 200 with the app's page. (Under `assets/` it answers 403.) The check now compares every served file with the build, byte for byte. Without that negative test, the check would have missed exactly the CO-004 bug it exists to catch.
+2. **GitHub identifies newer repositories by ID.** Copying the trust condition from feedback-platform (`repo:andreizimin/feedback-platform:…`) failed: this repository's OIDC subject uses immutable IDs (`repo:andreizimin@75641133/mandalorian-alphabet@1413777045:…`). The role now trusts that form, which also survives a rename.
+3. **The pipeline's first runs exposed a race in two browser tests.** After a page turn, the "stopped peeking" hint can appear, shrink the reading area and re-cut the pages in place. The app keeps the saved position and shows the page that contains it (TEXT-004). The first word on screen then sits earlier than the saved position, and these tests took the on-screen word as the learner's word. My first fix (waiting longer) misread the cause and failed again. The tests now read the saved position. This is open for a later change order: TEXT-004 defines the position as "the first word of the page they were on", which an in-place re-cut makes ambiguous.
+4. **Laptop and CI differ in timing, not only in fonts.** The race never showed locally in dozens of runs, and it failed on GitHub's runners twice in a row. Running every push on CI is what found it.
+5. **Platform notices to watch:** GitHub will move `ubuntu-latest` to Ubuntu 26 from 2026-10-19, and the `actions/*@v4` steps run on a deprecated Node 20. Neither blocks the pipeline today.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `59dc5c1` | CO-006 proposed: CI/CD with one manual step (ZZF-66) |
+| `91b6257` | CO-006: deploy pipeline with a live-site check (ZZF-66) |
+| `016decf` | CO-006: wait for pages to re-cut in the text-size browser test |
+| `514f6a4` | CO-006: keep-the-word browser tests use the saved position |
+| (this commit) | CO-006: outcome recorded before the dev check |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 266 → 266, browser 52 → 52, plus a 4-test live-site check run after every deploy |
+| Lines changed | +72 −14 (pipeline: workflow, Playwright config, script), +107 −4 (tests, 3 files), +35 −10 (HLD, LLD, specs, `CLAUDE.md`) |
+| Pipeline runs on the branch | 3 runs plus 1 rerun: 2 failed on the test race, 1 failed on the role's trust condition; the rerun passed (tests 2m41s, deploy and live check 1m08s) |
+| Agent time | about 25 minutes from approval (17:47) to the outcome (18:12) |
+| Deployed | dev from the branch by the pipeline (run 38330404997); production when the pull request merges |
