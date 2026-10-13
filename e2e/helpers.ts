@@ -1,4 +1,5 @@
 import { expect, type Page, type TestInfo } from '@playwright/test';
+import callOfTheWild from '../src/content/bundled/call-of-the-wild.json' with { type: 'json' };
 
 export const isPhone = (info: TestInfo) => info.project.name === 'iphone';
 
@@ -35,6 +36,19 @@ export const pageText = (page: Page) => page.locator('.page-area .passage-page')
 
 export async function firstWord(page: Page) {
   return (await pageText(page)).trim().split(/\s+/)[0];
+}
+
+/**
+ * The word at the learner's saved position in the first bundled passage. Pages
+ * can be re-cut in place (a hint appearing shrinks the reading area), so the
+ * first word on screen is not always the saved position; this is.
+ */
+export async function savedWord(page: Page) {
+  const position = await page.evaluate(() => {
+    const content = JSON.parse(localStorage.getItem('script-ramp:v1:content') ?? '{}');
+    return content.positions?.['call-of-the-wild'] ?? { paragraph: 0, word: 0 };
+  });
+  return callOfTheWild.paragraphs[position.paragraph].split(' ').filter(Boolean)[position.word];
 }
 
 /** A horizontal drag across the middle of the page, using pointer events like a finger. */

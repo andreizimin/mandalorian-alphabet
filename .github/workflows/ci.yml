@@ -1,8 +1,15 @@
 name: ci
 
-# Every push, on every branch: a change order's pull request shows these checks.
+# The deploy pipeline (offline LLD, "Deploy pipeline"): every push is tested; a
+# passing branch deploys to dev and `main` deploys to production, each followed
+# by the live-site check against the deployed address.
 on:
   push:
+    branches: ['**']
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   test:
@@ -24,5 +31,47 @@ jobs:
         if: failure()
         with:
           name: playwright-results
+          path: test-results/
+          retention-days: 7
+
+  # @spec OFF-011, OFF-012
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'dev' }}
+      url: ${{ github.ref == 'refs/heads/main' && 'https://learn-mandalorian.andreizimin.com' || 'https://learn-mandalorian-dev.andreizimin.com' }}
+    # One deploy per stage at a time; a later push waits for the earlier one.
+    concurrency:
+      group: deploy-${{ github.ref == 'refs/heads/main' && 'production' || 'dev' }}
+      cancel-in-progress: false
+    env:
+      STAGE: ${{ github.ref == 'refs/heads/main' && 'production' || 'dev' }}
+      LIVE_URL: ${{ github.ref == 'refs/heads/main' && 'https://learn-mandalorian.andreizimin.com' || 'https://learn-mandalorian-dev.andreizimin.com' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+      # Builds with VITE_STAGE set to the stage (sst.config.ts) into dist/.
+      - run: npx sst deploy --stage "$STAGE"
+      - run: npx playwright install --with-deps chromium
+      # @spec OFF-013
+      - name: Live-site check
+        run: npm run test:live
+        env:
+          LIVE_STAGE: ${{ env.STAGE }}
+          LIVE_DIST: dist
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: live-check-results
           path: test-results/
           retention-days: 7
