@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { firstWord, isPhone, learn, pageText, reach, start, swipe } from './helpers';
+import { firstWord, isPhone, learn, pageText, reach, savedWord, start, swipe } from './helpers';
 
 const firstPassage: { paragraphs: string[] } = JSON.parse(
   readFileSync(new URL('../src/content/bundled/call-of-the-wild.json', import.meta.url), 'utf8'),
@@ -84,7 +84,8 @@ test('changes text size for both fonts and keeps the learner on their word', asy
   await learn(page, 1);
   await page.getByRole('button', { name: 'Next page' }).click();
   await page.getByRole('button', { name: 'Next page' }).click();
-  const word = await firstWord(page);
+  const word = await savedWord(page);
+  await expect.poll(() => pageText(page)).toContain(word);
   const size = () => page.locator('.page-area p').first().evaluate((p) => parseFloat(getComputedStyle(p).fontSize));
   expect(await size()).toBe(20);
 
@@ -175,7 +176,8 @@ test('fills real pages without overflow, covering every word in order', async ({
 test('keeps the learner on their word when the window resizes', async ({ page }, info) => {
   test.skip(isPhone(info), 'resize on wide viewports');
   for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next page' }).click();
-  const word = await firstWord(page);
+  const word = await savedWord(page);
+  await expect.poll(() => pageText(page)).toContain(word);
 
   await page.setViewportSize({ width: 700, height: 700 });
 
