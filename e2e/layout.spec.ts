@@ -94,7 +94,8 @@ test('changes text size for both fonts and keeps the learner on their word', asy
   await expect.poll(size).toBe(22);
   const glyphSize = await page.locator('.page-area .g').first().evaluate((g) => parseFloat(getComputedStyle(g).fontSize));
   expect(glyphSize).toBe(22);
-  expect(await pageText(page)).toContain(word);
+  // Pages are re-cut after the new size lays out, a moment after the font size changes.
+  await expect.poll(() => pageText(page)).toContain(word);
 });
 
 // @spec LAYOUT-007
