@@ -6,15 +6,16 @@ export const isPhone = (info: TestInfo) => info.project.name === 'iphone';
 /**
  * Opens the app fresh and dismisses the welcome card. The real feedback domain is
  * never reached, so no test can file a real ticket: by default it is blocked, and
- * `feedbackWidget` serves a stand-in script in place of widget.js.
+ * `feedbackWidget` serves a stand-in script in place of widget.js. `url` opens
+ * another address than the test server's root.
  */
-export async function start(page: Page, { feedbackWidget }: { feedbackWidget?: string } = {}) {
+export async function start(page: Page, { feedbackWidget, url = '/' }: { feedbackWidget?: string; url?: string } = {}) {
   await page.route('https://feedback.andreizimin.com/**', (route) =>
     feedbackWidget && new URL(route.request().url()).pathname === '/widget.js'
       ? route.fulfill({ contentType: 'text/javascript', body: feedbackWidget })
       : route.abort(),
   );
-  await page.goto('/');
+  await page.goto(url);
   await page.getByRole('button', { name: 'Start reading' }).click();
   await expect(page.locator('.page-area p').first()).toBeVisible();
 }
