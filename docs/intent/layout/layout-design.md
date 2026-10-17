@@ -18,9 +18,9 @@ One codebase serves iPhone, iPad and a laptop. Layout responds to viewport width
 
 ## Reader Controls
 
-The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size and Feedback (owned by `feedback`).
+The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size, appearance and Feedback (owned by `feedback`).
 
-- **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library and text size. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size buttons leave it open so the size can be stepped several times.
+- **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library, text size and appearance. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size and appearance buttons leave it open so the result can be seen and stepped several times.
 - **Wider screens (≥ 600 px):** a top bar shows every reader control; the bottom bar holds only the page-turn buttons.
 - **Feedback:** an ordinary button styled like the others, never floating over the page. On wider screens it sits in the top bar; on phones, where there is no top bar and the bottom bar is full, a compact Feedback button sits at the right end of the passage-title line at the top of the screen.
 
@@ -33,6 +33,16 @@ Single column, line length capped at about 65 characters, so an iPad or laptop n
 ## Text Size
 
 Text size runs from 16 to 32 px in 2 px steps, default 20 px, changed with A− and A+ buttons. It applies to the reading font and the glyph font together. Changing it re-paginates the passage, keeping the learner on the word they were reading. Text size is the first entry in the settings slice saved by `persistence`.
+
+## Appearance
+
+The learner chooses the app's appearance: **Auto** (follow the device's light or dark setting), **Light** or **Dark**. The default is Auto, so a learner who never touches it gets what they had before the setting existed.
+
+One button among the reader controls steps Auto → Light → Dark → Auto and shows the current choice as its label, so the result of a tap is visible at once; three values do not need a settings screen. The choice is the second entry in the settings slice saved by `persistence`.
+
+Every color in the app comes from tokens on the document root (page, text, muted, accent, newest-letter highlight). Auto keeps today's behaviour: the dark tokens apply under the browser's dark-appearance media query. Light and Dark are applied as an attribute on the document root (`data-appearance`), which selects the tokens directly and sets `color-scheme` to match, so native controls and scrollbars follow the chosen appearance too. Auto removes the attribute.
+
+Settings saved before this setting existed hold only a text size; they are read as Auto, so no learner sees the "saved progress could not be read" notice or loses their text size because a field is missing.
 
 ## Page Turning
 
@@ -49,7 +59,7 @@ The quiz is a separate full-screen view replacing the reader, opened in one tap 
 
 ## Platform
 
-Every interactive control is at least 44 by 44 pt. The layout respects safe areas (notch, home indicator) and follows the system light or dark appearance.
+Every interactive control is at least 44 by 44 pt. The layout respects safe areas (notch, home indicator) and, while the appearance is Auto, follows the system light or dark appearance.
 
 The newest-letter highlight color is the app's warm accent: brown on the light page and gold in dark appearance, each with a contrast ratio of at least 4.5:1 against the page background.
 
@@ -69,4 +79,6 @@ Width-dependent placement, sizes and real pagination depend on the browser's lay
 | Edge-zone width | Outer 15 % of viewport width | Fixed 44 pt strips | A proportional zone stays reachable on iPad and leaves most of a phone page for peeks |
 | Swipe threshold | 50 px horizontal and more horizontal than vertical | Any horizontal movement | Small finger drift during a glyph tap must not turn the page |
 | Text size control | A− and A+ in 2 px steps | A slider | Two buttons are reliable to hit with a thumb and give predictable steps |
+| Appearance control | One button cycling Auto → Light → Dark, labelled with the current choice | A two-state Light/Dark toggle; a segmented control; a settings screen | A toggle loses Auto, which is the right default for most learners; three values fit one button whose label shows the result, and a settings screen is more than one setting needs |
+| Applying the appearance | An attribute on the document root selecting the color tokens and `color-scheme` | A class on the app's root element; separate stylesheets | The tokens already live on the document root, and `color-scheme` must be set there for native controls to follow |
 | Layout verification | Playwright with WebKit at three viewports | Checking CSS by eye; Chromium | Layout specs need a real engine; WebKit is the engine the primary user's devices run |

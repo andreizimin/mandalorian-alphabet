@@ -19,8 +19,9 @@ import {
 import { usePagination } from './content/usePagination';
 import { usePageGestures } from './layout/gestures';
 import { useArrowKeyPageTurns } from './layout/pageTurning';
+import { applyAppearance } from './layout/appearance';
 import { BottomBar, MenuSheet, TitleBar, TopBar, type ReaderActions } from './layout/ReaderChrome';
-import { stepTextSize } from './layout/settings';
+import { appearanceOf, cycleAppearance, stepTextSize } from './layout/settings';
 import { currentStage, isDevStage } from './stage';
 import { DataPanel, StorageNotice } from './persistence/components';
 import { buildExport, deliverExport } from './persistence/exportImport';
@@ -60,6 +61,10 @@ export function App() {
   useEffect(() => {
     void alphabet.start();
   }, [alphabet]);
+
+  // @spec LAYOUT-017
+  const appearance = appearanceOf(settings);
+  useEffect(() => applyAppearance(document.documentElement, appearance), [appearance]);
 
   const order = alphabet.order();
   const currentId = resolveCurrentId(content, BUNDLED_PASSAGES);
@@ -117,6 +122,7 @@ export function App() {
     learnedCount: progress.learned.length,
     fontReady: fontState === 'loaded',
     textSize: settings.textSize,
+    appearance,
     feedbackReady: feedback.ready,
     feedbackReason: feedback.reason,
     onAdvance: advance,
@@ -126,6 +132,7 @@ export function App() {
     onLibrary: () => setView('library'),
     onQuiz: () => setView('quiz'),
     onTextSize: (direction) => settingsStore.update((s) => stepTextSize(s, direction)),
+    onAppearance: () => settingsStore.update(cycleAppearance),
     onBack: back,
     onForward: forward,
     onFeedback: feedback.open,

@@ -3,7 +3,7 @@ import { FeedbackButton } from '../feedback/FeedbackButton';
 import { Controls } from '../progression/components';
 import { QuizButton } from '../quiz/QuizScreen';
 import { PageTurnBar } from './pageTurning';
-import { MAX_TEXT_SIZE, MIN_TEXT_SIZE } from './settings';
+import { APPEARANCE_LABEL, MAX_TEXT_SIZE, MIN_TEXT_SIZE, type Appearance } from './settings';
 
 export interface ReaderActions {
   canAdvance: boolean;
@@ -12,6 +12,7 @@ export interface ReaderActions {
   learnedCount: number;
   fontReady: boolean;
   textSize: number;
+  appearance: Appearance;
   feedbackReady: boolean;
   /** Why Feedback is unavailable, shown while it is disabled. */
   feedbackReason?: string;
@@ -22,9 +23,22 @@ export interface ReaderActions {
   onLibrary: () => void;
   onQuiz: () => void;
   onTextSize: (direction: 1 | -1) => void;
+  /** Steps the appearance: Auto → Light → Dark → Auto. */
+  onAppearance: () => void;
   onBack: () => void;
   onForward: () => void;
   onFeedback: () => void;
+}
+
+/** One button that steps the appearance and shows the current choice. */
+// @spec LAYOUT-017
+export function AppearanceControl({ appearance, onAppearance }: { appearance: Appearance; onAppearance: () => void }) {
+  const label = APPEARANCE_LABEL[appearance];
+  return (
+    <button type="button" className="appearance" aria-label={`Appearance: ${label}`} onClick={onAppearance}>
+      {label}
+    </button>
+  );
 }
 
 // @spec LAYOUT-006
@@ -48,7 +62,7 @@ export function TextSizeControl({
 }
 
 /** Every reader control, for viewports 600 px and wider (hidden below by CSS). */
-// @spec LAYOUT-003, LAYOUT-008, LAYOUT-011, LAYOUT-016, PROG-007
+// @spec LAYOUT-003, LAYOUT-008, LAYOUT-011, LAYOUT-016, LAYOUT-017, PROG-007
 export function TopBar(a: ReaderActions) {
   return (
     <nav className="top-bar" aria-label="Reader controls">
@@ -67,6 +81,7 @@ export function TopBar(a: ReaderActions) {
       </button>
       <QuizButton learnedCount={a.learnedCount} fontReady={a.fontReady} onOpen={a.onQuiz} />
       <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
+      <AppearanceControl appearance={a.appearance} onAppearance={a.onAppearance} />
       <FeedbackButton ready={a.feedbackReady} reason={a.feedbackReason} onOpen={a.onFeedback} />
     </nav>
   );
@@ -120,7 +135,7 @@ export function BottomBar({ onMenu, ...a }: ReaderActions & { onMenu: () => void
 }
 
 /** The phone menu: occasional controls, one tap from the bottom bar. */
-// @spec LAYOUT-002, LAYOUT-011, LAYOUT-014, PROG-007
+// @spec LAYOUT-002, LAYOUT-011, LAYOUT-014, LAYOUT-017, PROG-007
 export function MenuSheet({ onClose, ...a }: ReaderActions & { onClose: () => void }) {
   const [confirmingReset, setConfirmingReset] = useState(false);
   const thenClose = (action: () => void) => () => {
@@ -157,6 +172,7 @@ export function MenuSheet({ onClose, ...a }: ReaderActions & { onClose: () => vo
               Library
             </button>
             <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
+            <AppearanceControl appearance={a.appearance} onAppearance={a.onAppearance} />
           </div>
         )}
       </div>
