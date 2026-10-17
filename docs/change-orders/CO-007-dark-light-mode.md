@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | Done |
 | Requested | 2026-10-16 |
-| Approved | |
-| Completed | |
+| Approved | 2026-10-17 |
+| Completed | 2026-10-17 |
 | Ticket | [ZZF-67](https://linear.app/zizify-workshop/issue/ZZF-67) |
 
 ## Request
@@ -76,7 +76,7 @@ Net: +2 new, ~4 revised, 0 deleted.
 
 ## Decisions Needed
 
-None. The control is one button that cycles Auto → Light → Dark and shows the current choice; a two-state toggle would lose Auto, and a settings screen is more than three values need.
+None; approved as written on 2026-10-17. The control is one button that cycles Auto → Light → Dark and shows the current choice; a two-state toggle would lose Auto, and a settings screen is more than three values need. The requester also chose to check this change on dev together with CO-008 and CO-009, which are stacked on this branch.
 
 ## Risks and Edge Cases
 
@@ -96,30 +96,36 @@ None. The control is one button that cycles Auto → Light → Dark and shows th
 
 ## Outcome
 
-Filled in after the change is complete.
+Written before the requester's dev check; the production run is reported on the ticket. Checked on dev together with CO-008 and CO-009, stacked on this branch.
 
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | None | | |
-| LLDs | 4 sections in `layout` | | |
-| Specs | +2 ~4 | | |
-| Tests | 5 files | | |
-| Code | 5 files | | |
+| HLD | None | None | |
+| LLDs | 4 sections in `layout` | 5 changes in `layout` | Reader Controls, the new Appearance section, Platform, and two decision rows (the control, and how it is applied) where one was predicted |
+| Specs | +2 ~4 | +2 ~4 | LAYOUT-017, LAYOUT-018 added; LAYOUT-002, 003, 005, 014 revised, as predicted |
+| Tests | 5 files | 5 files | +13 unit tests, +1 browser test (three viewports) |
+| Code | 5 files | 5 files | `settings.ts`, `appearance.ts`, `ReaderChrome.tsx`, `App.tsx`, `app.css`, as predicted |
+| Other | User flow step 9 | User flow step 9 | |
 
 ### Surprises
+
+1. **Nothing in the code.** The prediction held file for file; the only addition is a second decision row recording why the appearance is applied on the document root rather than the app's root element (`color-scheme` has to be set where the tokens live).
+2. **A test-order flake, not a bug.** The first browser run failed six iPhone tests at `page.goto`, before the app loaded: the preview server was still starting. A rerun passed all 52. Nothing to change in the app.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
+| `695514d` | CO-007 proposed: dark and light mode (ZZF-67) |
+| (this commit) | CO-007: Auto, Light or Dark appearance (ZZF-67) |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | |
-| Lines changed | |
-| Agent time | |
-| Deployed | |
+| Tests before → after | unit 279 → 292, browser (layout and feedback) 49 → 52 |
+| Lines changed | +66 −11 (code, 5 files), +165 −8 (tests, 5 files), +45 −8 (design doc, specs, user flow and this change order) |
+| Agent time | about 6 minutes from approval (16:30) to the outcome (16:36) |
+| Deployed | dev from the branch by the pipeline; production when the pull request merges |

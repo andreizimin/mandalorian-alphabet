@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { initialContent } from '../content/reading';
-import { initialSettings, stepTextSize } from '../layout/settings';
+import { appearanceOf, cycleAppearance, initialSettings, stepTextSize } from '../layout/settings';
 import { initialProgress } from '../progression/progression';
 import { buildExport, parseImport } from './exportImport';
 import { settingsSlice, SETTINGS_KEY } from './settingsSlice';
@@ -13,11 +13,36 @@ describe('settings slice', () => {
     const store = memoryStore();
     const first = renderHook(() => usePersistedSlice(store, settingsSlice));
     act(() => first.result.current.update((s) => stepTextSize(s, 1)));
-    expect(JSON.parse(store.getItem(SETTINGS_KEY)!)).toEqual({ textSize: 22 });
+    expect(JSON.parse(store.getItem(SETTINGS_KEY)!)).toEqual({ textSize: 22, appearance: 'system' });
     first.unmount();
 
     const reloaded = renderHook(() => usePersistedSlice(store, settingsSlice));
     expect(reloaded.result.current.value.textSize).toBe(22);
+  });
+
+  // @spec PERS-001, PERS-005, LAYOUT-017
+  it('saves the appearance immediately and restores it after a reload', () => {
+    const store = memoryStore();
+    const first = renderHook(() => usePersistedSlice(store, settingsSlice));
+    act(() => first.result.current.update(cycleAppearance));
+    act(() => first.result.current.update(cycleAppearance));
+    expect(JSON.parse(store.getItem(SETTINGS_KEY)!)).toEqual({ textSize: 20, appearance: 'dark' });
+    first.unmount();
+
+    const reloaded = renderHook(() => usePersistedSlice(store, settingsSlice));
+    expect(appearanceOf(reloaded.result.current.value)).toBe('dark');
+  });
+
+  // @spec LAYOUT-018, PERS-006
+  it('restores settings saved before the appearance existed as Auto, with no notice', () => {
+    const store = memoryStore();
+    store.setItem(SETTINGS_KEY, JSON.stringify({ textSize: 24 }));
+
+    const { result } = renderHook(() => usePersistedSlice(store, settingsSlice));
+
+    expect(result.current.notice).toBeNull();
+    expect(result.current.value.textSize).toBe(24);
+    expect(appearanceOf(result.current.value)).toBe('system');
   });
 });
 
