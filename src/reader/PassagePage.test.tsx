@@ -44,14 +44,17 @@ describe('PassagePage', () => {
     afterEach(() => vi.useRealTimers());
 
     // @spec READ-004
-    it('shows the Latin letter for 1.5 s and counts a peek when a glyph is tapped', async () => {
+    it('shows the whole word with the tapped letter marked for 1.5 s and counts a peek when a glyph is tapped', async () => {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       const { container, onPeek } = renderPage();
       const glyph = container.querySelector('.g')!; // the capital T in "The"
 
       await user.click(glyph);
 
-      expect(screen.getByRole('tooltip')).toHaveTextContent('T');
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveTextContent(/^The$/);
+      expect(Array.from(tooltip.querySelectorAll('.peek-letter')).map((m) => m.textContent)).toEqual(['T']);
+      expect(tooltip.querySelector('.g')).toBeNull(); // the reading font, not glyphs
       expect(onPeek).toHaveBeenCalledTimes(1);
       expect(onPeek).toHaveBeenCalledWith('t');
 
@@ -59,6 +62,32 @@ describe('PassagePage', () => {
       expect(screen.getByRole('tooltip')).toBeInTheDocument();
       act(() => vi.advanceTimersByTime(200));
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    // @spec READ-004
+    it('marks every occurrence of the tapped letter in the word, in either case', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      const { container } = renderPage();
+      const enter = Array.from(container.querySelectorAll('[role="img"]')).find((w) => w.getAttribute('aria-label') === 'Enter')!;
+
+      await user.click(enter.querySelector('.g')!); // the capital E
+
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveTextContent(/^Enter$/);
+      expect(Array.from(tooltip.querySelectorAll('.peek-letter')).map((m) => m.textContent)).toEqual(['E', 'e']);
+    });
+
+    // @spec READ-004
+    it('replaces the word when another glyph is tapped', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      const { container } = renderPage();
+      const glyphs = container.querySelectorAll('.g');
+
+      await user.click(glyphs[0]); // The
+      await user.click(glyphs[glyphs.length - 1]); // here.
+
+      expect(screen.getAllByRole('tooltip')).toHaveLength(1);
+      expect(screen.getByRole('tooltip')).toHaveTextContent(/^here\.$/);
     });
 
     // @spec READ-004
