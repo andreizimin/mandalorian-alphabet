@@ -24,6 +24,6 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-004](CO-004-dev-environment.md) | Dev environment and branch flow ([ZZF-62](https://linear.app/zizify-workshop/issue/ZZF-62)) | Feature | Done | +2–3 ~1 | +2 ~2 |
 | [CO-005](CO-005-faster-updates.md) | Keep offline, with faster updates ([ZZF-65](https://linear.app/zizify-workshop/issue/ZZF-65)) | Feature | Done | +2 ~1 | +2 ~1 |
 | [CO-006](CO-006-ci-cd.md) | CI/CD with one manual step ([ZZF-66](https://linear.app/zizify-workshop/issue/ZZF-66)) | Feature | Done | +3 | +3 |
-| [CO-007](CO-007-dark-light-mode.md) | Dark and light mode ([ZZF-67](https://linear.app/zizify-workshop/issue/ZZF-67)) | Feature | Proposed | +2 ~4 | |
-| [CO-008](CO-008-x-ray.md) | X-ray: the English under the glyphs ([ZZF-68](https://linear.app/zizify-workshop/issue/ZZF-68)) | Feature | Proposed | +5 ~1 | |
-| [CO-009](CO-009-intro-terminal.md) | Intro terminal ([ZZF-69](https://linear.app/zizify-workshop/issue/ZZF-69)) | Feature | Proposed | +8 ~1 | |
+| [CO-007](CO-007-dark-light-mode.md) | Dark and light mode ([ZZF-67](https://linear.app/zizify-workshop/issue/ZZF-67)) | Feature | Done | +2 ~4 | +2 ~4 |
+| [CO-008](CO-008-x-ray.md) | X-ray: the English under the glyphs ([ZZF-68](https://linear.app/zizify-workshop/issue/ZZF-68)) | Feature | Done | +1 ~1 (first proposal +5 ~1) | +1 ~1 |
+| [CO-009](CO-009-intro-terminal.md) | Intro terminal ([ZZF-69](https://linear.app/zizify-workshop/issue/ZZF-69)) | Feature | In progress | +8 ~1 | |

@@ -20,7 +20,7 @@ They tap *advance*. An intro card shows the glyph for E, the letter E, and up to
 
 ## 5. Reading, peeking, getting the hint
 
-They read. When a glyph trips them up they tap it, wherever it sits on the page; the Latin letter appears for 1.5 seconds and the peek is counted for that letter (READ-004). After two pages read since E arrived with fewer than 2 peeks on it, a non-blocking hint says they are ready for the next letter and names reading as the reason (PROG-004). They can dismiss it, which keeps it away until they advance (PROG-012), or advance at any time with or without a hint (PROG-010). On the phone the controls sit in a bottom bar within thumb reach (LAYOUT-002); pages turn with the ← and → buttons fixed at the bottom of the screen (LAYOUT-012), by swipe, or by a tap on the outer edges of the page away from any glyph (LAYOUT-007); on a laptop the arrow keys work too (LAYOUT-013). Turning back to re-read never counts as new reading (TEXT-011), and the last page of a passage ends with a card offering the next passage or the library (TEXT-012).
+They read. When a glyph trips them up they tap it, wherever it sits on the page; the whole word appears in English right under it for 1.5 seconds, the tapped letter marked, and the peek is counted for that letter (READ-004, READ-010). After two pages read since E arrived with fewer than 2 peeks on it, a non-blocking hint says they are ready for the next letter and names reading as the reason (PROG-004). They can dismiss it, which keeps it away until they advance (PROG-012), or advance at any time with or without a hint (PROG-010). On the phone the controls sit in a bottom bar within thumb reach (LAYOUT-002); pages turn with the ← and → buttons fixed at the bottom of the screen (LAYOUT-012), by swipe, or by a tap on the outer edges of the page away from any glyph (LAYOUT-007); on a laptop the arrow keys work too (LAYOUT-013). Turning back to re-read never counts as new reading (TEXT-011), and the last page of a passage ends with a card offering the next passage or the library (TEXT-012).
 
 ## 6. Second letter: the quiz unlocks
 
@@ -36,7 +36,7 @@ With E, T, A and O learned, enough short words qualify (*tea*, *toe*, *ate*, *oa
 
 ## 9. Longer sessions on the iPad
 
-The same app, no account, on the iPad: controls move to a top bar, the reading column stays at about 65 characters, and text size runs from 16 to 32 px for both fonts (LAYOUT-003, LAYOUT-001, LAYOUT-006). Split View and Slide Over behave because layout keys off viewport width, not device (LAYOUT-002, LAYOUT-003).
+The same app, no account, on the iPad: controls move to a top bar, the reading column stays at about 65 characters, and text size runs from 16 to 32 px for both fonts (LAYOUT-003, LAYOUT-001, LAYOUT-006). Split View and Slide Over behave because layout keys off viewport width, not device (LAYOUT-002, LAYOUT-003). Reading in bed, they tap the appearance button from Auto to Dark and the page goes dark whatever the iPad is set to; the choice is remembered (LAYOUT-017).
 
 ## 10. Stumbling, stepping back, resetting
 

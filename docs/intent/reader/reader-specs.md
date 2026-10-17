@@ -19,4 +19,5 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Peek
 
-- `[x]` **READ-004**: When the learner taps a glyph in a passage page (not in the quiz), wherever on the page the glyph sits, the system SHALL show its Latin letter for 1.5 s and increment that letter's peek count, and SHALL NOT turn the page.
+- `[x]` **READ-004**: When the learner taps a glyph in a passage page (not in the quiz), wherever on the page the glyph sits, the system SHALL show the whole word the glyph belongs to in the reading font, with every occurrence of the tapped letter in it marked, for 1.5 s, SHALL increment that letter's peek count, and SHALL NOT turn the page.
+- `[x]` **READ-010**: The peek popover SHALL sit directly under the tapped word, kept within the viewport's width, and above the word when there is no room below it within the page area.
