@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Minor fix |
-| Status | In progress |
+| Status | Done |
 | Requested | 2026-10-17 |
 | Approved | 2026-10-17 |
-| Completed | |
+| Completed | 2026-10-17 |
 | Ticket | [ZZF-70](https://linear.app/zizify-workshop/issue/ZZF-70) |
 
 ## Request
@@ -83,30 +83,35 @@ Unit tests with fake timers; WebKit browser tests at three viewports; CI; dev ch
 
 ## Outcome
 
-Filled in after the change is complete.
+Written before the requester's dev check; the production run is reported on the ticket.
 
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | None | | |
-| LLDs | 2 sections in `intro` | | |
-| Specs | +1 ~2 | | |
-| Tests | 4 files | | |
-| Code | 3 files | | |
+| HLD | None | None | |
+| LLDs | 2 sections in `intro` | 3 changes in `intro` | Script (the greeting "stands alone until the learner taps"), Typing, and the decision rows (a "Pacing" row added, "Skipping" replaced by "Tapping while typing", the greeting's-English row reworded), plus one line in Verification |
+| Specs | +1 ~2 | +1 ~2 | INTRO-009 added; INTRO-002 and INTRO-005 revised, as predicted |
+| Tests | 4 files | 4 files | As predicted |
+| Code | 3 files | 3 files | As predicted |
+| Other | User flow step 1 | User flow step 1 | |
 
 ### Surprises
+
+1. **A browser test tapped too soon.** It expected the second tap to start the message's first line, but the English greeting was still typing (half a second), so the tap finished it instead, which is what INTRO-005 says. The test now waits for the tap-to-continue prompt before each tap, which also makes it a better reading of INTRO-009.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
+| `a6ff268` | CO-010 proposed: intro paragraphs appear on tap (ZZF-70) |
+| (this commit) | CO-010: intro paragraphs appear on tap (ZZF-70) |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | |
-| Lines changed | |
-| Agent time | |
-| Deployed | |
+| Tests before → after | unit 316 → 318, browser 78 → 78 passed (5 skipped) |
+| Lines changed | +65 −22 (code, 3 files), +126 −66 (tests, 4 files), +13 −12 (design doc, specs and user flow) |
+| Agent time | about 8 minutes from the proposal (20:27) to the outcome (20:35) |
+| Deployed | dev from the branch by the pipeline; production when the pull request merges |

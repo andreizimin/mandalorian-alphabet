@@ -11,7 +11,8 @@ export const GLYPH_WORDS: readonly string[] = ["Mando'a", 'Mandalorian'];
 
 /**
  * The lines typed under the glyph greeting, in order. The first is the greeting
- * in English; the rest explain the app.
+ * in English; the rest explain the app. Each is a paragraph the learner brings
+ * with a tap.
  */
 export const LINES: readonly string[] = [
   GREETING,
@@ -22,9 +23,6 @@ export const LINES: readonly string[] = [
 ];
 
 export const CHAR_MS = 28;
-/** How long the glyph greeting stands alone before its English is typed beneath it. */
-export const HOLD_MS = 2500;
-export const LINE_PAUSE_MS = 450;
 
 export interface Frame {
   /** How many characters of the glyph greeting are shown. */
@@ -46,21 +44,40 @@ export function isFinished(frame: Frame): boolean {
   return frame.greeting === GREETING.length && currentLine(frame) === -1;
 }
 
-/** One step of the schedule: the next greeting character, or the next character of the current line. */
+/** A paragraph is complete and the next has not been started: the terminal waits for a tap. */
+// @spec INTRO-009
+export function isWaiting(frame: Frame): boolean {
+  if (frame.greeting < GREETING.length) return false;
+  const line = currentLine(frame);
+  return line !== -1 && frame.lines[line] === 0;
+}
+
+function typeOne(frame: Frame, line: number): Frame {
+  return { ...frame, lines: frame.lines.map((shown, i) => (i === line ? shown + 1 : shown)) };
+}
+
+/** One step of the timer: the next character of the paragraph being typed; nothing while waiting or finished. */
 // @spec INTRO-001, INTRO-002, INTRO-003
 export function step(frame: Frame): Frame {
   if (frame.greeting < GREETING.length) return { ...frame, greeting: frame.greeting + 1 };
   const line = currentLine(frame);
-  if (line === -1) return frame;
-  return { ...frame, lines: frame.lines.map((shown, i) => (i === line ? shown + 1 : shown)) };
+  if (line === -1 || frame.lines[line] === 0) return frame;
+  return typeOne(frame, line);
 }
 
-/** How long to wait after showing `frame` before the next step. */
-// @spec INTRO-001, INTRO-002
-export function delayAfter(frame: Frame): number {
-  if (frame.greeting < GREETING.length) return CHAR_MS;
+/** A tap: finishes the paragraph being typed, or starts the next one while waiting. */
+// @spec INTRO-005, INTRO-009
+export function tap(frame: Frame): Frame {
+  if (frame.greeting < GREETING.length) return { ...frame, greeting: GREETING.length };
   const line = currentLine(frame);
-  if (line === -1) return 0;
-  if (frame.lines[line] === 0) return line === 0 ? HOLD_MS : LINE_PAUSE_MS;
+  if (line === -1) return frame;
+  if (frame.lines[line] === 0) return typeOne(frame, line);
+  return { ...frame, lines: frame.lines.map((shown, i) => (i === line ? LINES[i].length : shown)) };
+}
+
+/** How long to wait after showing `frame` before the next step, or null when there is nothing to type. */
+// @spec INTRO-001, INTRO-009
+export function delayAfter(frame: Frame): number | null {
+  if (isFinished(frame) || isWaiting(frame)) return null;
   return CHAR_MS;
 }

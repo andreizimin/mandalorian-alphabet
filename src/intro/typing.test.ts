@@ -3,13 +3,13 @@ import {
   FINISHED,
   GLYPH_WORDS,
   GREETING,
-  HOLD_MS,
   LINES,
-  LINE_PAUSE_MS,
   START,
   delayAfter,
   isFinished,
+  isWaiting,
   step,
+  tap,
   type Frame,
 } from './typing';
 
@@ -45,35 +45,59 @@ describe('the intro script', () => {
 });
 
 describe('the typing schedule', () => {
-  // @spec INTRO-002
-  it('types the whole glyph greeting before anything else, then holds it before the English starts', () => {
+  // @spec INTRO-002, INTRO-009
+  it('types the whole glyph greeting, then waits for a tap instead of going on', () => {
     const typed = steps(START, GREETING.length);
     expect(typed).toEqual({ greeting: GREETING.length, lines: LINES.map(() => 0) });
-    expect(delayAfter(typed)).toBe(HOLD_MS);
-
-    const english = steps(typed, GREETING.length);
-    expect(english.greeting).toBe(GREETING.length);
-    expect(english.lines[0]).toBe(GREETING.length);
-    expect(english.lines.slice(1).every((n) => n === 0)).toBe(true);
+    expect(isWaiting(typed)).toBe(true);
+    expect(delayAfter(typed)).toBeNull();
+    expect(step(typed)).toEqual(typed);
   });
 
-  // @spec INTRO-001, INTRO-003
-  it('then types the lines in order, one character at a time, until finished', () => {
-    const total = GREETING.length + LINES.reduce((sum, line) => sum + line.length, 0);
-    const end = steps(START, total);
-    expect(end).toEqual(FINISHED);
-    expect(isFinished(end)).toBe(true);
-    expect(isFinished(steps(START, total - 1))).toBe(false);
+  // @spec INTRO-005, INTRO-009
+  it('a tap while waiting starts the next paragraph, which then types on its own', () => {
+    const typed = steps(START, GREETING.length);
+    const started = tap(typed);
+    expect(started.lines[0]).toBe(1);
+    expect(isWaiting(started)).toBe(false);
+    expect(delayAfter(started)).toBe(CHAR_MS);
+
+    const english = steps(started, GREETING.length - 1);
+    expect(english.lines[0]).toBe(GREETING.length);
+    expect(english.lines.slice(1).every((n) => n === 0)).toBe(true);
+    expect(isWaiting(english)).toBe(true);
+  });
+
+  // @spec INTRO-005
+  it('a tap while typing finishes the current paragraph only', () => {
+    const partGreeting = steps(START, 3);
+    const greeted = tap(partGreeting);
+    expect(greeted).toEqual({ greeting: GREETING.length, lines: LINES.map(() => 0) });
+
+    const partLine = steps(tap(greeted), 4);
+    const lineDone = tap(partLine);
+    expect(lineDone.lines[0]).toBe(LINES[0].length);
+    expect(lineDone.lines[1]).toBe(0);
+  });
+
+  // @spec INTRO-001, INTRO-004
+  it('reaches the end after a tap per paragraph, and stays there', () => {
+    let frame = steps(START, GREETING.length);
+    for (const line of LINES) {
+      frame = tap(frame);
+      frame = steps(frame, line.length - 1);
+    }
+    expect(frame).toEqual(FINISHED);
+    expect(isFinished(frame)).toBe(true);
+    expect(isWaiting(frame)).toBe(false);
+    expect(delayAfter(frame)).toBeNull();
+    expect(tap(FINISHED)).toEqual(FINISHED);
     expect(step(FINISHED)).toEqual(FINISHED);
   });
 
   // @spec INTRO-001
-  it('pauses at the end of each line, and types characters evenly otherwise', () => {
+  it('types characters evenly within a paragraph', () => {
     expect(delayAfter(START)).toBe(CHAR_MS);
-    const typed = steps(START, GREETING.length);
-    expect(delayAfter(step(typed))).toBe(CHAR_MS);
-    const firstLineDone = steps(typed, LINES[0].length);
-    expect(delayAfter(firstLineDone)).toBe(LINE_PAUSE_MS);
-    expect(delayAfter(FINISHED)).toBe(0);
+    expect(delayAfter(steps(START, 5))).toBe(CHAR_MS);
   });
 });

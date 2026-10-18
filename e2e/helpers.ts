@@ -20,10 +20,14 @@ export async function start(page: Page, { feedbackWidget, url = '/' }: { feedbac
   await expect(page.locator('.page-area p').first()).toBeVisible();
 }
 
-/** Finishes the intro terminal's typing with a tap (INTRO-005) and taps Let's go (INTRO-004). */
+/** Taps through the intro terminal's paragraphs (INTRO-005, INTRO-009) and taps Let's go (INTRO-004). */
 export async function passIntro(page: Page) {
-  await page.locator('.terminal').click({ position: { x: 12, y: 12 } });
-  await page.getByRole('button', { name: "Let's go" }).click();
+  const letsGo = page.getByRole('button', { name: "Let's go" });
+  await expect(page.locator('.terminal')).toBeVisible();
+  for (let i = 0; i < 20 && !(await letsGo.isVisible()); i++) {
+    await page.locator('.terminal').click({ position: { x: 12, y: 12 } });
+  }
+  await letsGo.click();
 }
 
 /** Opens the phone menu sheet when the control lives there. */
