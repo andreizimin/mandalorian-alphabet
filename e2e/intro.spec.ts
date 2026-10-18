@@ -21,8 +21,25 @@ test('the first open lands on the terminal, which greets in glyphs and then in E
   expect(await glyph.evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/Mando/);
   await expect(letsGo(page)).toHaveCount(0);
 
-  await expect(greeting.locator('.g')).toHaveCount(0, { timeout: 10_000 });
+  // The glyph line stays; its English is typed beneath it after a hold.
+  const english = page.locator('.intro-greeting-english');
+  await expect(english).toHaveText('Hello, adventurer!', { timeout: 15_000 });
+  await expect(english.locator('.g')).toHaveCount(0);
   await expect(greeting).toHaveText('Hello, adventurer!');
+  expect(await greeting.locator('.g').count()).toBeGreaterThan(10);
+});
+
+// @spec INTRO-003
+test("draws Mando'a and Mandalorian in glyphs inside the English lines", async ({ page }) => {
+  await openFresh(page);
+  await terminal(page).click({ position: { x: 12, y: 12 } });
+  await expect(letsGo(page)).toBeVisible();
+
+  const words = page.locator('.terminal .intro-line [role="img"]');
+  expect(new Set(await words.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label'))))).toEqual(
+    new Set(["Mando'a", 'Mandalorian']),
+  );
+  expect(await words.first().locator('.g').first().evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/Mando/);
 });
 
 // @spec INTRO-003, INTRO-004, INTRO-005
@@ -49,7 +66,7 @@ test('shows the whole text at once under reduced motion', async ({ page }) => {
   await openFresh(page);
   await expect(letsGo(page)).toBeVisible();
   await expect(page.locator('.intro-greeting')).toHaveText('Hello, adventurer!');
-  await expect(page.locator('.intro-greeting .g')).toHaveCount(0);
+  await expect(page.locator('.intro-greeting-english')).toHaveText('Hello, adventurer!');
 });
 
 // @spec INTRO-008

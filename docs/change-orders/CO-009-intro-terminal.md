@@ -123,7 +123,7 @@ Written before the requester's dev check; the production run is reported on the 
 |---|---|---|---|
 | HLD | 1 row | 1 row | |
 | LLDs | 1 new, 3 sections in `progression` | 1 new, 3 sections in `progression`, 1 sentence in `content` | `content`'s Pagination section now says the area is measured when it appears (see Surprises) |
-| Specs | +8 ~1 | +8 ~1 | INTRO-001 to INTRO-008 added, PROG-014 revised, as predicted |
+| Specs | +8 ~1 | +8 ~1, then ~2 | INTRO-001 to INTRO-008 added, PROG-014 revised, as predicted; INTRO-002 and INTRO-003 revised after the dev check (see Surprises 4) |
 | Tests | 7 files | 8 files | `src/persistence/usePersistedProgress.test.tsx` also used the old names |
 | Code | 6 files | 7 files | `src/content/usePagination.ts` fixed (see Surprises) |
 | Other | User flow steps 1 and 3; HLD row | User flow steps 1, 2 and 3; HLD row | Step 2 gained the replay |
@@ -133,6 +133,7 @@ Written before the requester's dev check; the production run is reported on the 
 1. **The reader never paginated after the intro.** The pagination hook subscribed to the reading area once, keyed on a ref object that never changes. The welcome card was an overlay over an already mounted reader, so the area had always existed from the first render; the intro replaces the reader, so the area appeared later and was never measured, and Let's go landed on an empty page. The browser tests caught it on the first run. The hook now follows the area element itself, which also covers returning from the library or the quiz. This is the one cross-segment effect the prediction missed (`content`: "none").
 2. **Fake timers and chained timeouts.** The terminal arms the next timer only after React commits the previous step, so advancing the fake clock in one call typed one character. The tests advance the clock one character at a time, as a browser would tick; the component was right.
 3. **A fourth test file.** The persistence test for restoring progress used the old welcome names; the grep before coding found it, so it cost a minute, not a surprise at run time.
+4. **The dev check asked for more Mandalorian, for longer.** The requester liked the intro but found the glyph greeting "too promptly dismissed, hard to see and properly enjoy", and asked for "a sprinkle of glyphs in the message". Three changes the same evening: the glyph greeting holds for 2.5 s instead of 0.9 s; it stays on screen while its English is typed beneath it, instead of being redrawn in place; and *Mando'a* and *Mandalorian* in the English lines are drawn in glyphs, growing as they are typed. INTRO-002 and INTRO-003 revised; `typing.ts`, `IntroTerminal.tsx`, `app.css`, both intro test files and `e2e/intro.spec.ts` touched again. The first design optimised for the "glyphs were English all along" reveal and forgot that the glyph line is the first Mandalorian the learner ever sees; a first impression wants time.
 
 ### Commits
 
@@ -140,13 +141,14 @@ Written before the requester's dev check; the production run is reported on the 
 |---|---|
 | `89a4a16` | CO-009 proposed: intro terminal (ZZF-69) |
 | `843fa84` | Merge the finished CO-008 branch into the CO-009 branch (stacked for one dev check) |
-| (this commit) | CO-009: the intro terminal (ZZF-69) |
+| `9946683` | CO-009: the intro terminal (ZZF-69) |
+| (this commit) | CO-009: the glyph greeting stays, and glyphs in the message (ZZF-69) |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | unit 297 → 308, browser 69 → 75 passed (5 skipped), with the intro now in every test's start |
-| Lines changed | +186 −51 (code, 7 files), +292 −47 (tests, 8 files), +104 −12 (design docs, specs, user flow and this change order) |
-| Agent time | about 18 minutes from the branch merge (16:50) to the outcome (17:08) |
+| Tests before → after | unit 297 → 308, then 316; browser 69 → 75 passed, then 78, with the intro now in every test's start |
+| Lines changed | +186 −51 (code, 7 files), +292 −47 (tests, 8 files), +104 −12 (design docs, specs, user flow and this change order); then about +70 −40 across the same intro files after the dev check |
+| Agent time | about 18 minutes from the branch merge (16:50) to the outcome (17:08), plus about 15 minutes after the dev check |
 | Deployed | dev from the branch by the pipeline; production when the pull requests merge |

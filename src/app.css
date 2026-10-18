@@ -427,8 +427,15 @@ button.primary {
   color: #f0c98e;
 }
 
-.intro-greeting .g {
+.intro-greeting .g,
+.intro-line .g {
   cursor: inherit;
+}
+
+.intro-greeting-english {
+  margin-top: -0.4em;
+  font-size: 20px;
+  color: #f0c98e;
 }
 
 .cursor {

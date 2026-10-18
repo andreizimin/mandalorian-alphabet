@@ -4,7 +4,7 @@ The journey of the primary user — a young Star Wars fan — from first open to
 
 ## 1. First open
 
-They open the link in Safari on their iPhone. An old Mandalorian terminal fills the screen and types "Hello, adventurer!" in glyphs they cannot read, then turns the line into English before their eyes (INTRO-001, INTRO-002). It goes on in English: they don't read Mando'a yet, nobody does on day one, and here is how they will learn, one letter at a time inside real stories (INTRO-003). A tap finishes the typing if they are impatient (INTRO-005), and **Let's go** opens the first passage (INTRO-004). The app loads once and from then on works offline (OFF-001). The Mandalorian font ships with the app, so there is nothing to upload or install (ALPHA-001); the terminal waits for it before typing (INTRO-006). If the font ever fails, a message offers a retry (ALPHA-003).
+They open the link in Safari on their iPhone. An old Mandalorian terminal fills the screen and types "Hello, adventurer!" in glyphs they cannot read, lets them look at it, then types the same line in English beneath (INTRO-001, INTRO-002). It goes on in English, with *Mando'a* and *Mandalorian* still in glyphs: they don't read Mando'a yet, nobody does on day one, and here is how they will learn, one letter at a time inside real stories (INTRO-003). A tap finishes the typing if they are impatient (INTRO-005), and **Let's go** opens the first passage (INTRO-004). The app loads once and from then on works offline (OFF-001). The Mandalorian font ships with the app, so there is nothing to upload or install (ALPHA-001); the terminal waits for it before typing (INTRO-006). If the font ever fails, a message offers a retry (ALPHA-003).
 
 ## 2. Straight into a passage
 
