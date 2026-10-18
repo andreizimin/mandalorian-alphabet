@@ -115,6 +115,68 @@ describe('PassagePage', () => {
   });
 });
 
+describe('PassagePage selection X-ray', () => {
+  function select(container: HTMLElement, from: number, to: number) {
+    const text = container.querySelector('p')!;
+    const range = document.createRange();
+    range.setStart(text, from);
+    range.setEnd(text, to);
+    const selection = document.getSelection()!;
+    selection.removeAllRanges();
+    selection.addRange(range);
+    act(() => {
+      document.dispatchEvent(new Event('selectionchange'));
+    });
+  }
+
+  afterEach(() => document.getSelection()?.removeAllRanges());
+
+  // @spec READ-011
+  it('shows the selected text in the reading font while it is selected, without counting a peek', () => {
+    const { container, onPeek } = renderPage();
+    const paragraph = container.querySelector('p')!;
+    select(container, 0, paragraph.childNodes.length);
+
+    const tooltip = screen.getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('The east gate.');
+    expect(tooltip).toHaveClass('peek-selection');
+    expect(tooltip.querySelector('.g')).toBeNull();
+    expect(onPeek).not.toHaveBeenCalled();
+  });
+
+  // @spec READ-011
+  it('removes the popover when the selection is cleared', () => {
+    const { container } = renderPage();
+    const paragraph = container.querySelector('p')!;
+    select(container, 0, paragraph.childNodes.length);
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    document.getSelection()!.removeAllRanges();
+    act(() => {
+      document.dispatchEvent(new Event('selectionchange'));
+    });
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  // @spec READ-011
+  it('ignores selections outside the page', () => {
+    const { onPeek } = renderPage();
+    const outside = document.createElement('p');
+    outside.textContent = 'elsewhere';
+    document.body.append(outside);
+    const range = document.createRange();
+    range.selectNodeContents(outside);
+    document.getSelection()!.addRange(range);
+    act(() => {
+      document.dispatchEvent(new Event('selectionchange'));
+    });
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(onPeek).not.toHaveBeenCalled();
+    outside.remove();
+  });
+});
+
 describe('PassagePage newest-letter highlight', () => {
   const highlighted = (el: HTMLElement) =>
     Array.from(el.querySelectorAll('.g.g-new')).map((g) => g.textContent!.toLowerCase());
