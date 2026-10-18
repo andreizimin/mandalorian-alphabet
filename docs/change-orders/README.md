@@ -28,3 +28,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-008](CO-008-x-ray.md) | X-ray: the English under the glyphs ([ZZF-68](https://linear.app/zizify-workshop/issue/ZZF-68)) | Feature | Done | +1 ~1 (first proposal +5 ~1) | +2 ~1 (selection X-ray added after the dev check) |
 | [CO-009](CO-009-intro-terminal.md) | Intro terminal ([ZZF-69](https://linear.app/zizify-workshop/issue/ZZF-69)) | Feature | Done | +8 ~1 | +8 ~1 (2 revised after the dev check) |
 | [CO-010](CO-010-intro-tap-to-continue.md) | Intro paragraphs appear on tap ([ZZF-70](https://linear.app/zizify-workshop/issue/ZZF-70)) | Minor fix | Done | +1 ~2 | +1 ~2 |
+| [CO-011](CO-011-console-look.md) | The console look ([ZZF-71](https://linear.app/zizify-workshop/issue/ZZF-71)) | Feature | Proposed | +2 ~2 | |
