@@ -105,9 +105,9 @@ Written before the requester's dev check; the production run is reported on the 
 |---|---|---|---|
 | HLD | None | None | |
 | LLDs | 2 sections in `reader` | 2 sections in `reader` | Peek rewritten; two decision rows |
-| Specs | +1 ~1 | +1 ~1 | READ-010 added, READ-004 revised, as predicted (the first proposal was +5 ~1) |
-| Tests | 3 files | 4 files | `playwright.config.ts` also changed, for the test runner itself (see Surprises) |
-| Code | 3 files | 3 files | `PassagePage.tsx`, `peekPlacement.ts`, `app.css`, as predicted |
+| Specs | +1 ~1 | +2 ~1 | READ-010 added, READ-004 revised, as predicted (the first proposal was +5 ~1); READ-011 added after the dev check (see Surprises 4) |
+| Tests | 3 files | 5 files | `playwright.config.ts` for the test runner itself (Surprises 3) and `src/test/setup.ts` for a jsdom gap (Surprises 4) |
+| Code | 3 files | 3 files | `PassagePage.tsx`, `peekPlacement.ts`, `app.css`, as predicted; all three touched again for the selection X-ray |
 | Other | User flow step 5 | User flow step 5 | |
 
 ### Surprises
@@ -115,6 +115,7 @@ Written before the requester's dev check; the production run is reported on the 
 1. **The design changed at approval, and the prediction was redone before work.** The first proposal (a held X-ray button for the whole page, five new specs across `reader` and `layout`) was replaced when the requester asked for activation from the text itself. The rewritten prediction then held file for file. The lesson for future proposals: when a request names a mechanism ("x-ray glass"), ask how it is reached before predicting its specs.
 2. **A browser test assumed the rule's edge instead of testing the rule.** The "last line" test expected the popover to flip above the word whenever the word was within 60 px of the bottom, but at the default text size the popover (about 40 px) still fit below. The test now computes whether the popover fits and expects the matching side; the pure placement function's unit tests cover the flip itself.
 3. **The test port was taken by another project.** A preview server for a different repository was listening on 4173, and the Playwright config reuses an existing server on that port, so every browser test loaded the wrong app and timed out. `playwright.config.ts` now reads `E2E_PORT` (default 4173) so a run can pick a free port; CI is unaffected.
+4. **The dev check sent it back: highlighting was the gesture all along.** On dev, the requester *selected* text on the iPhone and expected its English; a tap on a glyph was not what "x-ray glass" meant to them. The gesture was never named in the ticket, and the decision round offered taps, holds and buttons but not selection. Selection X-ray was added the same evening: because the page's text is Latin underneath (READ-002), the selected text already is the English, so the reader only listens for selection changes and shows it in a popover above the selection (READ-011). The browser's own copy menu keeps working. jsdom's Range lacks `getClientRects`, so the unit-test setup polyfills an empty list. The tap-a-glyph word stays. Lesson added to Surprise 1: when a request names a tool ("glass"), ask what the hand does with it.
 
 ### Commits
 
@@ -122,13 +123,14 @@ Written before the requester's dev check; the production run is reported on the 
 |---|---|
 | `aa6a663` | CO-008 proposed: X-ray, the English under the glyphs (ZZF-68) |
 | `7ef39c2` | Merge the finished CO-007 branch into the CO-008 branch (stacked for one dev check) |
-| (this commit) | CO-008: a peek shows the whole word under the word (ZZF-68) |
+| `a2c9785` | CO-008: a peek shows the whole word under the word (ZZF-68) |
+| (this commit) | CO-008: selection X-ray, the English of highlighted text (ZZF-68) |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | unit 292 → 297, browser (reader) 0 → 6 (two tests, three viewports) |
-| Lines changed | +116 −15 (code, 3 files), +114 −5 (tests and test config, 4 files), +51 −48 (design doc, specs, user flow and this change order) |
-| Agent time | about 12 minutes from the branch merge (16:37) to the outcome (16:49) |
+| Tests before → after | unit 292 → 303, browser (reader) 0 → 9 (three tests, three viewports) |
+| Lines changed | +116 −15 then +75 −20 (code, 3 files), +114 −5 then +130 −2 (tests and test config, 5 files), +51 −48 then +22 −6 (design doc, specs, user flow and this change order) |
+| Agent time | about 12 minutes from the branch merge (16:37) to the outcome (16:49), plus about 15 minutes for the selection X-ray after the dev check (17:20 to 17:35) |
 | Deployed | dev from the branch by the pipeline; production when the pull request merges |

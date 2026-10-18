@@ -37,9 +37,24 @@ export function peekPlacement(word: Box, popover: Size, viewport: Size, area: Ar
   const above = below + popover.height > area.bottom;
   const top = above ? word.top - PEEK_GAP - popover.height : below;
 
-  const centered = word.left + word.width / 2 - popover.width / 2;
-  const maxLeft = Math.max(PEEK_MARGIN, viewport.width - PEEK_MARGIN - popover.width);
-  const left = Math.min(Math.max(centered, PEEK_MARGIN), maxLeft);
+  return { left: clampLeft(word, popover, viewport), top, above };
+}
 
-  return { left, top, above };
+function clampLeft(anchor: Box, popover: Size, viewport: Size): number {
+  const centered = anchor.left + anchor.width / 2 - popover.width / 2;
+  const maxLeft = Math.max(PEEK_MARGIN, viewport.width - PEEK_MARGIN - popover.width);
+  return Math.min(Math.max(centered, PEEK_MARGIN), maxLeft);
+}
+
+/**
+ * Where the selection popover goes: above the selection's first line, centered
+ * on it, or below its last line when there is no room above within the page
+ * area; kept within the viewport's width.
+ */
+// @spec READ-011
+export function selectionPlacement(first: Box, last: Box, popover: Size, viewport: Size, area: Area): Placement {
+  const aboveTop = first.top - PEEK_GAP - popover.height;
+  const above = aboveTop >= area.top;
+  const top = above ? aboveTop : last.top + last.height + PEEK_GAP;
+  return { left: clampLeft(first, popover, viewport), top, above };
 }
