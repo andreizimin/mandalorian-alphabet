@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | Done |
 | Requested | 2026-10-16 |
-| Approved | |
-| Completed | |
+| Approved | 2026-10-17 |
+| Completed | 2026-10-17 |
 | Ticket | [ZZF-69](https://linear.app/zizify-workshop/issue/ZZF-69) |
 
 ## Request
@@ -90,7 +90,9 @@ Net: +8 new, ~1 revised, 0 deleted. If decision 1 is "no", INTRO-008 is dropped 
 
 ## Decisions Needed
 
-1. **Replay from the library.** *Recommended:* yes, a Replay intro button in the library, so the intro can be watched again (and checked on dev without clearing the app's data). *Alternative:* no replay; the intro shows exactly once per device.
+Answered on 2026-10-17, as recommended.
+
+1. **Replay from the library.** *Recommended:* yes, a Replay intro button in the library, so the intro can be watched again (and checked on dev without clearing the app's data). *Alternative:* no replay; the intro shows exactly once per device. *Answered:* yes.
 
 ## Risks and Edge Cases
 
@@ -113,30 +115,38 @@ Net: +8 new, ~1 revised, 0 deleted. If decision 1 is "no", INTRO-008 is dropped 
 
 ## Outcome
 
-Filled in after the change is complete.
+Written before the requester's dev check; the production run is reported on the ticket. Checked on dev together with CO-007 and CO-008, which this branch carries.
 
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | 1 row | | |
-| LLDs | 1 new, 3 sections in `progression` | | |
-| Specs | +8 ~1 | | |
-| Tests | 7 files | | |
-| Code | 6 files | | |
+| HLD | 1 row | 1 row | |
+| LLDs | 1 new, 3 sections in `progression` | 1 new, 3 sections in `progression`, 1 sentence in `content` | `content`'s Pagination section now says the area is measured when it appears (see Surprises) |
+| Specs | +8 ~1 | +8 ~1 | INTRO-001 to INTRO-008 added, PROG-014 revised, as predicted |
+| Tests | 7 files | 8 files | `src/persistence/usePersistedProgress.test.tsx` also used the old names |
+| Code | 6 files | 7 files | `src/content/usePagination.ts` fixed (see Surprises) |
+| Other | User flow steps 1 and 3; HLD row | User flow steps 1, 2 and 3; HLD row | Step 2 gained the replay |
 
 ### Surprises
+
+1. **The reader never paginated after the intro.** The pagination hook subscribed to the reading area once, keyed on a ref object that never changes. The welcome card was an overlay over an already mounted reader, so the area had always existed from the first render; the intro replaces the reader, so the area appeared later and was never measured, and Let's go landed on an empty page. The browser tests caught it on the first run. The hook now follows the area element itself, which also covers returning from the library or the quiz. This is the one cross-segment effect the prediction missed (`content`: "none").
+2. **Fake timers and chained timeouts.** The terminal arms the next timer only after React commits the previous step, so advancing the fake clock in one call typed one character. The tests advance the clock one character at a time, as a browser would tick; the component was right.
+3. **A fourth test file.** The persistence test for restoring progress used the old welcome names; the grep before coding found it, so it cost a minute, not a surprise at run time.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
+| `89a4a16` | CO-009 proposed: intro terminal (ZZF-69) |
+| `843fa84` | Merge the finished CO-008 branch into the CO-009 branch (stacked for one dev check) |
+| (this commit) | CO-009: the intro terminal (ZZF-69) |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | |
-| Lines changed | |
-| Agent time | |
-| Deployed | |
+| Tests before → after | unit 297 → 308, browser 69 → 75 passed (5 skipped), with the intro now in every test's start |
+| Lines changed | +186 −51 (code, 7 files), +292 −47 (tests, 8 files), +104 −12 (design docs, specs, user flow and this change order) |
+| Agent time | about 18 minutes from the branch merge (16:50) to the outcome (17:08) |
+| Deployed | dev from the branch by the pipeline; production when the pull requests merge |

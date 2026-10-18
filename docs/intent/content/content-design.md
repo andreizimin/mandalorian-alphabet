@@ -41,7 +41,7 @@ The library lists every bundled passage, then every pasted passage newest first,
 
 A page is the run of words from a start position to an end position that fits the reading area. Pagination is greedy: whole paragraphs are added while they fit; a paragraph that does not fit is split at the last word that fits; a single word too large for an empty page is placed alone so pagination always advances. Whether content fits is decided by a measuring function supplied by the caller, which in the browser renders the candidate page into a hidden element styled like the reading area.
 
-Re-pagination happens when the viewport size or text size changes. The learner stays on the page that contains their current position (the first word of the page they were on).
+Re-pagination happens when the viewport size or text size changes, and when the reading area first appears or reappears (the reader is shown after the intro, the library or the quiz), since the area's size is only known once it is on screen. The learner stays on the page that contains their current position (the first word of the page they were on).
 
 ## Page Turns and Reading Progress
 

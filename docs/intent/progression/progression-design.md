@@ -18,15 +18,15 @@ Progression decides which letter comes next and when to suggest advancing. The l
 - `currentPagePeeks` counts peeks on the newest letter on the page being read. When a page is read, it is appended to `newestPagePeeks`, which therefore holds one entry per page read since the newest letter was introduced. A page counts as read when the learner turns forward past it.
 - `quizByLetter[letter]` is a ring of the last 5 quiz answers that targeted the letter, newest last. The `quiz` node appends to it; progression reads it.
 - `hintDismissedFor` lists the signals the learner has dismissed the hint for on the current newest letter.
-- `welcomeSeen` records that the first-launch welcome card has been dismissed.
+- `welcomeSeen` records that the first-launch intro (owned by `intro`) has been completed. The field keeps the name it had when the first-launch screen was a welcome card, so saved progress and exports stay readable.
 
 Progression also owns the validator for its persisted state (`validateProgress`), which `persistence` uses when restoring saved progress and checking an import.
 
-Progression state changes only through named events (advance, step back, reset, peek, page read, quiz answers recorded, hint dismissed, welcome dismissed), so the same logic serves the reader, the quiz and persistence.
+Progression state changes only through named events (advance, step back, reset, peek, page read, quiz answers recorded, hint dismissed, intro completed), so the same logic serves the reader, the quiz and persistence.
 
 ## First Launch
 
-The learned set starts empty and the first letter waits for a tap like every other one. A one-time welcome card, shown on first launch over the opening passage, points at *advance* and says what will happen. No letter is introduced automatically.
+The learned set starts empty and the first letter waits for a tap like every other one. On first launch, while the learned set is empty and the intro has not been completed, the app shows the intro terminal (owned by `intro`) instead of the reader; it explains that Next letter brings the first letter. No letter is introduced automatically. Reset does not clear the completion flag: the intro is about the app, not the learned set.
 
 ## Introducing a Letter
 
@@ -58,7 +58,7 @@ Advance, step back one letter, reset (with confirmation), and a legend of learne
 |---|---|---|---|
 | Default order | English letter frequency | Alphabetical; visual similarity | Frequent letters give the most exposure per page |
 | Advancing | Learner-driven with hint | Automatic advance; quiz-gated advance | Learners vary; forced pace frustrates, and a gate strands a stuck learner |
-| First letter | Waits for a tap, prompted by a welcome card | Auto-introduce on first launch | Keeps "the learner advances" true from the start and gives a moment of plain English to anchor the passage |
+| First letter | Waits for a tap, after the intro terminal has explained it | Auto-introduce on first launch; a welcome card over the first page | Keeps "the learner advances" true from the start and gives a moment of plain English to anchor the passage; the terminal (owned by `intro`) does the explaining the card used to |
 | Combining signals | Either signal triggers the hint; one hint names both when both hold | Both required; two separate hints | Requiring both would make the quiz mandatory for ever seeing a hint; two banners compete for a phone screen |
 | Reading signal window | Pages read since the letter was introduced, minimum 2 | Last 2 pages regardless of introduction | A just-introduced letter has 0 peeks on the previous pages, which would fire the hint instantly |
 | Hint dismissal | Per signal, until the next advance | Never dismissible; dismiss forever | A hint that returns every page nags; one that never returns loses the second signal's evidence |

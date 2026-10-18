@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { expect, test } from '@playwright/test';
+import { passIntro } from './helpers';
 
 // The live-site check: runs against a deployed address (LIVE_URL) after each
 // deploy, never against the local preview server, which serves every file and
@@ -68,6 +69,7 @@ test('carries the stage names and indexing rules', async ({ page, request }) => 
   );
 
   await page.goto('/');
+  await passIntro(page);
   await expect(page.locator('.passage-title').first()).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveCount(production ? 0 : 1);
   await expect(page.locator('.dev-marker').filter({ visible: true })).toHaveCount(dev ? 1 : 0);
@@ -76,6 +78,7 @@ test('carries the stage names and indexing rules', async ({ page, request }) => 
 // @spec OFF-013, OFF-001
 test('opens with no network after the first visit', async ({ page }) => {
   await page.goto('/');
+  await passIntro(page);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();
   await expect.poll(() => page.evaluate(() => navigator.serviceWorker.controller !== null)).toBe(true);

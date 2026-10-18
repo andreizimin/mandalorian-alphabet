@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { paginate, type Page } from './paginate';
 
 const ASCII_LETTER = /^[a-z]$/i;
@@ -26,6 +26,7 @@ function fill(measurer: HTMLElement, blocks: string[], learned: ReadonlySet<stri
 /**
  * Paginates a passage to the size of the reading area, measuring candidate
  * pages in a hidden element styled like it. Re-paginates when the area
+ * appears (the reader is shown after the intro, the library or the quiz),
  * resizes (rotation, Split View, text size) or when `revision` changes.
  */
 // @spec TEXT-003, TEXT-004
@@ -38,17 +39,25 @@ export function usePagination(
 ): Page[] {
   const [pages, setPages] = useState<Page[]>([]);
   const [size, setSize] = useState({ width: 0, height: 0 });
+  const observed = useRef<HTMLElement | null>(null);
+  const stopObserving = useRef<(() => void) | undefined>(undefined);
 
+  // The area element comes and goes with the view, so the observer follows the element, not the ref.
   useLayoutEffect(() => {
     const area = areaRef.current;
+    if (area === observed.current) return;
+    stopObserving.current?.();
+    stopObserving.current = undefined;
+    observed.current = area;
     if (!area) return;
     const read = () => setSize({ width: area.clientWidth, height: area.clientHeight });
     read();
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(read);
     observer.observe(area);
-    return () => observer.disconnect();
-  }, [areaRef]);
+    stopObserving.current = () => observer.disconnect();
+  });
+  useEffect(() => () => stopObserving.current?.(), []);
 
   useLayoutEffect(() => {
     const measurer = measurerRef.current;

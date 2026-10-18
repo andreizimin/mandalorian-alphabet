@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { FREQUENCY_ORDER } from '../alphabet/alphabet';
-import { initialProgress, showWelcome } from '../progression/progression';
+import { initialProgress, showIntro } from '../progression/progression';
 import { PROGRESS_KEY } from './progressSlice';
 import { brokenStore, memoryStore } from './testStores';
 import { usePersistedProgress } from './usePersistedProgress';
@@ -9,11 +9,11 @@ const advance = { type: 'advance', order: FREQUENCY_ORDER } as const;
 
 describe('usePersistedProgress', () => {
   // @spec PERS-001, PROG-014
-  it('restores progress, including the welcome card being seen, after a reload', () => {
+  it('restores progress, including the intro being completed, after a reload', () => {
     const store = memoryStore();
     const first = renderHook(() => usePersistedProgress(store));
     act(() => {
-      first.result.current.dispatch({ type: 'dismissWelcome' });
+      first.result.current.dispatch({ type: 'completeIntro' });
       first.result.current.dispatch(advance);
       first.result.current.dispatch({ type: 'peek', letter: 'e' });
     });
@@ -23,7 +23,7 @@ describe('usePersistedProgress', () => {
 
     expect(reloaded.result.current.progress.learned).toEqual(['e']);
     expect(reloaded.result.current.progress.peeksByLetter).toEqual({ e: 1 });
-    expect(showWelcome(reloaded.result.current.progress)).toBe(false);
+    expect(showIntro(reloaded.result.current.progress)).toBe(false);
   });
 
   // @spec PERS-005

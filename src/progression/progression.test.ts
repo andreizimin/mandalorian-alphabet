@@ -4,7 +4,7 @@ import {
   nextLetter,
   progressReducer,
   readinessSignals,
-  showWelcome,
+  showIntro,
   validateProgress,
   visibleHint,
   type ProgressEvent,
@@ -200,7 +200,7 @@ describe('step back and reset', () => {
 });
 
 describe('validateProgress', () => {
-  const valid = run([advance, advance, peek('e'), quiz('t', true, false), pageRead, { type: 'dismissWelcome' }]);
+  const valid = run([advance, advance, peek('e'), quiz('t', true, false), pageRead, { type: 'completeIntro' }]);
 
   // @spec PERS-003, PERS-006
   it('accepts initial and real progress, including after a JSON round trip', () => {
@@ -228,20 +228,27 @@ describe('validateProgress', () => {
 
 describe('first launch', () => {
   // @spec PROG-014
-  it('starts with no letters learned and the welcome card showing', () => {
+  it('starts with no letters learned and the intro to show', () => {
     expect(initialProgress.learned).toEqual([]);
-    expect(showWelcome(initialProgress)).toBe(true);
+    expect(showIntro(initialProgress)).toBe(true);
   });
 
   // @spec PROG-014
-  it('shows the welcome card only once, even after a reset', () => {
-    const seen = progressReducer(initialProgress, { type: 'dismissWelcome' });
-    expect(showWelcome(seen)).toBe(false);
-    expect(showWelcome(run([advance, { type: 'reset' }], seen))).toBe(false);
+  it('shows the intro only once, even after a reset', () => {
+    const seen = progressReducer(initialProgress, { type: 'completeIntro' });
+    expect(showIntro(seen)).toBe(false);
+    expect(showIntro(run([advance, { type: 'reset' }], seen))).toBe(false);
   });
 
   // @spec PROG-014
-  it('does not show the welcome card once a letter is learned', () => {
-    expect(showWelcome(run([advance]))).toBe(false);
+  it('does not show the intro once a letter is learned', () => {
+    expect(showIntro(run([advance]))).toBe(false);
+  });
+
+  // @spec PROG-014, PERS-001
+  it('keeps the completion flag under its stored name, so saved progress stays readable', () => {
+    const seen = progressReducer(initialProgress, { type: 'completeIntro' });
+    expect(seen.welcomeSeen).toBe(true);
+    expect(validateProgress(JSON.parse(JSON.stringify(seen)))).toBe(true);
   });
 });

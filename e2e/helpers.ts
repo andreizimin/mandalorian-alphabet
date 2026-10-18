@@ -4,10 +4,10 @@ import callOfTheWild from '../src/content/bundled/call-of-the-wild.json' with { 
 export const isPhone = (info: TestInfo) => info.project.name === 'iphone';
 
 /**
- * Opens the app fresh and dismisses the welcome card. The real feedback domain is
- * never reached, so no test can file a real ticket: by default it is blocked, and
- * `feedbackWidget` serves a stand-in script in place of widget.js. `url` opens
- * another address than the test server's root.
+ * Opens the app fresh and goes through the intro terminal. The real feedback
+ * domain is never reached, so no test can file a real ticket: by default it is
+ * blocked, and `feedbackWidget` serves a stand-in script in place of widget.js.
+ * `url` opens another address than the test server's root.
  */
 export async function start(page: Page, { feedbackWidget, url = '/' }: { feedbackWidget?: string; url?: string } = {}) {
   await page.route('https://feedback.andreizimin.com/**', (route) =>
@@ -16,8 +16,14 @@ export async function start(page: Page, { feedbackWidget, url = '/' }: { feedbac
       : route.abort(),
   );
   await page.goto(url);
-  await page.getByRole('button', { name: 'Start reading' }).click();
+  await passIntro(page);
   await expect(page.locator('.page-area p').first()).toBeVisible();
+}
+
+/** Finishes the intro terminal's typing with a tap (INTRO-005) and taps Let's go (INTRO-004). */
+export async function passIntro(page: Page) {
+  await page.locator('.terminal').click({ position: { x: 12, y: 12 } });
+  await page.getByRole('button', { name: "Let's go" }).click();
 }
 
 /** Opens the phone menu sheet when the control lives there. */

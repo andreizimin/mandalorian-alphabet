@@ -16,6 +16,10 @@ export interface ProgressState {
   /** Last answers per letter, newest last. */
   quizByLetter: Readonly<Record<string, readonly boolean[]>>;
   hintDismissedFor: readonly Signal[];
+  /**
+   * The first-launch intro (owned by `intro`) has been completed. The field keeps
+   * the name it had when that screen was a welcome card, so saved progress stays readable.
+   */
   welcomeSeen: boolean;
 }
 
@@ -27,7 +31,7 @@ export type ProgressEvent =
   | { type: 'pageRead' }
   | { type: 'quizAnswers'; answers: readonly QuizAnswerRecord[] }
   | { type: 'dismissHint' }
-  | { type: 'dismissWelcome' };
+  | { type: 'completeIntro' };
 
 export interface Thresholds {
   readingPages: number;
@@ -113,7 +117,7 @@ export function progressReducer(state: ProgressState, event: ProgressEvent): Pro
       if (shown.length === 0) return state;
       return { ...state, hintDismissedFor: [...state.hintDismissedFor, ...shown] };
     }
-    case 'dismissWelcome':
+    case 'completeIntro':
       return state.welcomeSeen ? state : { ...state, welcomeSeen: true };
   }
 }
@@ -169,7 +173,8 @@ export function validateProgress(value: unknown): value is ProgressState {
   return typeof welcomeSeen === 'boolean';
 }
 
+/** The intro shows in place of the reader until it has been completed, while nothing is learned. */
 // @spec PROG-014
-export function showWelcome(state: ProgressState): boolean {
+export function showIntro(state: ProgressState): boolean {
   return !state.welcomeSeen && state.learned.length === 0;
 }

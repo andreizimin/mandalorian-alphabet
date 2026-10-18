@@ -380,6 +380,76 @@ button.primary {
   color: #b3261e;
 }
 
+/* @spec INTRO-001 */
+/* Intro: an old Mandalorian terminal, full screen in place of the reader. Always dark. */
+.intro {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 0;
+  font: 16px/1.5 system-ui, sans-serif;
+}
+
+.terminal {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 34rem;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 20px 22px 12px;
+  border: 1px solid #d9a066;
+  border-radius: 10px;
+  background: #0e0b08;
+  color: #e3b27a;
+  box-shadow: inset 0 0 48px rgba(217, 160, 102, 0.08);
+  font: 17px/1.55 'Courier New', ui-monospace, Menlo, monospace;
+  cursor: pointer;
+}
+
+.terminal p {
+  margin: 0 0 0.9em;
+}
+
+.intro-greeting {
+  font-size: 26px;
+  line-height: 1.3;
+  color: #f0c98e;
+}
+
+.intro-greeting .g {
+  cursor: inherit;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  margin-left: 2px;
+  background: #e3b27a;
+  vertical-align: text-bottom;
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+  }
+}
+
+.intro-go {
+  min-width: 10rem;
+  font-size: 17px;
+}
+
 /* Quiz: a full-screen view replacing the reader. */
 .quiz {
   display: flex;
