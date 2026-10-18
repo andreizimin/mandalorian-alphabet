@@ -187,19 +187,38 @@ body {
   color: var(--newest);
 }
 
+/* @spec READ-004, READ-010 */
+/* The peek: the whole word in the reading font, placed under the tapped word by the page. */
 .peek {
   position: fixed;
-  left: 50%;
-  bottom: calc(96px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
+  left: 8px;
+  top: 0;
   z-index: 5;
-  min-width: 44px;
-  padding: 6px 14px;
+  max-width: calc(100vw - 16px);
+  padding: 4px 12px;
   border-radius: 10px;
   background: var(--fg);
   color: var(--bg);
-  font: 600 28px/1.2 system-ui, sans-serif;
-  text-align: center;
+  font: var(--text-size, 20px) / 1.4 Georgia, 'Times New Roman', serif;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* @spec READ-011 */
+/* The English of a selection: may run to several lines. */
+.peek-selection {
+  max-width: min(28rem, calc(100vw - 16px));
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.peek-letter {
+  background: none;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
 
 .font-status {
