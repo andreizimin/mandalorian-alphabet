@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | Done |
 | Requested | 2026-10-17 |
-| Approved | |
-| Completed | |
+| Approved | 2026-10-18 |
+| Completed | 2026-10-18 |
 | Ticket | [ZZF-71](https://linear.app/zizify-workshop/issue/ZZF-71) |
 
 ## Request
@@ -73,6 +73,8 @@ Net: +2 new, ~2 revised. Decision 4 may add one spec for effects under reduced m
 
 ## Decisions Needed
 
+All four answered on 2026-10-18, each with the recommended option: night and day palettes under Auto/Light/Dark; the serif reading font for the passage; the whole app; subtle glow and vignette, no scanlines.
+
 1. **What the appearance setting means in a console.** *Recommended:* the console has a night palette (black panel, amber text, the terminal's look) and a day palette (warm paper panel, dark brown ink and amber rules, the same frames and keys), and Auto/Light/Dark pick between them as today. *Alternative:* the console is always the night palette; the appearance control is removed and CO-007's specs are retired.
 2. **The passage text.** *Recommended:* keep the serif reading font for the passage, inside the console; long reading in a monospace face is harder on the eyes, and the glyph font is unchanged either way. *Alternative:* everything in the console monospace, passage included.
 3. **How far it goes.** *Recommended:* the whole app: reader, library, quiz, cards, menu sheet, hint, data panel. *Alternative:* the reader's chrome only, leaving the library and quiz as they are.
@@ -97,30 +99,37 @@ Net: +2 new, ~2 revised. Decision 4 may add one spec for effects under reduced m
 
 ## Outcome
 
-Filled in after the change is complete.
+Written before the requester's dev check; the production run is reported on the ticket. Screenshots at phone and laptop sizes in both palettes, and of the quiz, menu and library, were taken with Playwright and reviewed before the push.
 
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | 1 key decision | | |
-| LLDs | 3 sections in `layout`, 1 in `intro` | | |
-| Specs | +2 ~2 | | |
-| Tests | 2 files | | |
-| Code | 5 files | | |
+| HLD | 1 key decision | 1 key decision | |
+| LLDs | 3 sections in `layout`, 1 in `intro` | 3 in `layout` (Console Look, Platform, 5 decision rows), 1 in `intro` | As predicted |
+| Specs | +2 ~2 | +2 ~2 | LAYOUT-021, LAYOUT-022 added; LAYOUT-015, LAYOUT-017 revised |
+| Tests | 2 files | 2 files | +1 unit test, +1 browser test (three viewports); the contrast test now measures reading text as well as the highlight, against the panel |
+| Code | 5 files | 4 files | `App.tsx` was not needed: the frame is the `main` element's own border and background, so no markup changed there |
+| Other | User flow step 2 | User flow step 2 | |
 
 ### Surprises
+
+1. **The frame needs no structure.** The prediction expected a wrapper in `App.tsx`; the reading column already is one element, and a border, panel background and inset glow on it make the frame. The page-turn rail carries the frame's bottom edge the same way.
+2. **The phone status line vanished.** In the first screenshot the title read "// …": the Feedback key, now wider in the console face, and its "needs a connection" note took the line. The note now sits beneath the key on phones and the title keeps at least 40 % of the line. Caught by looking, not by a test; the feedback browser test only checks that the note is visible once.
+3. **The test held me to my own spec.** The text-size keys (A−, A+) were first exempted from upper case out of habit; the console test, which checks every visible key, failed, and the exemption went. The phone layout had also dropped the frame's side borders; the same test caught it, and the frame now stays at every width.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
+| `9ddd382` | CO-011 proposed: the console look (ZZF-71) |
+| (this commit) | CO-011: the console look (ZZF-71) |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | |
-| Lines changed | |
-| Agent time | |
-| Deployed | |
+| Tests before → after | unit 318 → 319, browser 78 → 84 passed (5 skipped) |
+| Lines changed | +233 −124 (code: stylesheet, chrome, index.html, manifest), +61 −5 (tests, 2 files), +33 −8 (HLD, design docs, specs, user flow) |
+| Agent time | about 80 minutes from approval (20:01) to the outcome (21:20), including the screenshots |
+| Deployed | dev from the branch by the pipeline; production when the pull request merges |

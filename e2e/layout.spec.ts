@@ -79,6 +79,46 @@ test('follows the system light or dark appearance and pads for the safe area', a
   expect(padding).toBeGreaterThanOrEqual(12);
 });
 
+// @spec LAYOUT-021, LAYOUT-022
+test('draws the console: monospace square keys, a framed panel, a status line, and a serif passage', async ({ page }, info) => {
+  await reach(page, info);
+  const keys = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('button'))
+      .filter((b) => b.offsetParent !== null)
+      .map((b) => {
+        const s = getComputedStyle(b);
+        return { family: s.fontFamily, radius: parseFloat(s.borderTopLeftRadius), transform: s.textTransform, border: s.borderTopStyle };
+      }),
+  );
+  expect(keys.length).toBeGreaterThan(3);
+  for (const key of keys) {
+    expect(key.family).toMatch(/mono|Menlo|Consolas|Courier/i);
+    expect(key.radius).toBeLessThanOrEqual(2);
+    expect(key.transform).toBe('uppercase');
+    expect(key.border).toBe('solid');
+  }
+
+  const frame = await page.locator('main.reader').evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { left: s.borderLeftStyle, width: parseFloat(s.borderLeftWidth), panel: s.backgroundColor, body: getComputedStyle(document.body).backgroundColor };
+  });
+  expect(frame.left).toBe('solid');
+  expect(frame.width).toBeGreaterThanOrEqual(1);
+  expect(frame.panel).not.toBe(frame.body);
+
+  const status = await page.locator('.passage-title').evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { family: s.fontFamily, transform: s.textTransform, cursor: el.querySelector('.cursor') !== null };
+  });
+  expect(status.family).toMatch(/mono|Menlo|Consolas|Courier/i);
+  expect(status.transform).toBe('uppercase');
+  expect(status.cursor).toBe(true);
+
+  const passageFont = await page.locator('.page-area p').first().evaluate((p) => getComputedStyle(p).fontFamily);
+  expect(passageFont).toMatch(/Georgia|serif/i);
+  expect(passageFont).not.toMatch(/mono/i);
+});
+
 // @spec LAYOUT-017, LAYOUT-005
 test('lets the learner choose Light or Dark over the system appearance, and remembers it', async ({ page }, info) => {
   const luminance = () =>
@@ -238,16 +278,21 @@ test('highlights the newest letter in a readable accent color, light and dark, w
           .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
       const newestColor = getComputedStyle(document.querySelector('.page-area .g.g-new')!).color;
       const otherColor = getComputedStyle(document.querySelector('.page-area .g:not(.g-new)')!).color;
-      const bg = getComputedStyle(document.body).backgroundColor;
-      const [a, b] = [lum(rgb(newestColor)), lum(rgb(bg))].sort((x, y) => y - x);
-      return { differs: newestColor !== otherColor, ratio: (a + 0.05) / (b + 0.05) };
+      // The passage sits on the console panel, not the page behind it.
+      const bg = getComputedStyle(document.querySelector('main.reader')!).backgroundColor;
+      const ratio = (color: string) => {
+        const [a, b] = [lum(rgb(color)), lum(rgb(bg))].sort((x, y) => y - x);
+        return (a + 0.05) / (b + 0.05);
+      };
+      return { differs: newestColor !== otherColor, newest: ratio(newestColor), text: ratio(otherColor) };
     });
 
   for (const scheme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: scheme });
-    const { differs, ratio } = await contrast();
+    const { differs, newest, text } = await contrast();
     expect(differs).toBe(true);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(newest).toBeGreaterThanOrEqual(4.5);
+    expect(text).toBeGreaterThanOrEqual(4.5);
   }
 
   // Pages re-fit when the header changes height (for example when the readiness hint appears),

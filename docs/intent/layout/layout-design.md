@@ -57,11 +57,24 @@ Every way of turning a page maps to the same two actions, forward and back, whic
 
 The quiz is a separate full-screen view replacing the reader, opened in one tap from the reader controls on every width. Its 4 answer choices form a 2 by 2 grid: in the lower half of the viewport under 600 px so one thumb reaches all four, centered under the prompt at wider widths.
 
+## Console Look
+
+The app is one Mandalorian console, the one the intro terminal already is, so nothing in it reads as a stock web page. The look is a design language applied through shared tokens and classes; it changes no control's name, place or size, so every layout spec above holds as it did.
+
+- **Panel and frame.** The reading column is a panel with a one-pixel amber frame, standing on a slightly darker page with a faint vignette. The panel carries a faint inner glow at its edges. The page-turn rail at the bottom is part of the same frame.
+- **Palette.** Two palettes, chosen by the appearance setting: **night** (black panel, amber chrome, pale amber reading text, gold for the newest letter) and **day** (parchment panel, brown-amber chrome, dark brown reading text, brown for the newest letter). Auto follows the system as before. Every color is a token on the document root; text and the newest-letter highlight meet a contrast ratio of at least 4.5:1 against the panel in both palettes.
+- **Keys.** Every button is a console key: the console monospace face, upper case with letter spacing, square corners, an amber edge, transparent face; the primary action (Next letter, Let's go, Again) is a filled amber key with a soft glow. Disabled keys dim. Keys keep their 44 pt minimum.
+- **Status line.** The passage title is a status line in the console face: a `//` prefix, the title, the DEV tag as a console tag, and a blinking block cursor. On phones Feedback still sits at its right end.
+- **Rails and panels.** The top bar is a rail with a rule beneath it; cards (new letter, end of passage), the phone menu sheet, the readiness hint, the legend, the library and the data panel are sub-panels of the same console: square corners, amber rules, console face for labels. The quiz's choices are large keys; right and wrong keep their green and red, tinted on the panel.
+- **Reading text.** The passage keeps the serif reading font at the chosen text size, and the glyph font is untouched. A long story in a monospace face costs reading comfort, and reading fluency is the app's goal. The peek popover shows its word in the reading font on an amber chip.
+- **Effects.** A subtle inner glow and vignette only. No scanlines or flicker: they soften the glyphs the learner is trying to recognize.
+- **The intro terminal** uses the night palette's constants whatever the appearance, as the `intro` LLD says.
+
 ## Platform
 
-Every interactive control is at least 44 by 44 pt. The layout respects safe areas (notch, home indicator) and, while the appearance is Auto, follows the system light or dark appearance.
+Every interactive control is at least 44 by 44 pt. The layout respects safe areas (notch, home indicator) and, while the appearance is Auto, follows the system light or dark appearance; Light and Dark are the console's day and night palettes.
 
-The newest-letter highlight color is the app's warm accent: brown on the light page and gold in dark appearance, each with a contrast ratio of at least 4.5:1 against the page background.
+The newest-letter highlight is gold on the night panel and brown on the day panel, each with a contrast ratio of at least 4.5:1 against the panel, and distinct from the reading text's color.
 
 ## Verification
 
@@ -81,4 +94,8 @@ Width-dependent placement, sizes and real pagination depend on the browser's lay
 | Text size control | A− and A+ in 2 px steps | A slider | Two buttons are reliable to hit with a thumb and give predictable steps |
 | Appearance control | One button cycling Auto → Light → Dark, labelled with the current choice | A two-state Light/Dark toggle; a segmented control; a settings screen | A toggle loses Auto, which is the right default for most learners; three values fit one button whose label shows the result, and a settings screen is more than one setting needs |
 | Applying the appearance | An attribute on the document root selecting the color tokens and `color-scheme` | A class on the app's root element; separate stylesheets | The tokens already live on the document root, and `color-scheme` must be set there for native controls to follow |
+| The look | A Mandalorian console: framed panel, amber chrome, monospace keys, status line | The stock look (rounded grey buttons on a plain page); a themed skin on the stock look | The intro terminal sets a world and the reader behind it broke it; the primary user's motivation is the universe, so the app should feel like part of it rather than like a web page |
+| Appearance under the console | Night and day palettes under Auto/Light/Dark | Always the night palette, removing the appearance setting | The requester had just asked for a light mode; a day console keeps it while the frame, keys and status line carry the look on parchment too |
+| Reading font in the console | The serif reading font for the passage; monospace for the chrome | Monospace everywhere | Long reading in a monospace face is harder on the eyes, and the glyph font is unaffected either way |
+| Effects | Subtle inner glow and vignette | None; full CRT scanlines and flicker | Scanlines soften the glyphs the learner is learning to recognize; a glow gives the panel depth without touching the text |
 | Layout verification | Playwright with WebKit at three viewports | Checking CSS by eye; Chromium | Layout specs need a real engine; WebKit is the engine the primary user's devices run |
