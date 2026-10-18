@@ -1,30 +1,51 @@
-/* @spec LAYOUT-005, LAYOUT-017 */
-/* Light tokens; Auto (no data-appearance) follows the system, Light and Dark force one. */
+/* @spec LAYOUT-005, LAYOUT-015, LAYOUT-017, LAYOUT-021 */
+/*
+ * The console palette. Two palettes, night and day; Auto (no data-appearance)
+ * follows the system, Light and Dark force one. The night constants are also
+ * what the intro terminal uses whatever the appearance.
+ */
 :root {
-  --bg: #fbfaf7;
-  --fg: #1d1d1f;
-  --muted: #6e6e73;
+  --night-page: #070604;
+  --night-panel: #0e0b08;
+  --night-amber: #e3b27a;
+  --night-amber-bright: #f0c98e;
+  --night-ink: #ecd3ad;
+
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+  --serif: Georgia, 'Times New Roman', serif;
+
+  /* Day palette: parchment panel, brown ink, brown-amber chrome. */
+  --page: #e4d5b8;
+  --panel: #f4ead6;
+  --ink: #2f2213;
+  --muted: #7a5a35;
   --accent: #8a5a2b;
   --newest: #8a5a2b;
+  --rule: color-mix(in srgb, var(--accent) 40%, transparent);
+  --glow: color-mix(in srgb, var(--accent) 10%, transparent);
+  --bg: var(--page);
+  --fg: var(--ink);
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-appearance='light']) {
-    --bg: #141414;
-    --fg: #ececec;
-    --muted: #9a9a9f;
-    --accent: #d9a066;
-    --newest: #d9a066;
+    --page: var(--night-page);
+    --panel: var(--night-panel);
+    --ink: var(--night-ink);
+    --muted: #a07f55;
+    --accent: var(--night-amber);
+    --newest: #ffd166;
   }
 }
 
 :root[data-appearance='dark'] {
-  --bg: #141414;
-  --fg: #ececec;
-  --muted: #9a9a9f;
-  --accent: #d9a066;
-  --newest: #d9a066;
+  --page: var(--night-page);
+  --panel: var(--night-panel);
+  --ink: var(--night-ink);
+  --muted: #a07f55;
+  --accent: var(--night-amber);
+  --newest: #ffd166;
   color-scheme: dark;
 }
 
@@ -34,12 +55,14 @@
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font: 20px/1.6 Georgia, 'Times New Roman', serif;
+  background-color: var(--page);
+  background-image: radial-gradient(ellipse at 50% 40%, var(--page) 55%, color-mix(in srgb, var(--page) 78%, black));
+  color: var(--ink);
+  font: 20px/1.6 var(--serif);
 }
 
-/* @spec LAYOUT-001, LAYOUT-005, LAYOUT-006 */
+/* @spec LAYOUT-001, LAYOUT-005, LAYOUT-006, LAYOUT-021 */
+/* The console panel: the reading column, framed, with a faint inner glow. */
 .reader {
   box-sizing: border-box;
   display: flex;
@@ -47,8 +70,12 @@ body {
   height: 100dvh;
   max-width: 65ch;
   margin: 0 auto;
-  /* Bottom padding reserves room for the fixed page-turn bar. */
+  /* Bottom padding reserves room for the fixed page-turn rail. */
   padding: max(16px, env(safe-area-inset-top)) 16px calc(84px + env(safe-area-inset-bottom));
+  border-left: 1px solid var(--accent);
+  border-right: 1px solid var(--accent);
+  background-color: var(--panel);
+  box-shadow: inset 0 0 64px var(--glow);
   font-size: var(--text-size, 20px);
 }
 
@@ -80,10 +107,28 @@ body {
   pointer-events: none;
 }
 
+/* @spec LAYOUT-021 */
+/* The status line: the passage title in the console face, with a cursor. */
 .passage-title {
-  margin: 4px 0 8px;
-  color: var(--muted);
-  font: italic 15px/1.3 Georgia, serif;
+  margin: 6px 0 10px;
+  color: var(--accent);
+  font: 600 12px/1.4 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.status-prefix {
+  margin-right: 0.6em;
+  opacity: 0.6;
+}
+
+.passage-title .cursor {
+  width: 0.55em;
+  height: 1em;
+  background: var(--accent);
 }
 
 .overlay {
@@ -94,24 +139,25 @@ body {
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: color-mix(in srgb, var(--fg) 35%, transparent);
+  background: color-mix(in srgb, var(--night-page) 60%, transparent);
 }
 
 .overlay .card {
   max-width: 28rem;
   width: 100%;
-  background: var(--bg);
+  background: var(--panel);
 }
 
 .library {
   margin-top: 12px;
-  font: 16px/1.4 system-ui, sans-serif;
+  font: 15px/1.5 var(--mono);
 }
 
 .passage-list {
   margin: 0 0 16px;
   padding: 0;
   list-style: none;
+  border-top: 1px solid var(--rule);
 }
 
 .passage-list li {
@@ -119,14 +165,17 @@ body {
   gap: 8px;
   align-items: center;
   padding: 6px 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--muted) 20%, transparent);
+  border-bottom: 1px solid var(--rule);
 }
 
 .passage-open {
   flex: 1;
   border: none;
   text-align: left;
-  font: 18px/1.3 Georgia, serif;
+  color: var(--ink);
+  font: 18px/1.3 var(--serif);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .paste-form {
@@ -135,41 +184,51 @@ body {
   gap: 8px;
 }
 
+.paste-form label {
+  color: var(--accent);
+  font: 600 12px/1.4 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .paste-form textarea {
   box-sizing: border-box;
   width: 100%;
   padding: 10px;
-  border: 1px solid var(--muted);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--fg);
-  font: 16px/1.4 Georgia, serif;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--page) 50%, transparent);
+  color: var(--ink);
+  font: 16px/1.4 var(--serif);
 }
 
 .paste-form button {
   align-self: flex-start;
 }
 
-/* @spec LAYOUT-005, LAYOUT-012 */
+/* @spec LAYOUT-005, LAYOUT-012, LAYOUT-021 */
+/* The page-turn rail: the bottom of the console frame. */
 .page-turn-bar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   max-width: 65ch;
   margin: 0 auto;
   padding: 12px 16px max(12px, env(safe-area-inset-bottom));
-  background: var(--bg);
-  border-top: 1px solid color-mix(in srgb, var(--muted) 25%, transparent);
+  border: 1px solid var(--accent);
+  border-bottom: none;
+  background: var(--panel);
 }
 
 .page-turn-bar button {
   min-width: 88px;
   min-height: 48px;
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .passage-page {
@@ -188,7 +247,7 @@ body {
 }
 
 /* @spec READ-004, READ-010 */
-/* The peek: the whole word in the reading font, placed under the tapped word by the page. */
+/* The peek: the whole word in the reading font on an amber chip, placed under the tapped word by the page. */
 .peek {
   position: fixed;
   left: 8px;
@@ -196,10 +255,11 @@ body {
   z-index: 5;
   max-width: calc(100vw - 16px);
   padding: 4px 12px;
-  border-radius: 10px;
-  background: var(--fg);
-  color: var(--bg);
-  font: var(--text-size, 20px) / 1.4 Georgia, 'Times New Roman', serif;
+  border-radius: 2px;
+  background: var(--accent);
+  color: var(--panel);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 45%, transparent);
+  font: var(--text-size, 20px) / 1.4 var(--serif);
   white-space: nowrap;
   pointer-events: none;
 }
@@ -227,38 +287,46 @@ body {
   align-items: center;
   margin-bottom: 16px;
   color: var(--muted);
-  font: 15px/1.4 system-ui, sans-serif;
+  font: 14px/1.4 var(--mono);
 }
 
-.font-status /* @spec LAYOUT-004 */
+/* @spec LAYOUT-004, LAYOUT-021 */
+/* Console keys: every button in the app. */
 button {
   min-height: 44px;
   padding: 0 14px;
   border: 1px solid var(--accent);
-  border-radius: 8px;
+  border-radius: 2px;
   background: transparent;
   color: var(--accent);
-  font: inherit;
+  font: 600 13px/1.2 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 120ms, box-shadow 120ms;
 }
 
-button {
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid var(--muted);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--fg);
-  font: 15px/1.2 system-ui, sans-serif;
+button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+button:active:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
 }
 
 button:disabled {
   opacity: 0.4;
+  cursor: default;
 }
 
 button.primary {
-  border-color: var(--accent);
   background: var(--accent);
-  color: var(--bg);
+  color: var(--panel);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+button.primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 85%, white);
 }
 
 .controls {
@@ -267,7 +335,7 @@ button.primary {
   gap: 8px;
   align-items: center;
   margin-bottom: 12px;
-  font: 15px/1.4 system-ui, sans-serif;
+  font: 14px/1.4 var(--mono);
 }
 
 .legend-toggle {
@@ -279,7 +347,8 @@ button.primary {
   flex-wrap: wrap;
   gap: 10px 16px;
   margin: 8px 0 16px;
-  padding: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
   list-style: none;
   font-size: 28px;
 }
@@ -290,16 +359,15 @@ button.primary {
   align-items: baseline;
 }
 
-.legend-latin {
-  color: var(--muted);
-  font: 15px system-ui, sans-serif;
-}
-
+.legend-latin,
 .legend-empty {
   color: var(--muted);
-  font: 15px system-ui, sans-serif;
+  font: 13px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
+/* A console message: the readiness hint and storage notices. */
 .hint {
   display: flex;
   gap: 12px;
@@ -307,10 +375,11 @@ button.primary {
   justify-content: space-between;
   margin: 8px 0 16px;
   padding: 8px 8px 8px 14px;
+  border: 1px solid var(--rule);
   border-left: 3px solid var(--accent);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  font: 15px/1.4 system-ui, sans-serif;
+  background: var(--glow);
+  color: var(--ink);
+  font: 14px/1.4 var(--mono);
 }
 
 .hint button {
@@ -319,12 +388,15 @@ button.primary {
   min-width: 44px;
 }
 
+/* Sub-panels of the console: the new-letter card and the end-of-passage card. */
 .card {
   margin: 8px 0 20px;
   padding: 16px;
-  border: 1px solid color-mix(in srgb, var(--muted) 40%, transparent);
-  border-radius: 12px;
-  font: 16px/1.5 system-ui, sans-serif;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 25%, transparent);
+  color: var(--ink);
+  font: 16px/1.5 var(--mono);
 }
 
 .intro-pair {
@@ -341,7 +413,7 @@ button.primary {
 .intro-latin {
   font-size: 40px;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--accent);
 }
 
 .intro-examples {
@@ -350,14 +422,14 @@ button.primary {
   margin: 12px 0;
   padding: 0;
   list-style: none;
-  font: 24px Georgia, serif;
+  font: 24px var(--serif);
 }
 
 .data-panel {
   margin-top: 32px;
   padding-top: 16px;
-  border-top: 1px solid color-mix(in srgb, var(--muted) 30%, transparent);
-  font: 15px/1.4 system-ui, sans-serif;
+  border-top: 1px solid var(--rule);
+  font: 14px/1.4 var(--mono);
 }
 
 .data-actions {
@@ -372,8 +444,12 @@ button.primary {
   align-items: center;
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid var(--muted);
-  border-radius: 8px;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  color: var(--accent);
+  font: 600 13px/1.2 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -385,11 +461,11 @@ button.primary {
 }
 
 .data-error {
-  color: #b3261e;
+  color: #d9534f;
 }
 
 /* @spec INTRO-001 */
-/* Intro: an old Mandalorian terminal, full screen in place of the reader. Always dark. */
+/* Intro: an old Mandalorian terminal, full screen in place of the reader. Always the night palette. */
 .intro {
   display: flex;
   flex: 1;
@@ -398,7 +474,7 @@ button.primary {
   justify-content: center;
   gap: 20px;
   min-height: 0;
-  font: 16px/1.5 system-ui, sans-serif;
+  font: 16px/1.5 var(--mono);
 }
 
 .terminal {
@@ -408,12 +484,12 @@ button.primary {
   max-height: 100%;
   overflow-y: auto;
   padding: 20px 22px 12px;
-  border: 1px solid #d9a066;
-  border-radius: 10px;
-  background: #0e0b08;
-  color: #e3b27a;
+  border: 1px solid var(--night-amber);
+  border-radius: 2px;
+  background: var(--night-panel);
+  color: var(--night-amber);
   box-shadow: inset 0 0 48px rgba(217, 160, 102, 0.08);
-  font: 17px/1.55 'Courier New', ui-monospace, Menlo, monospace;
+  font: 17px/1.55 var(--mono);
   cursor: pointer;
 }
 
@@ -424,7 +500,7 @@ button.primary {
 .intro-greeting {
   font-size: 26px;
   line-height: 1.3;
-  color: #f0c98e;
+  color: var(--night-amber-bright);
 }
 
 .intro-greeting .g,
@@ -444,7 +520,7 @@ button.primary {
 .intro-greeting-english {
   margin-top: -0.4em;
   font-size: 20px;
-  color: #f0c98e;
+  color: var(--night-amber-bright);
 }
 
 .cursor {
@@ -452,7 +528,7 @@ button.primary {
   width: 0.6em;
   height: 1.05em;
   margin-left: 2px;
-  background: #e3b27a;
+  background: currentColor;
   vertical-align: text-bottom;
   animation: blink 1s steps(2, start) infinite;
 }
@@ -471,7 +547,7 @@ button.primary {
 
 .intro-go {
   min-width: 10rem;
-  font-size: 17px;
+  font-size: 15px;
 }
 
 /* Quiz: a full-screen view replacing the reader. */
@@ -480,20 +556,24 @@ button.primary {
   flex: 1;
   flex-direction: column;
   min-height: 0;
-  font: 16px/1.4 system-ui, sans-serif;
+  font: 15px/1.4 var(--mono);
 }
 
 .quiz-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--muted);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .quiz-prompt {
   margin: 24px 0 8px;
   text-align: center;
-  font: 56px/1.2 Georgia, serif;
+  font: 56px/1.2 var(--serif);
 }
 
 .quiz-feedback {
@@ -532,17 +612,20 @@ button.primary {
 
 .choice {
   min-height: 72px;
-  font: 32px/1.2 Georgia, serif;
+  color: var(--ink);
+  font: 32px/1.2 var(--serif);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .choice.correct {
-  border: 2px solid #2e7d32;
-  background: color-mix(in srgb, #2e7d32 15%, transparent);
+  border: 2px solid #4caf50;
+  background: color-mix(in srgb, #4caf50 18%, transparent);
 }
 
 .choice.wrong {
-  border: 2px solid #b3261e;
-  background: color-mix(in srgb, #b3261e 12%, transparent);
+  border: 2px solid #e05a4f;
+  background: color-mix(in srgb, #e05a4f 14%, transparent);
 }
 
 .choice:disabled {
@@ -562,7 +645,8 @@ button.primary {
 }
 
 .quiz-score {
-  font: 600 28px/1.2 system-ui, sans-serif;
+  color: var(--accent);
+  font: 600 26px/1.2 var(--mono);
 }
 
 .quiz-button {
@@ -573,17 +657,19 @@ button.primary {
 
 .quiz-reason {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
-/* @spec LAYOUT-002, LAYOUT-003 */
-/* Reader chrome: top bar on wider screens, bottom bar extras on phones. */
+/* @spec LAYOUT-002, LAYOUT-003, LAYOUT-021 */
+/* Reader chrome: a top rail on wider screens, bottom rail extras on phones. */
 .top-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
   margin-bottom: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
 }
 
 .top-bar .controls {
@@ -602,15 +688,14 @@ button.primary {
   position: relative;
 }
 
-/* On phones the quiz reason floats above the bar so the bar never overflows. */
+/* On phones the quiz reason floats above the rail so the rail never overflows. */
 .phone-only .quiz-reason {
   position: absolute;
   bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   padding: 2px 8px;
-  border-radius: 6px;
-  background: var(--bg);
+  background: var(--panel);
   white-space: nowrap;
 }
 
@@ -626,7 +711,7 @@ button.primary {
 
   .page-turn-bar .phone-only button {
     min-width: 44px;
-    font-size: 15px;
+    font-size: 13px;
   }
 
   .page-turn-bar .phone-only button[aria-label='Menu'] {
@@ -653,9 +738,10 @@ button.primary {
   position: fixed;
   inset: 0;
   z-index: 20;
-  background: color-mix(in srgb, var(--fg) 25%, transparent);
+  background: color-mix(in srgb, var(--night-page) 55%, transparent);
 }
 
+/* The phone menu: a sub-panel rising from the rail. */
 .menu-sheet {
   position: fixed;
   left: 0;
@@ -663,9 +749,10 @@ button.primary {
   bottom: 0;
   z-index: 21;
   padding: 16px 16px max(16px, env(safe-area-inset-bottom));
-  border-radius: 16px 16px 0 0;
-  background: var(--bg);
-  font: 16px/1.4 system-ui, sans-serif;
+  border-top: 1px solid var(--accent);
+  background: var(--panel);
+  box-shadow: 0 -8px 32px color-mix(in srgb, var(--night-page) 50%, transparent);
+  font: 15px/1.4 var(--mono);
 }
 
 .menu-items {
@@ -674,7 +761,7 @@ button.primary {
   gap: 8px;
 }
 
-/* Title line: passage title, with Feedback at its right end on phones (LAYOUT-016). */
+/* Title line: the status line, with Feedback at its right end on phones (LAYOUT-016). */
 .title-line {
   display: flex;
   gap: 8px;
@@ -682,8 +769,27 @@ button.primary {
   justify-content: space-between;
 }
 
+.title-line .passage-title {
+  flex: 1 1 40%;
+  min-width: 0;
+}
+
+/* On phones the Feedback key keeps its reason beneath it, so the status line keeps its room. */
 .title-line .phone-only {
-  flex: none;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.title-line .feedback-button {
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+}
+
+.title-line .feedback-reason {
+  max-width: 12em;
+  font-size: 10px;
+  text-align: right;
 }
 
 .feedback-button {
@@ -694,20 +800,19 @@ button.primary {
 
 .feedback-reason {
   color: var(--muted);
-  font: 13px/1.2 system-ui, sans-serif;
+  font: 12px/1.2 var(--mono);
 }
 
 /* @spec OFF-008 */
-/* Dev builds only: a small tag after the passage title. */
+/* Dev builds only: a console tag after the passage title. */
 .dev-marker {
   display: inline-block;
-  margin-left: 8px;
+  margin: 0 8px;
   padding: 1px 6px;
-  border-radius: 4px;
+  border-radius: 2px;
   background: var(--accent);
-  color: var(--bg);
-  font: 700 11px/1.4 system-ui, sans-serif;
-  font-style: normal;
-  letter-spacing: 0.06em;
+  color: var(--panel);
+  font: 700 10px/1.4 var(--mono);
+  letter-spacing: 0.1em;
   vertical-align: middle;
 }

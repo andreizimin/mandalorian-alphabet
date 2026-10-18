@@ -17,8 +17,8 @@ export function pwaOptionsFor(stage: string) {
     start_url: '/',
     scope: '/',
     display: 'standalone' as const,
-    background_color: '#fbfaf7',
-    theme_color: '#1b1b1d',
+    background_color: '#0e0b08',
+    theme_color: '#0e0b08',
     icons: [
       { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
       { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

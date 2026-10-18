@@ -87,8 +87,8 @@ export function TopBar(a: ReaderActions) {
   );
 }
 
-/** The passage title; on phones, which have no top bar, Feedback sits at its right end. */
-// @spec LAYOUT-016, OFF-008
+/** The status line: the passage title in the console face; on phones, which have no top bar, Feedback sits at its right end. */
+// @spec LAYOUT-016, LAYOUT-021, OFF-008
 export function TitleBar({
   title,
   feedbackReady,
@@ -105,9 +105,13 @@ export function TitleBar({
 }) {
   return (
     <div className="title-line">
-      <p className="passage-title">
+      <p className="passage-title status-line">
+        <span className="status-prefix" aria-hidden="true">
+          //
+        </span>
         {title}
         {dev && <span className="dev-marker">DEV</span>}
+        <span className="cursor" aria-hidden="true" />
       </p>
       <div className="phone-only">
         <FeedbackButton ready={feedbackReady} reason={feedbackReason} onOpen={onFeedback} />

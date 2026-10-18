@@ -78,6 +78,7 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 - **Font source:** the app bundles Mando AF Regular, a public-domain (CC0) font that draws the Mandalorian alphabet as seen in *The Clone Wars* and *The Mandalorian*. Nothing to upload or install. See `alphabet` LLD.
 - **Feedback:** learners send ideas and bug reports through the shared feedback platform used by every app on andreizimin.com, opened from an ordinary Feedback button among the reader controls. Submissions become Linear tickets labelled `learn-mandalorian`. See `feedback` LLD.
 - **One case:** the Mandalorian script has no upper and lower case, so both cases of a letter draw the same glyph. The underlying text keeps its original case for copy, search and screen readers.
+- **Look:** the app is drawn as a Mandalorian console, the intro terminal's style carried through the reader, library and quiz: a framed panel, amber on black by night or ink on parchment by day, monospace console keys. The passage itself keeps a reading font, because the goal is fluent reading and a monospace page costs it. See `layout` LLD.
 
 ## Open Questions
 

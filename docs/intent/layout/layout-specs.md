@@ -32,9 +32,14 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 ## Platform
 
 - `[x]` **LAYOUT-005**: The system SHALL respect device safe areas and, while the appearance is Auto, SHALL follow the system light or dark appearance.
-- `[x]` **LAYOUT-015**: The system SHALL define the newest-letter highlight color for both light and dark appearance with a contrast ratio of at least 4.5:1 against the page background.
+- `[x]` **LAYOUT-015**: The system SHALL define the console palette (page, panel, reading text, muted, accent and newest-letter colors) for both the night and the day appearance, with a contrast ratio of at least 4.5:1 for the reading text and for the newest-letter highlight against the panel, and the highlight distinct from the reading text's color.
+
+## Console Look
+
+- `[x]` **LAYOUT-021**: The system SHALL draw the reader, library and quiz as a Mandalorian console: a framed panel in the console palette, every button a monospace upper-case console key with square corners and the accent edge, the passage title as a status line in the console face, and the control and page-turn bars as rails of the same panel; no control SHALL use the browser's default button look.
+- `[x]` **LAYOUT-022**: The system SHALL keep the passage text in the reading font at the chosen text size, and the glyph font unchanged, inside the console.
 
 ## Appearance
 
-- `[x]` **LAYOUT-017**: The system SHALL let the learner set the appearance to Auto, Light or Dark (default Auto) with one control that steps Auto → Light → Dark → Auto and shows the current choice; while Light or Dark is chosen the system SHALL draw the app in that appearance regardless of the system setting, and SHALL save the choice in the settings slice.
+- `[x]` **LAYOUT-017**: The system SHALL let the learner set the appearance to Auto, Light or Dark (default Auto) with one control that steps Auto → Light → Dark → Auto and shows the current choice; while Light or Dark is chosen the system SHALL draw the console in that appearance's palette (night for Dark, day for Light) regardless of the system setting, and SHALL save the choice in the settings slice.
 - `[x]` **LAYOUT-018**: When restoring or importing settings saved without an appearance, the system SHALL treat the appearance as Auto.

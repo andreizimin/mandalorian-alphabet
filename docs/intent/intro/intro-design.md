@@ -34,7 +34,7 @@ When the last paragraph is complete, the Let's go button appears under the text.
 
 ## Appearance
 
-The terminal is always dark, whatever appearance the learner has chosen for the reader (see `layout`): a dark panel with the text in the warm accent color, a thin border and a blinking block cursor. An ancient terminal does not have a light mode. The Let's go button is styled so it is readable on the dark panel in both appearances.
+The terminal is always dark, whatever appearance the learner has chosen for the reader (see `layout`): the console's night palette, a dark panel with the text in the warm accent color, a thin border and a blinking block cursor. An ancient terminal does not have a light mode. The rest of the app is drawn as the same console (`layout`, Console Look), so leaving the intro for the reader is a change of screen, not of world. The Let's go button sits outside the panel, on the page, so it is readable in both appearances.
 
 The intro replaces the reader on screen, like the quiz does, and shows none of the reader chrome. It fits a phone without scrolling at the default text size; on wider screens it is a centered column.
 

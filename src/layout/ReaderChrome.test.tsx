@@ -202,6 +202,17 @@ describe('Feedback among the reader controls', () => {
   });
 });
 
+describe('status line', () => {
+  // @spec LAYOUT-021
+  it('shows the passage title as a console status line with a cursor, keeping the title readable', () => {
+    render(<TitleBar title="Treasure Island" feedbackReady onFeedback={() => {}} />);
+    const title = screen.getByText('Treasure Island');
+    expect(title).toHaveClass('passage-title', 'status-line');
+    expect(title.querySelector('.cursor')).not.toBeNull();
+    expect(title.querySelector('.cursor')).toHaveAttribute('aria-hidden', 'true');
+  });
+});
+
 describe('DEV marker', () => {
   // @spec OFF-008
   it('follows the passage title on dev builds only', () => {
