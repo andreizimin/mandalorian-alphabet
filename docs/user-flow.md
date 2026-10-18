@@ -4,15 +4,15 @@ The journey of the primary user — a young Star Wars fan — from first open to
 
 ## 1. First open
 
-They open the link in Safari on their iPhone. The app loads once and from then on works offline (OFF-001). The Mandalorian font ships with the app, so there is nothing to upload or install (ALPHA-001). In the moment before it loads, text shows in the normal font and the quiz is off (ALPHA-004, QUIZ-003); if it ever fails, a message offers a retry (ALPHA-003).
+They open the link in Safari on their iPhone. An old Mandalorian terminal fills the screen and types "Hello, adventurer!" in glyphs they cannot read, lets them look at it, then types the same line in English beneath (INTRO-001, INTRO-002). It goes on in English, with *Mando'a* and *Mandalorian* still in glyphs: they don't read Mando'a yet, nobody does on day one, and here is how they will learn, one letter at a time inside real stories (INTRO-003). A tap finishes the typing if they are impatient (INTRO-005), and **Let's go** opens the first passage (INTRO-004). The app loads once and from then on works offline (OFF-001). The Mandalorian font ships with the app, so there is nothing to upload or install (ALPHA-001); the terminal waits for it before typing (INTRO-006). If the font ever fails, a message offers a retry (ALPHA-003).
 
 ## 2. Straight into a passage
 
-The app opens directly into the first bundled passage (TEXT-005): paginated, single column, never split mid-word (TEXT-003, LAYOUT-001). The library, one tap from the controls, lists the two or three bundled public-domain adventure or science-fiction passages and holds the paste action for any English text: fan fiction, a wiki article, a favorite chapter (TEXT-001, TEXT-002, TEXT-006, LAYOUT-011).
+Let's go lands on the first bundled passage (TEXT-005): paginated, single column, never split mid-word (TEXT-003, LAYOUT-001). The library, one tap from the controls, lists the two or three bundled public-domain adventure or science-fiction passages and holds the paste action for any English text: fan fiction, a wiki article, a favorite chapter (TEXT-001, TEXT-002, TEXT-006, LAYOUT-011). The intro can be replayed from there too (INTRO-008).
 
 ## 3. Reading with no glyphs
 
-The learned set starts empty, so the first page is plain English. A one-time welcome card points at *advance* and says what it will do; nothing is substituted until they tap it (PROG-014).
+The learned set starts empty, so the first page is plain English, and nothing is substituted until they tap *Next letter*, as the terminal said (PROG-014).
 
 ## 4. The first letter
 

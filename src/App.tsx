@@ -4,6 +4,7 @@ import { FontStatus } from './alphabet/FontStatus';
 import { useFontState } from './alphabet/useFontState';
 import { EndCard, Library } from './content/components';
 import { useFeedbackWidget } from './feedback/useFeedbackWidget';
+import { IntroTerminal } from './intro/IntroTerminal';
 import { pageBlocks, pageIndexFor } from './content/paginate';
 import { BUNDLED_PASSAGES } from './content/passages';
 import {
@@ -30,8 +31,8 @@ import { localStore } from './persistence/storage';
 import { usePersistedContent } from './persistence/usePersistedContent';
 import { usePersistedProgress } from './persistence/usePersistedProgress';
 import { usePersistedSlice } from './persistence/usePersistedSlice';
-import { HintBanner, IntroCard, Legend, WelcomeCard } from './progression/components';
-import { nextLetter, showWelcome, visibleHint } from './progression/progression';
+import { HintBanner, IntroCard, Legend } from './progression/components';
+import { nextLetter, showIntro, visibleHint } from './progression/progression';
 import { QuizScreen } from './quiz/QuizScreen';
 import { EVERYDAY_WORDS, GALAXY_WORDS } from './quiz/wordPool';
 import { PassagePage } from './reader/PassagePage';
@@ -50,7 +51,10 @@ export function App() {
   const settings = settingsStore.value;
   const feedback = useFeedbackWidget();
 
-  const [view, setView] = useState<'reader' | 'library' | 'quiz'>('reader');
+  // @spec PROG-014
+  const [view, setView] = useState<'intro' | 'reader' | 'library' | 'quiz'>(() =>
+    showIntro(progress) ? 'intro' : 'reader',
+  );
   const [introLetter, setIntroLetter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -110,8 +114,7 @@ export function App() {
   }
 
   // @spec FEED-004
-  const reading =
-    view === 'reader' && !menuOpen && !introLetter && !ended && !showWelcome(progress) && !feedback.isOpen;
+  const reading = view === 'reader' && !menuOpen && !introLetter && !ended && !feedback.isOpen;
   useArrowKeyPageTurns({ enabled: reading, onBack: back, onForward: forward });
   usePageGestures({ enabled: reading, onBack: back, onForward: forward });
 
@@ -150,6 +153,17 @@ export function App() {
       <FontStatus alphabet={alphabet} />
       <StorageNotice notice={notice} onDismiss={dismissNotice} />
 
+      {view === 'intro' && (
+        // @spec INTRO-004, INTRO-008
+        <IntroTerminal
+          fontState={fontState}
+          onDone={() => {
+            dispatch({ type: 'completeIntro' });
+            setView('reader');
+          }}
+        />
+      )}
+
       {view === 'quiz' && (
         <QuizScreen
           learned={progress.learned}
@@ -164,9 +178,15 @@ export function App() {
 
       {view === 'library' && (
         <>
-          <button type="button" onClick={() => setView('reader')}>
-            ← Back to reading
-          </button>
+          <div className="controls">
+            <button type="button" onClick={() => setView('reader')}>
+              ← Back to reading
+            </button>
+            {/* @spec INTRO-008 */}
+            <button type="button" onClick={() => setView('intro')}>
+              Replay intro
+            </button>
+          </div>
           <Library
             bundled={BUNDLED_PASSAGES}
             pasted={content.pasted}
@@ -221,11 +241,6 @@ export function App() {
         </>
       )}
 
-      {view === 'reader' && showWelcome(progress) && (
-        <div className="overlay">
-          <WelcomeCard onDismiss={() => dispatch({ type: 'dismissWelcome' })} />
-        </div>
-      )}
       {view === 'reader' && introLetter && (
         <div className="overlay">
           <IntroCard

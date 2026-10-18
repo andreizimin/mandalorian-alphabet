@@ -67,6 +67,7 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 | [layout](intent/layout/layout-design.md) | LAYOUT | Responsive layout for iPhone and iPad |
 | [offline](intent/offline/offline-design.md) | OFF | Service worker, installability |
 | [feedback](intent/feedback/feedback-design.md) | FEED | In-app feedback through the shared feedback platform |
+| [intro](intent/intro/intro-design.md) | INTRO | The first-launch terminal that greets the learner and explains the app, replayable from the library |
 
 ## Key Decisions
 

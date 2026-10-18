@@ -138,18 +138,3 @@ export function Legend({ learned }: { learned: readonly string[] }) {
     </ul>
   );
 }
-
-// @spec PROG-014
-export function WelcomeCard({ onDismiss }: { onDismiss: () => void }) {
-  return (
-    <div role="dialog" aria-label="Welcome" className="card welcome-card">
-      <p>
-        This is plain English for now. Tap <strong>Next letter</strong> whenever you're ready, and one letter at a
-        time will turn into Mandalorian.
-      </p>
-      <button type="button" onClick={onDismiss}>
-        Start reading
-      </button>
-    </div>
-  );
-}

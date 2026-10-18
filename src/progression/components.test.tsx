@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Controls, HintBanner, IntroCard, Legend, WelcomeCard, exampleWords } from './components';
+import { Controls, HintBanner, IntroCard, Legend, exampleWords } from './components';
 
 describe('IntroCard', () => {
   const passage = 'The east gate stood open. Beyond it, the desert stretched east forever.';
@@ -135,17 +135,6 @@ describe('Legend', () => {
   it('says so when nothing is learned yet', () => {
     render(<Legend learned={[]} />);
     expect(screen.getByText(/no letters yet/i)).toBeInTheDocument();
-  });
-});
-
-describe('WelcomeCard', () => {
-  // @spec PROG-014
-  it('points at the advance control and can be dismissed', async () => {
-    const onDismiss = vi.fn();
-    render(<WelcomeCard onDismiss={onDismiss} />);
-    expect(screen.getByRole('dialog', { name: /welcome/i })).toHaveTextContent(/next letter/i);
-    await userEvent.click(screen.getByRole('button', { name: /start reading/i }));
-    expect(onDismiss).toHaveBeenCalled();
   });
 });
 
