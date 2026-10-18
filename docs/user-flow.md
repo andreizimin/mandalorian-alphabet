@@ -36,7 +36,7 @@ With E, T, A and O learned, enough short words qualify (*tea*, *toe*, *ate*, *oa
 
 ## 9. Longer sessions on the iPad
 
-The same app, no account, on the iPad: controls move to a top bar, the reading column stays at about 65 characters, and text size runs from 16 to 32 px for both fonts (LAYOUT-003, LAYOUT-001, LAYOUT-006). Split View and Slide Over behave because layout keys off viewport width, not device (LAYOUT-002, LAYOUT-003).
+The same app, no account, on the iPad: controls move to a top bar, the reading column stays at about 65 characters, and text size runs from 16 to 32 px for both fonts (LAYOUT-003, LAYOUT-001, LAYOUT-006). Split View and Slide Over behave because layout keys off viewport width, not device (LAYOUT-002, LAYOUT-003). Reading in bed, they tap the appearance button from Auto to Dark and the page goes dark whatever the iPad is set to; the choice is remembered (LAYOUT-017).
 
 ## 10. Stumbling, stepping back, resetting
 

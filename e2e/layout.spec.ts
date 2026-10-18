@@ -79,6 +79,43 @@ test('follows the system light or dark appearance and pads for the safe area', a
   expect(padding).toBeGreaterThanOrEqual(12);
 });
 
+// @spec LAYOUT-017, LAYOUT-005
+test('lets the learner choose Light or Dark over the system appearance, and remembers it', async ({ page }, info) => {
+  const luminance = () =>
+    page.evaluate(() => {
+      const [r, g, b] = getComputedStyle(document.body).backgroundColor.match(/\d+/g)!.map(Number);
+      return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    });
+  const appearance = () => page.getByRole('button', { name: /^Appearance/ });
+
+  await page.emulateMedia({ colorScheme: 'light' });
+  await reach(page, info);
+  await expect(appearance()).toHaveText('Auto');
+  await appearance().click(); // Light
+  await expect(appearance()).toHaveText('Light');
+  await appearance().click(); // Dark
+  await expect(appearance()).toHaveText('Dark');
+  expect(await luminance()).toBeLessThan(0.2);
+
+  // A forced appearance ignores the system's.
+  await page.emulateMedia({ colorScheme: 'light' });
+  expect(await luminance()).toBeLessThan(0.2);
+
+  // The choice survives a reload.
+  await page.reload();
+  await expect(page.locator('.page-area p').first()).toBeVisible();
+  expect(await luminance()).toBeLessThan(0.2);
+
+  // Light over a dark system; Auto follows the system again.
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await reach(page, info);
+  await appearance().click(); // Auto
+  await expect(appearance()).toHaveText('Auto');
+  expect(await luminance()).toBeLessThan(0.2);
+  await appearance().click(); // Light
+  expect(await luminance()).toBeGreaterThan(0.8);
+});
+
 // @spec LAYOUT-006, TEXT-004
 test('changes text size for both fonts and keeps the learner on their word', async ({ page }, info) => {
   await learn(page, 1);

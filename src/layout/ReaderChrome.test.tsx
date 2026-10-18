@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BottomBar, MenuSheet, TextSizeControl, TitleBar, TopBar, type ReaderActions } from './ReaderChrome';
+import { AppearanceControl, BottomBar, MenuSheet, TextSizeControl, TitleBar, TopBar, type ReaderActions } from './ReaderChrome';
 
 function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
   return {
@@ -10,6 +10,7 @@ function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
     learnedCount: 3,
     fontReady: true,
     textSize: 20,
+    appearance: 'system',
     feedbackReady: true,
     onAdvance: vi.fn(),
     onStepBack: vi.fn(),
@@ -18,6 +19,7 @@ function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
     onLibrary: vi.fn(),
     onQuiz: vi.fn(),
     onTextSize: vi.fn(),
+    onAppearance: vi.fn(),
     onBack: vi.fn(),
     onForward: vi.fn(),
     onFeedback: vi.fn(),
@@ -45,6 +47,15 @@ describe('TopBar', () => {
     }
     expect(within(bar).getByRole('button', { name: /^reset/i })).toBeInTheDocument();
     expect(within(bar).getByRole('group', { name: /text size/i })).toBeInTheDocument();
+  });
+
+  // @spec LAYOUT-003, LAYOUT-017
+  it('holds the appearance control', async () => {
+    const a = actions();
+    render(<TopBar {...a} />);
+    const bar = screen.getByRole('navigation', { name: /reader controls/i });
+    await userEvent.click(within(bar).getByRole('button', { name: /^appearance/i }));
+    expect(a.onAppearance).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -86,12 +97,20 @@ describe('MenuSheet', () => {
   }
 
   // @spec LAYOUT-002, LAYOUT-011, PROG-007
-  it('holds Step back, Reset, Legend, Library and text size', () => {
+  it('holds Step back, Reset, Legend, Library, text size and appearance', () => {
     const { sheet } = renderSheet();
-    for (const name of [/step back/i, /^reset/i, /legend/i, /library/i]) {
+    for (const name of [/step back/i, /^reset/i, /legend/i, /library/i, /^appearance/i]) {
       expect(within(sheet).getByRole('button', { name })).toBeInTheDocument();
     }
     expect(within(sheet).getByRole('group', { name: /text size/i })).toBeInTheDocument();
+  });
+
+  // @spec LAYOUT-014, LAYOUT-017
+  it('steps the appearance and stays open so the result can be seen', async () => {
+    const { a, onClose, sheet } = renderSheet();
+    await userEvent.click(within(sheet).getByRole('button', { name: /^appearance/i }));
+    expect(a.onAppearance).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   // @spec LAYOUT-014
@@ -124,6 +143,24 @@ describe('TextSizeControl', () => {
     expect(screen.getByRole('button', { name: /smaller text/i })).toBeDisabled();
     rerender(<TextSizeControl textSize={32} onTextSize={onTextSize} />);
     expect(screen.getByRole('button', { name: /larger text/i })).toBeDisabled();
+  });
+});
+
+describe('AppearanceControl', () => {
+  // @spec LAYOUT-017
+  it('shows the current choice as its label and steps on tap', async () => {
+    const onAppearance = vi.fn();
+    const { rerender } = render(<AppearanceControl appearance="system" onAppearance={onAppearance} />);
+    const button = screen.getByRole('button', { name: /^appearance/i });
+    expect(button).toHaveTextContent('Auto');
+
+    await userEvent.click(button);
+    expect(onAppearance).toHaveBeenCalledTimes(1);
+
+    rerender(<AppearanceControl appearance="light" onAppearance={onAppearance} />);
+    expect(button).toHaveTextContent('Light');
+    rerender(<AppearanceControl appearance="dark" onAppearance={onAppearance} />);
+    expect(button).toHaveTextContent('Dark');
   });
 });
 

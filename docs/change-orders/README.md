@@ -24,3 +24,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-004](CO-004-dev-environment.md) | Dev environment and branch flow ([ZZF-62](https://linear.app/zizify-workshop/issue/ZZF-62)) | Feature | Done | +2–3 ~1 | +2 ~2 |
 | [CO-005](CO-005-faster-updates.md) | Keep offline, with faster updates ([ZZF-65](https://linear.app/zizify-workshop/issue/ZZF-65)) | Feature | Done | +2 ~1 | +2 ~1 |
 | [CO-006](CO-006-ci-cd.md) | CI/CD with one manual step ([ZZF-66](https://linear.app/zizify-workshop/issue/ZZF-66)) | Feature | Done | +3 | +3 |
+| [CO-007](CO-007-dark-light-mode.md) | Dark and light mode ([ZZF-67](https://linear.app/zizify-workshop/issue/ZZF-67)) | Feature | Done | +2 ~4 | +2 ~4 |
