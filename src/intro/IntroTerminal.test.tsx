@@ -1,11 +1,13 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntroTerminal } from './IntroTerminal';
-import { CHAR_MS, GREETING, HOLD_MS, LINES } from './typing';
+import { CHAR_MS, GREETING, LINES } from './typing';
 
 const GREETING_LETTERS = GREETING.replace(/[^a-z]/gi, '').length;
 const greeting = () => document.querySelector('.intro-greeting')!;
 const english = () => document.querySelector('.intro-greeting-english');
+const prompt = () => document.querySelector('.intro-continue');
+const terminal = () => document.querySelector('.terminal')!;
 const goButton = () => screen.queryByRole('button', { name: /let's go/i });
 
 /**
@@ -16,65 +18,91 @@ function advance(ms: number) {
   for (let i = 0; i < Math.ceil(ms / CHAR_MS); i++) act(() => vi.advanceTimersByTime(CHAR_MS));
 }
 
-function finishTyping() {
-  for (let i = 0; i < 5000 && !goButton(); i++) act(() => vi.advanceTimersByTime(CHAR_MS));
-}
-
 function mockReducedMotion(matches: boolean) {
   vi.stubGlobal('matchMedia', (query: string) => ({ matches: matches && /reduced-motion/.test(query), media: query }));
 }
 
 describe('IntroTerminal', () => {
+  let user: ReturnType<typeof userEvent.setup>;
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     mockReducedMotion(false);
+    user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   });
   afterEach(() => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
-  // @spec INTRO-001, INTRO-002
-  it('types the greeting in glyphs, holds it, then types its English beneath while the glyphs stay', () => {
+  /** Taps through every paragraph: finish the current one, start the next, until Let's go shows. */
+  async function tapThrough() {
+    for (let i = 0; i < 20 && !goButton(); i++) await user.click(terminal());
+  }
+
+  // @spec INTRO-001, INTRO-002, INTRO-009
+  it('types the greeting in glyphs, then waits for a tap; its English types beneath while the glyphs stay', async () => {
     render(<IntroTerminal fontState="loaded" onDone={() => {}} />);
     expect(greeting().textContent).toBe('');
+    expect(prompt()).toBeNull();
 
     advance(CHAR_MS * GREETING.length);
     expect(greeting().textContent).toBe(GREETING);
     expect(greeting().querySelectorAll('.g')).toHaveLength(GREETING_LETTERS);
     expect(english()).toBeNull();
+    expect(prompt()).not.toBeNull();
 
-    advance(HOLD_MS - CHAR_MS * 2);
-    expect(english()).toBeNull(); // still holding
+    advance(CHAR_MS * 200); // time alone brings nothing more
+    expect(english()).toBeNull();
 
-    advance(CHAR_MS * 2 + CHAR_MS * GREETING.length);
+    await user.click(terminal());
+    expect(prompt()).toBeNull();
+    advance(CHAR_MS * GREETING.length);
     expect(english()!.textContent).toBe(GREETING);
     expect(english()!.querySelectorAll('.g')).toHaveLength(0);
     expect(greeting().querySelectorAll('.g')).toHaveLength(GREETING_LETTERS);
+    expect(prompt()).not.toBeNull();
     expect(goButton()).toBeNull();
   });
 
-  // @spec INTRO-001, INTRO-003, INTRO-004
-  it("shows the Let's go button only once every line is typed, and reports the tap", async () => {
+  // @spec INTRO-005
+  it('a tap while a paragraph is typing finishes that paragraph only', async () => {
+    render(<IntroTerminal fontState="loaded" onDone={() => {}} />);
+    advance(CHAR_MS * 3);
+    expect(greeting().textContent).toBe(GREETING.slice(0, 3));
+
+    await user.click(terminal());
+    expect(greeting().textContent).toBe(GREETING);
+    expect(english()).toBeNull();
+
+    await user.click(terminal()); // starts the English greeting
+    advance(CHAR_MS * 4);
+    await user.click(terminal()); // finishes it
+    expect(english()!.textContent).toBe(GREETING);
+    expect(document.querySelectorAll('.terminal p.intro-line')).toHaveLength(0);
+    expect(goButton()).toBeNull();
+  });
+
+  // @spec INTRO-001, INTRO-003, INTRO-004, INTRO-009
+  it("shows the Let's go button only once every paragraph has been brought by a tap, and reports the tap", async () => {
     const onDone = vi.fn();
     render(<IntroTerminal fontState="loaded" onDone={onDone} />);
-    expect(goButton()).toBeNull();
+    advance(CHAR_MS * 2000);
+    expect(goButton()).toBeNull(); // the greeting waits forever on its own
 
-    finishTyping();
+    await tapThrough();
 
-    const terminal = document.querySelector('.terminal')!;
-    for (const line of LINES) expect(terminal.textContent).toContain(line);
+    for (const line of LINES) expect(terminal().textContent).toContain(line);
+    expect(prompt()).toBeNull();
     expect(goButton()).not.toBeNull();
 
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     await user.click(goButton()!);
     expect(onDone).toHaveBeenCalledTimes(1);
   });
 
   // @spec INTRO-003
-  it("draws Mando'a and Mandalorian in glyphs inside the English lines, and nothing else", () => {
+  it("draws Mando'a and Mandalorian in glyphs inside the English lines, and nothing else", async () => {
     render(<IntroTerminal fontState="loaded" onDone={() => {}} />);
-    finishTyping();
+    await tapThrough();
 
     const lines = Array.from(document.querySelectorAll('.terminal p.intro-line'));
     const glyphWords = lines.flatMap((p) => Array.from(p.querySelectorAll('[role="img"]')).map((w) => w.getAttribute('aria-label')));
@@ -83,22 +111,6 @@ describe('IntroTerminal', () => {
     for (const p of lines) {
       for (const g of p.querySelectorAll('.g')) expect(g.closest('[role="img"]')).not.toBeNull();
     }
-  });
-
-  // @spec INTRO-005
-  it('finishes the text at once when the terminal is tapped while typing', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    render(<IntroTerminal fontState="loaded" onDone={() => {}} />);
-    advance(CHAR_MS * 3);
-    expect(greeting().textContent).toBe(GREETING.slice(0, 3));
-    expect(goButton()).toBeNull();
-
-    await user.click(document.querySelector('.terminal')!);
-
-    expect(greeting().textContent).toBe(GREETING);
-    expect(english()!.textContent).toBe(GREETING);
-    expect(document.querySelector('.terminal')!.textContent).toContain(LINES[LINES.length - 1]);
-    expect(goButton()).not.toBeNull();
   });
 
   // @spec INTRO-006

@@ -1,7 +1,20 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { FontState } from '../alphabet/alphabet';
 import { Substituted } from '../reader/Substituted';
-import { FINISHED, GLYPH_WORDS, GREETING, LINES, START, currentLine, delayAfter, isFinished, step, type Frame } from './typing';
+import {
+  FINISHED,
+  GLYPH_WORDS,
+  GREETING,
+  LINES,
+  START,
+  currentLine,
+  delayAfter,
+  isFinished,
+  isWaiting,
+  step,
+  tap,
+  type Frame,
+} from './typing';
 
 const EVERY_LETTER: ReadonlySet<string> = new Set('abcdefghijklmnopqrstuvwxyz');
 const NO_LETTERS: ReadonlySet<string> = new Set();
@@ -30,31 +43,34 @@ function Sprinkled({ text, glyphs }: { text: string; glyphs: boolean }): ReactNo
 }
 
 /**
- * The first-launch terminal: types the greeting in glyphs, holds it, types its
- * English beneath, explains the app, then offers Let's go. A tap finishes the typing.
+ * The first-launch terminal: types the greeting in glyphs, then one paragraph
+ * per tap (its English, then the message), then offers Let's go. A tap while a
+ * paragraph is typing finishes it.
  */
-// @spec INTRO-001, INTRO-002, INTRO-003, INTRO-004, INTRO-005, INTRO-006, INTRO-007
+// @spec INTRO-001, INTRO-002, INTRO-003, INTRO-004, INTRO-005, INTRO-006, INTRO-007, INTRO-009
 export function IntroTerminal({ fontState, onDone }: { fontState: FontState; onDone: () => void }) {
   const [frame, setFrame] = useState<Frame>(() => (prefersReducedMotion() ? FINISHED : START));
   const finished = isFinished(frame);
+  const waiting = isWaiting(frame);
   // The greeting must not flash in a fallback font: typing waits until the font has loaded or failed.
   const ready = fontState !== 'loading';
 
   useEffect(() => {
-    if (!ready || finished) return;
-    const timer = setTimeout(() => setFrame(step), delayAfter(frame));
+    const delay = delayAfter(frame);
+    if (!ready || delay === null) return;
+    const timer = setTimeout(() => setFrame(step), delay);
     return () => clearTimeout(timer);
-  }, [ready, finished, frame]);
+  }, [ready, frame]);
 
   const glyphs = fontState === 'loaded';
   const typingGreeting = frame.greeting < GREETING.length;
   const line = currentLine(frame);
-  // The cursor stays on the glyph greeting while it is typed and held, then follows the line being typed.
+  // The cursor stays on the glyph greeting until its English starts, then follows the line being typed.
   const cursorOnGreeting = !ready || typingGreeting || (line === 0 && frame.lines[0] === 0);
 
   return (
     <section className="intro" aria-label="Intro">
-      <div className="terminal" onClick={() => setFrame(FINISHED)}>
+      <div className="terminal" onClick={() => setFrame(tap)}>
         <p className="intro-greeting">
           <Substituted text={GREETING.slice(0, frame.greeting)} letters={glyphs ? EVERY_LETTER : NO_LETTERS} />
           {cursorOnGreeting && <Cursor />}
@@ -72,6 +88,7 @@ export function IntroTerminal({ fontState, onDone }: { fontState: FontState; onD
             <Cursor />
           </p>
         )}
+        {waiting && ready && <p className="intro-continue">tap to continue</p>}
       </div>
       {finished && (
         <button type="button" className="primary intro-go" onClick={onDone}>

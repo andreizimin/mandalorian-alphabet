@@ -21,18 +21,36 @@ test('the first open lands on the terminal, which greets in glyphs and then in E
   expect(await glyph.evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/Mando/);
   await expect(letsGo(page)).toHaveCount(0);
 
-  // The glyph line stays; its English is typed beneath it after a hold.
-  const english = page.locator('.intro-greeting-english');
-  await expect(english).toHaveText('Hello, adventurer!', { timeout: 15_000 });
-  await expect(english.locator('.g')).toHaveCount(0);
+  // The glyph greeting completes, then the terminal waits for a tap; nothing more comes on its own.
   await expect(greeting).toHaveText('Hello, adventurer!');
   expect(await greeting.locator('.g').count()).toBeGreaterThan(10);
+  await expect(page.locator('.intro-continue')).toBeVisible();
+  const english = page.locator('.intro-greeting-english');
+  await page.waitForTimeout(1_500);
+  await expect(english).toHaveCount(0);
+
+  // A tap brings its English beneath it; the glyph line stays.
+  await terminal(page).click({ position: { x: 12, y: 12 } });
+  await expect(english).toHaveText('Hello, adventurer!');
+  await expect(english.locator('.g')).toHaveCount(0);
+  expect(await greeting.locator('.g').count()).toBeGreaterThan(10);
+  await expect(letsGo(page)).toHaveCount(0);
 });
 
-// @spec INTRO-003
-test("draws Mando'a and Mandalorian in glyphs inside the English lines", async ({ page }) => {
+// @spec INTRO-003, INTRO-005, INTRO-009
+test("draws Mando'a and Mandalorian in glyphs inside the English lines, each paragraph on a tap", async ({ page }) => {
   await openFresh(page);
-  await terminal(page).click({ position: { x: 12, y: 12 } });
+  await expect(page.locator('.intro-continue')).toBeVisible();
+  const lines = page.locator('.terminal .intro-line');
+  await terminal(page).click({ position: { x: 12, y: 12 } }); // the English greeting
+  await expect(page.locator('.intro-greeting-english')).toHaveText('Hello, adventurer!');
+  await expect(lines).toHaveCount(0);
+  await expect(page.locator('.intro-continue')).toBeVisible();
+  await terminal(page).click({ position: { x: 12, y: 12 } }); // the first line of the message
+  await expect(lines).toHaveCount(1);
+  for (let i = 0; i < 12 && !(await letsGo(page).isVisible()); i++) {
+    await terminal(page).click({ position: { x: 12, y: 12 } });
+  }
   await expect(letsGo(page)).toBeVisible();
 
   const words = page.locator('.terminal .intro-line [role="img"]');
@@ -43,9 +61,11 @@ test("draws Mando'a and Mandalorian in glyphs inside the English lines", async (
 });
 
 // @spec INTRO-003, INTRO-004, INTRO-005
-test("a tap finishes the typing; Let's go opens the first passage, and a reload opens the reader", async ({ page }) => {
+test("taps bring the paragraphs; Let's go opens the first passage, and a reload opens the reader", async ({ page }) => {
   await openFresh(page);
-  await terminal(page).click({ position: { x: 12, y: 12 } });
+  for (let i = 0; i < 20 && !(await letsGo(page).isVisible()); i++) {
+    await terminal(page).click({ position: { x: 12, y: 12 } });
+  }
 
   await expect(letsGo(page)).toBeVisible();
   await expect(terminal(page)).toContainText("don't read Mando'a yet");

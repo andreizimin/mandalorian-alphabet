@@ -432,6 +432,15 @@ button.primary {
   cursor: inherit;
 }
 
+/* @spec INTRO-009 */
+.intro-continue {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
 .intro-greeting-english {
   margin-top: -0.4em;
   font-size: 20px;
