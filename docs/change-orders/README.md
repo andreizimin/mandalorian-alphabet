@@ -30,4 +30,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-010](CO-010-intro-tap-to-continue.md) | Intro paragraphs appear on tap ([ZZF-70](https://linear.app/zizify-workshop/issue/ZZF-70)) | Minor fix | Done | +1 ~2 | +1 ~2 |
 | [CO-011](CO-011-console-look.md) | The console look ([ZZF-71](https://linear.app/zizify-workshop/issue/ZZF-71)) | Feature | Done | +2 ~2 | +2 ~2 |
 | [CO-012](CO-012-umami-analytics.md) | Umami analytics and a Suggest-a-feature link | Feature | Done | +10 ~2 | +11 ~3 (FEED-006 revised after the dev check) |
-| [CO-013](CO-013-help-button.md) | Help button ([ZZF-74](https://linear.app/zizify-workshop/issue/ZZF-74)) | Feature | Approved | +5 ~2 | |
+| [CO-013](CO-013-help-button.md) | Help button ([ZZF-74](https://linear.app/zizify-workshop/issue/ZZF-74)) | Feature | Done | +5 ~2 | +5 ~2 |

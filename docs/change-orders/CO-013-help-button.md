@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Approved |
+| Status | Done |
 | Requested | 2026-11-01 |
 | Approved | 2026-11-01 |
-| Completed | |
+| Completed | 2026-11-01 |
 | Ticket | [ZZF-74](https://linear.app/zizify-workshop/issue/ZZF-74) |
 
 ## Request
@@ -105,31 +105,39 @@ Both answered on 2026-11-01, each with the recommended option: a Help panel with
 
 ## Outcome
 
-Filled in after the change is complete.
+Written before the requester's dev check; the production run is reported on the ticket. Screenshots at the phone, tablet and laptop sizes and at the ticket's 418 × 401 viewport, in both palettes, were taken and reviewed before the commit.
 
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | 1 design-tree row | | |
-| LLDs | 1 new (`help`), 3 sections in `layout`, 1 in `intro` | | |
-| Specs | +5 ~2 | | |
-| Tests | 3 files | | |
-| Code | 5 files | | |
-| Other | User flow, CLAUDE.md | | |
+| HLD | 1 design-tree row | 1 design-tree row | |
+| LLDs | 1 new (`help`), 3 sections in `layout`, 1 in `intro` | 1 new (`help`), 4 places in `layout` (Breakpoints, Reader Controls, Page Turning, the Console Look status line), 1 in `intro` | The status-line bullet in Console Look also named Feedback alone |
+| Specs | +5 ~2 | +5 ~2 | HELP-001 to HELP-005 added; LAYOUT-003, LAYOUT-016 revised as predicted |
+| Tests | 3 files | 3 files | +7 unit tests in `HelpPanel.test.tsx`, +2 in `ReaderChrome.test.tsx`; 5 browser tests at three viewports in `e2e/help.spec.ts` |
+| Code | 5 files | 5 files | As predicted |
+| Other | User flow, CLAUDE.md | User flow, CLAUDE.md | |
 
 ### Surprises
+
+1. **Close moved to the top.** The change order put Replay intro and Close together at the bottom of the panel. At the ticket's 418 × 401 viewport the bottom of the panel is several screens of scrolling away, so Close is pinned in the panel's header and only Replay intro sits at the bottom. HELP-005 ("keeping Close reachable") asked for this; the prediction's wording did not.
+2. **No WebKit in the build container.** The browser tests ran in Chromium at the same three viewports (iPhone 13, iPad gen 7, 1280 × 800 laptop) with a temporary config that was not committed. The pipeline runs them in WebKit as usual.
+3. **The pull request could not be opened from this session.** GitHub refused every push from this session (403), so the branch could not be pushed. The commits are on the local branch `zzf-74-help-button` and go to dev as soon as the branch is pushed.
+4. **CO-012 had called the phone title line "already full".** It had placed Suggest a feature in the menu for that reason. The requester chose the title line for Help anyway. The `?` key is one 44 pt square, and on the iPhone 13 viewport the title still truncates at about 40 % of the line ("THE CALL OF THE W…"), which the new browser test measures.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
+| `f1a8c35` | CO-013 proposed: help button (ZZF-74) |
+| `4ff89c0` | CO-013: record the approval (ZZF-74) |
+| (this commit) | CO-013: help button (ZZF-74) |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | |
-| Lines changed | |
-| Agent time | |
-| Deployed | |
+| Tests before → after | unit 329 → 338; browser 94 → 107 passed (5 → 7 skipped), in Chromium at the three viewports; offline 5 → 5 |
+| Lines changed | +213 −3 (code: help text, panel, chrome, App, stylesheet), +211 (tests, 3 files), +82 −9 (HLD, design docs, specs, user flow, CLAUDE.md) |
+| Agent time | about 7 minutes from approval (05:52) to the outcome (05:59), screenshots included |
+| Deployed | not yet: waiting for GitHub push access; dev from the branch by the pipeline once pushed, production when the pull request merges |

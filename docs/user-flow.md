@@ -8,7 +8,7 @@ They open the link in Safari on their iPhone. An old Mandalorian terminal fills 
 
 ## 2. Straight into a passage
 
-Let's go lands on the first bundled passage (TEXT-005), inside the same console: a framed panel with a status line naming the passage, console keys for the controls, and the story itself in a comfortable reading font (LAYOUT-021, LAYOUT-022); paginated, single column, never split mid-word (TEXT-003, LAYOUT-001). The library, one tap from the controls, lists the two or three bundled public-domain adventure or science-fiction passages and holds the paste action for any English text: fan fiction, a wiki article, a favorite chapter (TEXT-001, TEXT-002, TEXT-006, LAYOUT-011). The intro can be replayed from there too (INTRO-008).
+Let's go lands on the first bundled passage (TEXT-005), inside the same console: a framed panel with a status line naming the passage, console keys for the controls, and the story itself in a comfortable reading font (LAYOUT-021, LAYOUT-022); paginated, single column, never split mid-word (TEXT-003, LAYOUT-001). The library, one tap from the controls, lists the two or three bundled public-domain adventure or science-fiction passages and holds the paste action for any English text: fan fiction, a wiki article, a favorite chapter (TEXT-001, TEXT-002, TEXT-006, LAYOUT-011). The intro can be replayed from there too (INTRO-008). Whenever they are unsure what something does, the Help key (a `?` beside Feedback at the top of a phone, HELP in the top bar of an iPad) opens a short panel over the page: what the app is, and one line for each control and gesture (HELP-001, LAYOUT-016). It closes with a tap, back on the same page (HELP-002), and can replay the intro (HELP-004).
 
 ## 3. Reading with no glyphs
 

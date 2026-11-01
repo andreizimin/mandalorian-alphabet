@@ -816,3 +816,91 @@ button.primary:hover:not(:disabled) {
   letter-spacing: 0.1em;
   vertical-align: middle;
 }
+
+/* @spec HELP-001, HELP-005 */
+/* Help: a console sub-panel over the page that scrolls within itself on short screens, Close pinned at its top. */
+.overlay .help-panel {
+  max-width: 36rem;
+  max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  margin: 0;
+  padding-top: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-size: 15px;
+}
+
+.help-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -16px 8px;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--panel);
+}
+
+.help-title {
+  margin: 0;
+  color: var(--accent);
+  font: 700 15px/1.2 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.help-intro {
+  margin: 0 0 8px;
+}
+
+.help-controls {
+  margin: 12px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.help-entry {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.help-entry dt {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.help-entry dd {
+  margin: 2px 0 0;
+}
+
+.help-note {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.help-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* @spec LAYOUT-016 */
+/* The phone Help key: one square key on the status line, just before Feedback. */
+.help-button.compact {
+  flex: none;
+  min-width: 44px;
+  padding: 0;
+}
+
+.title-line .phone-only {
+  gap: 6px;
+}
+
+@media (min-width: 600px) {
+  .help-note {
+    display: none;
+  }
+}

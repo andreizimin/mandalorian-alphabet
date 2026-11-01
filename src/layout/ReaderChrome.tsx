@@ -29,6 +29,17 @@ export interface ReaderActions {
   onBack: () => void;
   onForward: () => void;
   onFeedback: () => void;
+  onHelp: () => void;
+}
+
+/** The Help key: HELP in the top bar, a compact square `?` on the phone title line. */
+// @spec HELP-001, LAYOUT-016
+export function HelpButton({ compact = false, onOpen }: { compact?: boolean; onOpen: () => void }) {
+  return (
+    <button type="button" className={compact ? 'help-button compact' : 'help-button'} aria-label="Help" onClick={onOpen}>
+      {compact ? '?' : 'Help'}
+    </button>
+  );
 }
 
 /** One button that steps the appearance and shows the current choice. */
@@ -83,25 +94,29 @@ export function TopBar(a: ReaderActions) {
       <QuizButton learnedCount={a.learnedCount} fontReady={a.fontReady} onOpen={a.onQuiz} />
       <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
       <AppearanceControl appearance={a.appearance} onAppearance={a.onAppearance} />
+      <HelpButton onOpen={a.onHelp} />
       <FeedbackButton ready={a.feedbackReady} reason={a.feedbackReason} onOpen={a.onFeedback} />
       <SuggestButton ready={a.feedbackReady} onOpen={a.onFeedback} />
     </nav>
   );
 }
 
-/** The status line: the passage title in the console face; on phones, which have no top bar, Feedback sits at its right end. */
+/** The status line: the passage title in the console face; on phones, which have no top bar, Help and Feedback sit at its right end. */
 // @spec LAYOUT-016, LAYOUT-021, OFF-008
 export function TitleBar({
   title,
   feedbackReady,
   feedbackReason,
   onFeedback,
+  onHelp,
   dev = false,
 }: {
   title: string;
   feedbackReady: boolean;
   feedbackReason?: string;
   onFeedback: () => void;
+  /** Opens Help; the compact key sits just before Feedback on phones (LAYOUT-016). */
+  onHelp?: () => void;
   /** A dev build: show the DEV marker after the title (OFF-008). */
   dev?: boolean;
 }) {
@@ -116,6 +131,7 @@ export function TitleBar({
         <span className="cursor" aria-hidden="true" />
       </p>
       <div className="phone-only">
+        {onHelp && <HelpButton compact onOpen={onHelp} />}
         <FeedbackButton ready={feedbackReady} reason={feedbackReason} onOpen={onFeedback} />
       </div>
     </div>

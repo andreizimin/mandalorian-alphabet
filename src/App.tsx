@@ -5,6 +5,7 @@ import { FontStatus } from './alphabet/FontStatus';
 import { useFontState } from './alphabet/useFontState';
 import { EndCard, Library } from './content/components';
 import { useFeedbackWidget } from './feedback/useFeedbackWidget';
+import { HelpPanel } from './help/HelpPanel';
 import { IntroTerminal } from './intro/IntroTerminal';
 import { pageBlocks, pageIndexFor } from './content/paginate';
 import { BUNDLED_PASSAGES } from './content/passages';
@@ -59,6 +60,7 @@ export function App() {
   const [introLetter, setIntroLetter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [ended, setEnded] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
   const measurerRef = useRef<HTMLDivElement>(null);
@@ -120,8 +122,8 @@ export function App() {
     setView('reader');
   }
 
-  // @spec FEED-004
-  const reading = view === 'reader' && !menuOpen && !introLetter && !ended && !feedback.isOpen;
+  // @spec FEED-004, HELP-003
+  const reading = view === 'reader' && !menuOpen && !helpOpen && !introLetter && !ended && !feedback.isOpen;
   useArrowKeyPageTurns({ enabled: reading, onBack: back, onForward: forward });
   usePageGestures({ enabled: reading, onBack: back, onForward: forward });
 
@@ -146,6 +148,7 @@ export function App() {
     onBack: back,
     onForward: forward,
     onFeedback: feedback.open,
+    onHelp: () => setHelpOpen(true),
   };
 
   const notice = progressStore.notice ?? contentStore.notice ?? settingsStore.notice;
@@ -226,6 +229,7 @@ export function App() {
               feedbackReady={feedback.ready}
               feedbackReason={feedback.reason}
               onFeedback={feedback.open}
+              onHelp={actions.onHelp}
               dev={isDevStage(currentStage())}
             />
             {legendOpen && <Legend learned={progress.learned} />}
@@ -249,6 +253,16 @@ export function App() {
         </>
       )}
 
+      {view === 'reader' && helpOpen && (
+        // @spec HELP-001, HELP-004
+        <HelpPanel
+          onClose={() => setHelpOpen(false)}
+          onReplayIntro={() => {
+            setHelpOpen(false);
+            setView('intro');
+          }}
+        />
+      )}
       {view === 'reader' && introLetter && (
         <div className="overlay">
           <IntroCard

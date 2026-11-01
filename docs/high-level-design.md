@@ -68,6 +68,7 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 | [offline](intent/offline/offline-design.md) | OFF | Service worker, installability |
 | [feedback](intent/feedback/feedback-design.md) | FEED | In-app feedback through the shared feedback platform |
 | [intro](intent/intro/intro-design.md) | INTRO | The first-launch terminal that greets the learner and explains the app, replayable from the library |
+| [help](intent/help/help-design.md) | HELP | The Help panel: what the app does and what each reader control does, opened from the reader controls |
 | [analytics](intent/analytics/analytics-design.md) | ANA | Cookieless usage analytics through the shared Umami account: a few core-loop events, nothing typed |
 
 ## Key Decisions

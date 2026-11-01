@@ -23,6 +23,7 @@ function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
     onBack: vi.fn(),
     onForward: vi.fn(),
     onFeedback: vi.fn(),
+    onHelp: vi.fn(),
     ...overrides,
   };
 }
@@ -62,6 +63,15 @@ describe('TopBar', () => {
   it('disables Suggest a feature with Feedback while the widget is unavailable', () => {
     render(<TopBar {...actions({ feedbackReady: false })} />);
     expect(screen.getByRole('button', { name: 'Suggest a feature' })).toBeDisabled();
+  });
+
+  // @spec LAYOUT-003, LAYOUT-016, HELP-001
+  it('holds the Help key, which opens Help', async () => {
+    const a = actions();
+    render(<TopBar {...a} />);
+    const bar = screen.getByRole('navigation', { name: /reader controls/i });
+    await userEvent.click(within(bar).getByRole('button', { name: 'Help' }));
+    expect(a.onHelp).toHaveBeenCalledTimes(1);
   });
 
   // @spec LAYOUT-003, LAYOUT-017
@@ -210,6 +220,22 @@ describe('Feedback among the reader controls', () => {
     expect(line.lastElementChild).toContainElement(phoneButton);
     await userEvent.click(phoneButton);
     expect(a.onFeedback).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec LAYOUT-016, HELP-001
+  it('puts a compact Help key on the phone title line, just before Feedback', async () => {
+    const a = actions();
+    render(<TitleBar title="Treasure Island" {...a} />);
+    const line = screen.getByText('Treasure Island').closest('.title-line') as HTMLElement;
+    const help = within(line).getByRole('button', { name: 'Help' });
+
+    expect(help.closest('.phone-only')).not.toBeNull();
+    expect(help).toHaveTextContent('?');
+    expect(help.compareDocumentPosition(within(line).getByRole('button', { name: 'Feedback' }))).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    await userEvent.click(help);
+    expect(a.onHelp).toHaveBeenCalledTimes(1);
   });
 
   // @spec LAYOUT-016, FEED-003
