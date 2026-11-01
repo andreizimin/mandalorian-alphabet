@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Minor fix |
-| Status | Proposed |
+| Status | Done |
 | Requested | 2026-11-01 |
-| Approved | |
-| Completed | |
+| Approved | 2026-11-01 (as written; no decisions needed) |
+| Completed | 2026-11-01 |
 | Ticket | none (asked in conversation) |
 
 ## Request
@@ -71,29 +71,35 @@ None.
 
 ## Outcome
 
+Written before the requester's dev check.
+
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | None | | |
-| LLDs | None | | |
-| Specs | None | | |
-| Tests | None | | |
-| Code | None | | |
-| Other | Skill (5 files), LICENSE, SOURCE.md, CLAUDE.md line | | |
+| HLD | None | None | |
+| LLDs | None | None | |
+| Specs | None | None | |
+| Tests | None | None | |
+| Code | None | None | |
+| Other | Skill (5 files), LICENSE, SOURCE.md, CLAUDE.md line | Skill (5 files), LICENSE, SOURCE.md, CLAUDE.md line | `diff -r` against upstream `v1.3.0` shows only the added LICENSE (and SOURCE.md) |
 
 ### Surprises
+
+1. **The skill is stricter than this project's process.** At v1.3.0 the skill stops for review at every phase boundary and asks for an edge audit before tests. CLAUDE.md overrides the phase stops (the requester's standing override), but the Phase 2 LLD edge probe, the Phase 4 intent-narrowing edge audit and the end-of-change coherence report are still owed. CO-013 skipped them as separate steps. They are not done here; the requester has been offered a retroactive pass.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
+| `272fe7d` | CO-015 proposed: vendor the linked-intent-dev skill |
+| (this commit) | CO-015: vendor the linked-intent-dev skill |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | |
-| Lines changed | |
-| Agent time | |
-| Deployed | |
+| Tests before → after | unchanged (no code or test changes) |
+| Lines changed | +807 (vendored skill, unmodified) +21 (LICENSE) +14 (SOURCE.md) +1 −1 (CLAUDE.md), plus this change order |
+| Agent time | about 10 minutes |
+| Deployed | dev from the branch by the pipeline (app unchanged); production when the pull request merges |

@@ -6,7 +6,7 @@
 
 ## Linked-Intent Development (MANDATORY)
 
-**Consult the `linked-intent-dev` skill for ALL code changes.** All changes flow through the arrow of intent in one direction:
+**Consult the `linked-intent-dev` skill for ALL code changes.** The skill is vendored at `.claude/skills/linked-intent-dev/` at the version in the `## LID` block above, so every session has it; see its `SOURCE.md` for updating it. All changes flow through the arrow of intent in one direction:
 
 ```
 HLD → LLDs → EARS → Tests → Code
