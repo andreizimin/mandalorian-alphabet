@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Minor fix |
-| Status | Proposed |
+| Status | Done |
 | Requested | 2026-11-01 |
-| Approved | |
-| Completed | |
+| Approved | 2026-11-01 (as written; no decisions needed) |
+| Completed | 2026-11-01 |
 | Ticket | none (asked in conversation) |
 
 ## Request
@@ -64,29 +64,35 @@ The next change's merge waits on the question. This change is the first case: af
 
 ## Outcome
 
+Written before the requester's dev check.
+
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | 1 sentence | | |
-| LLDs | None | | |
-| Specs | None | | |
-| Tests | None | | |
-| Code | None | | |
-| Other | CLAUDE.md, 3 steps | | |
+| HLD | 1 sentence | 1 sentence | Change flow paragraph |
+| LLDs | None | None | |
+| Specs | None | None | |
+| Tests | None | None | |
+| Code | None | None | |
+| Other | CLAUDE.md, 3 steps | CLAUDE.md, 3 steps | Change Orders steps 5 and 6; "process ZZF-NN" step 4 |
 
 ### Surprises
+
+None. Step 5 also names both commits when dev serves a different one from the branch head, which CO-013 ran into; the Intent had predicted that.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
+| `2d0f7c9` | CO-014 proposed: explicit dev-check question before merging |
+| (this commit) | CO-014: explicit dev-check question before merging |
 
 ### Measurements
 
 | | |
 |---|---|
-| Tests before → after | |
-| Lines changed | |
-| Agent time | |
-| Deployed | |
+| Tests before → after | unchanged (no code or test changes) |
+| Lines changed | +4 −4 (CLAUDE.md, HLD), plus this change order |
+| Agent time | about 5 minutes |
+| Deployed | dev from the branch by the pipeline (app unchanged); production when the pull request merges |
