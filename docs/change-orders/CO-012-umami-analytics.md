@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Done (not deployed) |
+| Status | Done |
 | Requested | 2026-10-31 |
 | Approved | 2026-10-31 (as written; the decisions below were taken with the recommended options) |
 | Completed | 2026-10-31 |
@@ -151,4 +151,4 @@ Written at the end of the change, before any review. The change was not pushed, 
 | Tests before → after | unit 319 → 327, browser 84 → 99 passed (5 skipped) |
 | Lines changed | +103 −2 (code, 8 files), +209 −6 (tests, 11 files), +127 −8 (HLD, design docs, specs, user flow, `CLAUDE.md`) |
 | Agent time | about 50 minutes from the proposal to the outcome, with no stops |
-| Deployed | Not deployed, at the requester's instruction; the branch `co-012-umami-analytics` is local only |
+| Deployed | Held back at first at the requester's instruction, then on their go: dev from the branch by the pipeline; production when the pull request merges. The suggestion address is still the placeholder until given. |
