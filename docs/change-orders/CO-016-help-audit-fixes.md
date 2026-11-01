@@ -87,6 +87,23 @@ None.
 
 Answered on 2026-11-01, each with the recommended option: replays are not counted (first completion only), and the follow-up fixes the three gaps and pins the settled behaviours and design-only rules.
 
+### Edge audit (Phase 4) before tests
+
+A blind reader probed the new and revised lines and found six forks. Two the code settles:
+- **HELP-011:** both quiz values are constants (10 questions; 2 letters).
+- **ANA-003:** "first time" is the saved intro-completed flag, which a replay always follows.
+
+The requester resolved the other four on 2026-11-01, each with the recommended option:
+1. **The same place:** closing Help shows the page holding the learner's word, as text size and resize already do.
+2. **Replay intro:** focus moves into the intro terminal, and Let's go lands as usual.
+3. **Focus on close:** focus returns to whichever Help key is on screen now.
+4. **Withholding Help:** while another overlay is open, the key stays and activating it does nothing; a glyph peek does not block Help.
+
+The resulting edits (outside the prediction above, which stands as written):
+- HELP-002, HELP-004, HELP-006 and HELP-009 narrowed.
+- HELP-009 split, adding HELP-013.
+- HELP-012 added.
+
 ## Risks and Edge Cases
 
 - **`inert` support:** Safari has supported `inert` since 15.5. On older browsers the panel still gets `aria-modal` and keeps Tab inside it, so the focus fixes still hold.
