@@ -6,7 +6,7 @@ This is an unmodified copy of the `linked-intent-dev` skill from the LID project
 |---|---|
 | Upstream | https://github.com/jszmajda/lid |
 | Path | `plugins/linked-intent-dev/skills/linked-intent-dev/` |
-| Tag | `v1.3.0` (commit `a3eb947fa639ddb859bdfcf5aaf861dc872461d5`) |
+| Tag | `v1.4.2` (commit `4e24477cd6bfbc219dda91f5617aefb162370865`) |
 | License | MIT, see `LICENSE` |
 
-The version matches the `## LID` block in `CLAUDE.md`. To move to another version, copy the same path from the new tag over this folder, update this file and the `- Version:` line in `CLAUDE.md` together, and do it as a change order.
+The version matches the `## LID` block in `CLAUDE.md`. To move to another version, copy the same path from the new tag over this folder (for both vendored skills), apply that release's migration from the upstream CHANGELOG, update these files and the `- Version:` line in `CLAUDE.md` together, and do it as a change order.

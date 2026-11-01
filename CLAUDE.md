@@ -2,17 +2,22 @@
 
 ## LID
 - Mode: Full
-- Version: 1.3.0
+- Version: 1.4.2
 
 ## Linked-Intent Development (MANDATORY)
 
-**Consult the `linked-intent-dev` skill for ALL code changes.** The skill is vendored at `.claude/skills/linked-intent-dev/` at the version in the `## LID` block above, so every session has it; see its `SOURCE.md` for updating it. All changes flow through the arrow of intent in one direction:
+**Consult the `linked-intent-dev` skill for ALL code changes.** It is vendored with `update-lid` at `.claude/skills/`, at the version in the `## LID` block above, so every session has them; see each skill's `SOURCE.md` for updating. All changes flow through the arrow of intent in one direction:
 
 ```
 HLD → LLDs → EARS → Tests → Code
 ```
 
-The skill guides the agent through HLD check → LLD check → EARS → intent-narrowing edge audit → tests-first → code, with stops between each phase. When specs and code disagree, specs win: fix the code, or fix the spec and cascade.
+- **All changes**: consult the `linked-intent-dev` skill if your harness provides it; otherwise read `docs/lid/workflow.md` before making changes, and if it is missing and `## LID` records no decline, offer the user once to add it from https://raw.githubusercontent.com/jszmajda/lid/v1.4.2/plugins/linked-intent-dev/skills/update-lid/references/workflow-doc.md (on decline, add `- Workflow doc: declined` to `## LID`). The workflow in one line: HLD check → LLD → EARS specs → edge audit → failing tests first → code — inspected at each phase.
+- **Bug fixes**: walk the arrow like any other change — find where behavior diverged from intent and cascade from there. No short-circuit.
+
+Each phase's output is inspected — by the user or an inspector they name — before the next begins; ambiguous spec readings go back to the user. In this project the requester's standing override (Change Orders step 3) consolidates those inspections into the change order review, the Decisions Needed round and the dev check; the LLD edge probe, the edge audit and the coherence report still run, and any spec that admits two readings still goes back to the requester before tests. When specs and code disagree, specs win: fix the code, or fix the spec and cascade. **Docs carry current intent, written to be read cold** — write each doc as if authored fresh today, from current intent alone: no narration of how it changed, no meaning that needs the conversation that produced it, no rebuttals to questions only a past discussion raised. Rationale, considered alternatives, and constraints a fresh author would independently write stay; record rejected alternatives and why in the LLD's Decisions & Alternatives table, not as asides in body prose.
+
+**Memory vs. intent.** Before saving durable project knowledge to agent or tool memory, test whether it is project *intent* — would a fresh agent, in any tool, next session, need it to build this system correctly? If yes, record it in the arrow (HLD / LLD / EARS / decision doc), which travels and cascades — not in private, per-tool memory, where intent escapes the arrow. Knowledge about the user or how they like to work stays in memory.
 
 ## Change Orders (MANDATORY)
 
@@ -47,6 +52,7 @@ Requests arrive as Linear tickets (team Zizify-team, project Feedback Collector,
 | Change orders (one per change, predicted vs actual) | `docs/change-orders/` |
 | Low-level designs | `docs/intent/<node>/<node>-design.md` |
 | EARS specs | `docs/intent/<node>/<node>-specs.md` |
+| Decision docs (created when the first is written) | `docs/decisions/` (project-level) and `docs/intent/<node>/decisions/` |
 
 Nodes: `reader` (READ), `progression` (PROG), `quiz` (QUIZ), `alphabet` (ALPHA), `content` (TEXT), `persistence` (PERS), `layout` (LAYOUT), `offline` (OFF), `feedback` (FEED), `intro` (INTRO), `help` (HELP), `analytics` (ANA).
 

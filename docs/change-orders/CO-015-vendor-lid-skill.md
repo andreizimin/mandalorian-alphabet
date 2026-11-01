@@ -73,33 +73,61 @@ None.
 
 Written before the requester's dev check.
 
+**The scope changed after approval.** Once v1.3.0 was on the branch, the requester asked for the latest release instead ("I need the latest 1.4 skill"). Asked how far to go, they chose the full upgrade: vendor `linked-intent-dev` and `update-lid` at v1.4.2, apply the 1.3 → 1.4 migration from the upstream CHANGELOG, and set `- Version: 1.4.2`. The Predicted Impact above is the original v1.3.0 prediction; the differences are recorded here.
+
 ### Predicted vs Actual
 
 | Level | Predicted | Actual | Notes |
 |---|---|---|---|
-| HLD | None | None | |
-| LLDs | None | None | |
+| HLD | None | None | The tenet sweep found nothing to change (below) |
+| LLDs | None | None | The misplaced-spec sweep found nothing to move (below) |
 | Specs | None | None | |
 | Tests | None | None | |
 | Code | None | None | |
-| Other | Skill (5 files), LICENSE, SOURCE.md, CLAUDE.md line | Skill (5 files), LICENSE, SOURCE.md, CLAUDE.md line | `diff -r` against upstream `v1.3.0` shows only the added LICENSE (and SOURCE.md) |
+| Other | `linked-intent-dev` v1.3.0 (5 files), LICENSE, SOURCE.md, one CLAUDE.md line | `linked-intent-dev` v1.4.2 (7 files, adding `capability-flags.md` and `evals/`) and `update-lid` v1.4.2 (4 files), each with LICENSE and SOURCE.md; CLAUDE.md `## LID` version and the whole Linked-Intent Development section; one navigation row | `diff -r` against upstream `v1.4.2` shows only the added LICENSE and SOURCE.md |
+
+### The 1.3 → 1.4 migration
+
+- **Directives refresh (mechanical), applied.** The CLAUDE.md workflow section now follows the v1.4.2 template:
+  - the pointer bullet (skill first, otherwise `docs/lid/workflow.md` from the v1.4.2 release);
+  - the workflow in one line;
+  - the bug-fix line;
+  - the inspection invariant, which replaces "with stops between each phase";
+  - *docs carry current intent*;
+  - *memory vs. intent*.
+
+  Two project lines are kept: *specs win when specs and code disagree*, and a sentence tying the inspection invariant to the requester's standing override in Change Orders step 3. The navigation table gains the template's decision-docs row.
+- **Tenet sweep (judgment): nothing to change.** The HLD's three tenets (*Mandalorian polish over generality*, *Verification over uninterrupted flow*, *Convenience over device purity*) are each a one-line lean with no embedded procedure.
+- **Misplaced-spec sweep (judgment): nothing to move.**
+  - The mechanical screen found no requirement lines or status markers in any `*-design.md`.
+  - The four spec IDs that design docs mention are citations, not definitions: `ANA-009` in `analytics`, `INTRO-008` in `help`, `PROG-014` in `intro` and `READ-002` in `reader`.
+- **Informational items, no action.**
+  - New audit finding classes.
+  - Judgment reaching the requester by default.
+  - Capability flags: none apply to the model that did this work.
+  - No `.lid/` directory exists.
+  - No workflow doc is vendored: Claude Code loads the skill directly.
 
 ### Surprises
 
-1. **The skill is stricter than this project's process.** At v1.3.0 the skill stops for review at every phase boundary and asks for an edge audit before tests. CLAUDE.md overrides the phase stops (the requester's standing override), but the Phase 2 LLD edge probe, the Phase 4 intent-narrowing edge audit and the end-of-change coherence report are still owed. CO-013 skipped them as separate steps. They are not done here; the requester has been offered a retroactive pass.
+1. **The latest release, not the declared one.** The prediction pinned the copy to the version CLAUDE.md declared. The requester wanted the latest, which brought the 1.3 → 1.4 migration with it.
+2. **The skill is stricter than this project's process.** The LLD edge probe, the Phase 4 edge audit and the end-of-change coherence report are owed on every change, even with the phase stops consolidated. CO-013 skipped them as separate steps. CLAUDE.md now says they still run; the retroactive pass over CO-013 has been offered, not done.
+3. **The phase-stop override needed a sentence.** The 1.4 inspection invariant reads as a stop after every phase. The project's standing override already consolidates inspection into the change order review, the decisions round and the dev check, so the refreshed section says so rather than leave the two in tension.
 
 ### Commits
 
 | Hash | Message |
 |---|---|
 | `272fe7d` | CO-015 proposed: vendor the linked-intent-dev skill |
-| (this commit) | CO-015: vendor the linked-intent-dev skill |
+| `6c36006` | CO-015: vendor the linked-intent-dev skill (v1.3.0) |
+| `2ef1f67` | CO-015: correct a line count in the outcome |
+| (this commit) | CO-015: move to LID v1.4.2 with update-lid and the 1.3 → 1.4 migration |
 
 ### Measurements
 
 | | |
 |---|---|
 | Tests before → after | unchanged (no code or test changes) |
-| Lines changed | +807 (vendored skill, unmodified) +21 (LICENSE) +12 (SOURCE.md) +1 −1 (CLAUDE.md), plus this change order |
-| Agent time | about 10 minutes |
+| Lines changed | the two vendored skills, unmodified from upstream; CLAUDE.md's LID section rewritten (about +12 −6); this change order |
+| Agent time | about 25 minutes, including reading both skills and the CHANGELOG |
 | Deployed | dev from the branch by the pipeline (app unchanged); production when the pull request merges |
