@@ -61,6 +61,16 @@ export function App() {
   const [legendOpen, setLegendOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [introFromHelp, setIntroFromHelp] = useState(false);
+  const helpReturnsFocus = useRef(false);
+
+  // @spec HELP-006
+  useEffect(() => {
+    if (helpOpen || !helpReturnsFocus.current) return;
+    helpReturnsFocus.current = false;
+    const keys = [...document.querySelectorAll<HTMLButtonElement>('button[aria-label="Help"]')];
+    keys.find((key) => key.offsetParent !== null)?.focus();
+  }, [helpOpen]);
   const [ended, setEnded] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
   const measurerRef = useRef<HTMLDivElement>(null);
@@ -148,7 +158,11 @@ export function App() {
     onBack: back,
     onForward: forward,
     onFeedback: feedback.open,
-    onHelp: () => setHelpOpen(true),
+    // @spec HELP-013
+    onHelp: () => {
+      if (menuOpen || introLetter || ended || feedback.isOpen) return;
+      setHelpOpen(true);
+    },
   };
 
   const notice = progressStore.notice ?? contentStore.notice ?? settingsStore.notice;
@@ -159,131 +173,141 @@ export function App() {
   };
 
   return (
-    <main className="reader" style={{ '--text-size': `${settings.textSize}px` } as CSSProperties}>
-      <FontStatus alphabet={alphabet} />
-      <StorageNotice notice={notice} onDismiss={dismissNotice} />
+    <>
+      {/* @spec HELP-007 */}
+      <main className="reader" inert={helpOpen} style={{ '--text-size': `${settings.textSize}px` } as CSSProperties}>
+        <FontStatus alphabet={alphabet} />
+        <StorageNotice notice={notice} onDismiss={dismissNotice} />
 
-      {view === 'intro' && (
-        // @spec INTRO-004, INTRO-008, ANA-003
-        <IntroTerminal
-          fontState={fontState}
-          onDone={() => {
-            dispatch({ type: 'completeIntro' });
-            setView('reader');
-            track('intro_done');
-          }}
-        />
-      )}
-
-      {view === 'quiz' && (
-        <QuizScreen
-          learned={progress.learned}
-          quizByLetter={progress.quizByLetter}
-          order={order}
-          everyday={EVERYDAY_WORDS}
-          galaxy={GALAXY_WORDS}
-          onRecord={(answers) => dispatch({ type: 'quizAnswers', answers })}
-          onExit={() => setView('reader')}
-        />
-      )}
-
-      {view === 'library' && (
-        <>
-          <div className="controls">
-            <button type="button" onClick={() => setView('reader')}>
-              ← Back to reading
-            </button>
-            {/* @spec INTRO-008 */}
-            <button type="button" onClick={() => setView('intro')}>
-              Replay intro
-            </button>
-          </div>
-          <Library
-            bundled={BUNDLED_PASSAGES}
-            pasted={content.pasted}
-            onOpen={open}
-            onDelete={(id) => update((c) => deletePasted(c, id, FIRST_BUNDLED_ID))}
-            onPaste={(p) => {
-              update((c) => addPasted(c, { id: `pasted-${Date.now()}`, source: 'pasted', ...p }));
-              setEnded(false);
+        {view === 'intro' && (
+          // @spec INTRO-004, INTRO-008, ANA-003, HELP-012
+          <IntroTerminal
+            fontState={fontState}
+            focusOnStart={introFromHelp}
+            onDone={() => {
+              const firstCompletion = !progress.welcomeSeen;
+              dispatch({ type: 'completeIntro' });
               setView('reader');
+              setIntroFromHelp(false);
+              if (firstCompletion) track('intro_done');
             }}
           />
-          <DataPanel
-            onExport={() => void deliverExport(buildExport({ progress, content, settings }, new Date()))}
-            onImport={(data) => {
-              progressStore.replace(data.progress);
-              if (data.content) contentStore.replace(data.content);
-              if (data.settings) settingsStore.set(data.settings);
-            }}
-          />
-        </>
-      )}
+        )}
 
-      {view === 'reader' && (
-        <>
-          <header className="reader-header">
-            <TopBar {...actions} />
-            <TitleBar
-              title={passage.title}
-              feedbackReady={feedback.ready}
-              feedbackReason={feedback.reason}
-              onFeedback={feedback.open}
-              onHelp={actions.onHelp}
-              dev={isDevStage(currentStage())}
+        {view === 'quiz' && (
+          <QuizScreen
+            learned={progress.learned}
+            quizByLetter={progress.quizByLetter}
+            order={order}
+            everyday={EVERYDAY_WORDS}
+            galaxy={GALAXY_WORDS}
+            onRecord={(answers) => dispatch({ type: 'quizAnswers', answers })}
+            onExit={() => setView('reader')}
+          />
+        )}
+
+        {view === 'library' && (
+          <>
+            <div className="controls">
+              <button type="button" onClick={() => setView('reader')}>
+                ← Back to reading
+              </button>
+              {/* @spec INTRO-008 */}
+              <button type="button" onClick={() => setView('intro')}>
+                Replay intro
+              </button>
+            </div>
+            <Library
+              bundled={BUNDLED_PASSAGES}
+              pasted={content.pasted}
+              onOpen={open}
+              onDelete={(id) => update((c) => deletePasted(c, id, FIRST_BUNDLED_ID))}
+              onPaste={(p) => {
+                update((c) => addPasted(c, { id: `pasted-${Date.now()}`, source: 'pasted', ...p }));
+                setEnded(false);
+                setView('reader');
+              }}
             />
-            {legendOpen && <Legend learned={progress.learned} />}
-            <HintBanner signals={visibleHint(progress)} onDismiss={() => dispatch({ type: 'dismissHint' })} />
-          </header>
+            <DataPanel
+              onExport={() => void deliverExport(buildExport({ progress, content, settings }, new Date()))}
+              onImport={(data) => {
+                progressStore.replace(data.progress);
+                if (data.content) contentStore.replace(data.content);
+                if (data.settings) settingsStore.set(data.settings);
+              }}
+            />
+          </>
+        )}
 
-          <div className="page-area" ref={areaRef}>
-            <div className="page-measurer" ref={measurerRef} aria-hidden="true" />
-            {page && (
-              <PassagePage
-                paragraphs={pageBlocks(passage.paragraphs, page)}
-                learnedSet={learnedSet}
-                newestLetter={fontState === 'loaded' ? progress.learned[progress.learned.length - 1] : undefined}
-                onPeek={(letter) => dispatch({ type: 'peek', letter })}
+        {view === 'reader' && (
+          <>
+            <header className="reader-header">
+              <TopBar {...actions} />
+              <TitleBar
+                title={passage.title}
+                feedbackReady={feedback.ready}
+                feedbackReason={feedback.reason}
+                onFeedback={feedback.open}
+                onHelp={actions.onHelp}
+                dev={isDevStage(currentStage())}
               />
-            )}
+              {legendOpen && <Legend learned={progress.learned} />}
+              <HintBanner signals={visibleHint(progress)} onDismiss={() => dispatch({ type: 'dismissHint' })} />
+            </header>
+
+            <div className="page-area" ref={areaRef}>
+              <div className="page-measurer" ref={measurerRef} aria-hidden="true" />
+              {page && (
+                <PassagePage
+                  paragraphs={pageBlocks(passage.paragraphs, page)}
+                  learnedSet={learnedSet}
+                  newestLetter={fontState === 'loaded' ? progress.learned[progress.learned.length - 1] : undefined}
+                  onPeek={(letter) => dispatch({ type: 'peek', letter })}
+                />
+              )}
+            </div>
+
+            <BottomBar {...actions} onMenu={() => setMenuOpen(true)} />
+            {menuOpen && <MenuSheet {...actions} onClose={() => setMenuOpen(false)} />}
+          </>
+        )}
+
+        {view === 'reader' && introLetter && (
+          <div className="overlay">
+            <IntroCard
+              letter={introLetter}
+              passageText={passage.paragraphs.join(' ')}
+              onClose={() => setIntroLetter(null)}
+            />
           </div>
-
-          <BottomBar {...actions} onMenu={() => setMenuOpen(true)} />
-          {menuOpen && <MenuSheet {...actions} onClose={() => setMenuOpen(false)} />}
-        </>
-      )}
-
+        )}
+        {view === 'reader' && ended && (
+          <div className="overlay">
+            <EndCard
+              title={passage.title}
+              onNext={() => open(nextBundledId(BUNDLED_PASSAGES, currentId))}
+              onLibrary={() => {
+                setEnded(false);
+                setView('library');
+              }}
+            />
+          </div>
+        )}
+      </main>
       {view === 'reader' && helpOpen && (
-        // @spec HELP-001, HELP-004
+        // @spec HELP-001, HELP-004, HELP-012
         <HelpPanel
-          onClose={() => setHelpOpen(false)}
+          onClose={() => {
+            helpReturnsFocus.current = true;
+            setHelpOpen(false);
+          }}
           onReplayIntro={() => {
             setHelpOpen(false);
+            setIntroFromHelp(true);
             setView('intro');
           }}
         />
       )}
-      {view === 'reader' && introLetter && (
-        <div className="overlay">
-          <IntroCard
-            letter={introLetter}
-            passageText={passage.paragraphs.join(' ')}
-            onClose={() => setIntroLetter(null)}
-          />
-        </div>
-      )}
-      {view === 'reader' && ended && (
-        <div className="overlay">
-          <EndCard
-            title={passage.title}
-            onNext={() => open(nextBundledId(BUNDLED_PASSAGES, currentId))}
-            onLibrary={() => {
-              setEnded(false);
-              setView('library');
-            }}
-          />
-        </div>
-      )}
-    </main>
+    </>
   );
 }

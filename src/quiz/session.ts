@@ -22,6 +22,9 @@ export interface SessionInput {
 }
 
 export const SESSION_LENGTH = 10;
+
+/** Letters the learner must have learned before the quiz opens. */
+export const QUIZ_MIN_LETTERS = 2;
 const NEWEST_MIN = 3;
 const WORD_POOL_MIN = 8;
 const NO_REPEAT_POOL_MIN = 10;

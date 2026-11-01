@@ -33,3 +33,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-013](CO-013-help-button.md) | Help button ([ZZF-74](https://linear.app/zizify-workshop/issue/ZZF-74)) | Feature | Done | +5 ~2 | +5 ~2 |
 | [CO-014](CO-014-dev-check-question.md) | Explicit dev-check question before merging | Minor fix | Done | 0 | 0 |
 | [CO-015](CO-015-vendor-lid-skill.md) | Vendor the linked-intent-dev skill into the repository (LID v1.4.2, with the 1.3 → 1.4 migration) | Minor fix | Done | 0 | 0 |
+| [CO-016](CO-016-help-audit-fixes.md) | Help panel audit fixes (follows ZZF-74) | Minor fix | Done | +6 ~5 | +8 ~6 |

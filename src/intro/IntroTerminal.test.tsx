@@ -143,3 +143,16 @@ describe('IntroTerminal', () => {
     expect(goButton()).not.toBeNull();
   });
 });
+
+describe('IntroTerminal opened from Help', () => {
+  // @spec HELP-012
+  it('takes keyboard focus when asked to', () => {
+    render(<IntroTerminal fontState="loaded" onDone={() => {}} focusOnStart />);
+    expect(document.querySelector('.terminal')).toHaveFocus();
+  });
+
+  it('leaves focus alone on a first launch', () => {
+    render(<IntroTerminal fontState="loaded" onDone={() => {}} />);
+    expect(document.querySelector('.terminal')).not.toHaveFocus();
+  });
+});

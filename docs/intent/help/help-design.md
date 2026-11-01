@@ -25,20 +25,21 @@ The panel opens with what the app is and how it teaches, in two or three lines: 
 - **A− A+ and the appearance key:** text size; Auto, Light or Dark.
 - **Feedback and Suggest a feature:** tell us what is wrong or what you would like.
 
-A note says that on a phone the ⋯ key holds the controls that are not in the bottom bar.
+A note, shown only under 600 px wide, says that on a phone the ⋯ key holds the controls that are not in the bottom bar; everything else reads the same at every width.
 
-The text is data (`src/help/helpText.ts`), like the intro's script, so a test can check that every reader control is named and the words can change without touching the component.
+The text is data (`src/help/helpText.ts`), like the intro's script, so a test can check that every reader control is named and the words can change without touching the component. The quiz line takes its numbers (questions in a session, letters the quiz needs) from the quiz's own values, so it cannot drift from them.
 
 ## The Panel
 
-The panel is a console sub-panel (see `layout`, Console Look) in the shared overlay, over the page, with a dialog role and the label "Help". Its keys are **Replay intro** and **Close**.
+The panel is a console sub-panel (see `layout`, Console Look) in the shared overlay, over the page: a modal dialog labelled "Help", with the keys **Replay intro** and **Close**.
 
-- **Closing:** Close, a tap on the backdrop outside the panel, or Escape. The page underneath does not move, so closing shows the same page.
-- **Replay intro:** closes the panel and shows the intro terminal, exactly as Replay intro in the library does (`intro`, INTRO-008): Let's go returns to the passage the learner was reading.
-- **Page turns:** while the panel is open, page-turn keys, swipes and edge taps are ignored, the same pause the menu sheet and the feedback form use, so a tap on the backdrop closes the panel and nothing else.
-- **Small screens:** the panel's text is longer than a phone in landscape is tall, so the panel is capped at the viewport's height and scrolls within itself; Close sits at the top so it is always reachable, and the page behind stays put.
+- **Closing:** Close, a tap on the backdrop outside the panel, or Escape. The backdrop covers the whole page, so the closing tap reaches nothing beneath it: no control, glyph or edge zone. Closing shows the page holding the word the learner was reading. The reader keeps its place as a word in the text, not a page number, so a resize or a font change while the panel is open re-cuts the pages and the learner's word may then sit partway down the page, as it does after a text-size change.
+- **Replay intro:** closes the panel and shows the intro terminal, exactly as Replay intro in the library does (`intro`, INTRO-008). Focus moves to the intro terminal. Let's go then shows the page holding the learner's word, with the panel closed, and focus lands wherever the reader normally puts it.
+- **Page turns:** while the panel is open, every page-turn input is paused: keys, swipes, edge taps, and the on-screen ← → buttons, which lie under the backdrop. The menu sheet and the feedback form pause page turns the same way.
+- **Small screens:** the panel's text is longer than a phone in landscape is tall. So the panel is capped at the viewport's height and scrolls within itself; Close is pinned in the panel's header at every scroll position, and the page behind stays put.
+- **Focus and assistive technology:** opening the panel moves keyboard focus to Close; closing it moves focus to the Help key on screen at that moment, which is the key that opened it unless the width crossed 600 px while the panel was open. While it is open, the reader behind it is inert, so Tab and a screen reader stay inside the panel.
 
-Help opens only from the reader. The quiz, the library and the intro each have their own way back to reading, and the new-letter and end-of-passage cards cover the controls, so two overlays never stack.
+Help opens from the reader only. The quiz, the library and the intro each have their own way back to reading. Help never opens while another overlay is open: the new-letter card, the end-of-passage card, the phone menu sheet or the feedback form. Most of these already cover the Help key; if a tap or a key press still reaches it, nothing happens. The key itself does not change, and a glyph peek does not block Help. So two overlays never stack.
 
 ## Decisions & Alternatives
 
@@ -48,6 +49,9 @@ Help opens only from the reader. The quiz, the library and the intro each have t
 | Where it lives | Its own component | Part of `intro`; part of `layout` | A panel with its own text is a distinct intent; `layout` owns only the key's place, as it does for Feedback |
 | Close key position | At the top of the panel | At the bottom, after the text | On a short phone screen the bottom of a scrolled panel is out of reach until the learner scrolls; at the top it is always one tap away |
 | The text | Data in `helpText.ts`, checked against the control names | Written inline in the component | A renamed or new control fails the test until Help says what it does, so Help cannot drift from the controls unnoticed |
+| Focus and modality | Focus to Close on open and back to the opener on close; the reader behind is inert | Leave focus where it was; a full focus-trap library | Without it, a keyboard or VoiceOver user can tab or swipe into the page behind the panel; `inert` and `aria-modal` give the trap with no dependency |
+| Withholding Help behind another overlay | The key stays; activating it does nothing | Disable or hide the key | The other overlays already cover the key; changing its look for a moment the learner rarely sees adds state for no gain |
+| A tap outside | Closes the panel and is consumed | Closes the panel and also acts on what it hit | A tap meant to dismiss must not also turn a page, peek or press a control the learner could not see clearly behind the backdrop |
 | Analytics | No event | A `mando_help_open` event | The `analytics` LLD counts core-loop actions, not controls |
 
 ## Verification

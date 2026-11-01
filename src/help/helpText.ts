@@ -3,6 +3,8 @@
  * control is explained and the words can change without touching the panel.
  */
 
+import { QUIZ_MIN_LETTERS, SESSION_LENGTH } from '../quiz/session';
+
 /** What the app is and how it teaches. */
 export const HELP_INTRO: readonly string[] = [
   'This app teaches you to read the Mandalorian alphabet by reading.',
@@ -25,7 +27,11 @@ export const HELP_CONTROLS: readonly HelpEntry[] = [
   },
   { name: 'Tap a glyph', text: 'Peeks at its word in English. Highlight some text to see all of it in English.' },
   { name: '← →, swipe or tap the page edge', text: 'Turns the page.' },
-  { name: 'Quiz', text: 'A quick 10-question check of the letters you have learned, once you have 2.' },
+  // @spec HELP-011
+  {
+    name: 'Quiz',
+    text: `A quick ${SESSION_LENGTH}-question check of the letters you have learned, once you have ${QUIZ_MIN_LETTERS}.`,
+  },
   { name: 'Legend', text: 'The letters you have learned so far.' },
   { name: 'Step back', text: 'Takes away the newest letter if it came too soon.' },
   { name: 'Reset', text: 'Starts again from no letters.' },

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { FontState } from '../alphabet/alphabet';
 import { Substituted } from '../reader/Substituted';
 import {
@@ -48,7 +48,21 @@ function Sprinkled({ text, glyphs }: { text: string; glyphs: boolean }): ReactNo
  * paragraph is typing finishes it.
  */
 // @spec INTRO-001, INTRO-002, INTRO-003, INTRO-004, INTRO-005, INTRO-006, INTRO-007, INTRO-009
-export function IntroTerminal({ fontState, onDone }: { fontState: FontState; onDone: () => void }) {
+export function IntroTerminal({
+  fontState,
+  onDone,
+  focusOnStart = false,
+}: {
+  fontState: FontState;
+  onDone: () => void;
+  /** Take keyboard focus when shown, as a replay from Help does. */
+  focusOnStart?: boolean;
+}) {
+  const terminalRef = useRef<HTMLDivElement>(null);
+  // @spec HELP-012
+  useEffect(() => {
+    if (focusOnStart) terminalRef.current?.focus();
+  }, [focusOnStart]);
   const [frame, setFrame] = useState<Frame>(() => (prefersReducedMotion() ? FINISHED : START));
   const finished = isFinished(frame);
   const waiting = isWaiting(frame);
@@ -70,7 +84,7 @@ export function IntroTerminal({ fontState, onDone }: { fontState: FontState; onD
 
   return (
     <section className="intro" aria-label="Intro">
-      <div className="terminal" onClick={() => setFrame(tap)}>
+      <div ref={terminalRef} className="terminal" tabIndex={focusOnStart ? -1 : undefined} onClick={() => setFrame(tap)}>
         <p className="intro-greeting">
           <Substituted text={GREETING.slice(0, frame.greeting)} letters={glyphs ? EVERY_LETTER : NO_LETTERS} />
           {cursorOnGreeting && <Cursor />}
