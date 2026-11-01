@@ -125,17 +125,18 @@ Written at the end of the change, before any review. The change was not pushed, 
 |---|---|---|---|
 | HLD | 3 changes | 3 changes | Design Tree row, Key Decision, open question closed |
 | LLDs | 1 new, 3 changed (4 sections) | 1 new, 3 changed (5 sections) | `layout` also changed its Breakpoints table row, as the prediction's section list said but its count did not |
-| Specs | +10 (1 deferred) ~2 | +11 (1 deferred) ~2 | `ANA-010` added for the tracker block in browser tests, so the `e2e/test.ts` annotation has a spec to cite |
+| Specs | +10 (1 deferred) ~2 | +11 (1 deferred) ~3 | `ANA-010` added for the tracker block in browser tests, so the `e2e/test.ts` annotation has a spec to cite; `FEED-006` revised after the dev check (surprise 4) |
 | Tests | 5 files | 11 files | The six existing browser specs each changed one import line to pick up the shared `test` |
-| Code | 7 files | 8 files | `src/feedback/suggestion.ts` holds the address on its own, so the browser spec can import it without pulling in React |
+| Code | 7 files | 7 files | `SuggestButton.tsx` in place of the predicted `SuggestLink.tsx`; no stylesheet change survived, since a button already is a console key |
 | Other | user flow, `CLAUDE.md` | user flow, `CLAUDE.md` | `CLAUDE.md`'s node list also gained the missing `intro` entry |
 
 ### Surprises
 
 1. **The quiz event could not sit in `next()`.** The last question's results phase is reached either by the Next button or by the 1.5-second timer, and the timer's callback closes over the picks of an earlier render, one pick short. The event moved to an effect on the results phase, where the picks are complete. The unit test that answers the last question wrong is what made this visible in the design rather than in the dashboard.
-2. **The sibling repos had no Umami to copy.** The request reads as a template applied across sites, and the suggestion address was left as `<SUGGESTION_URL>`; no other repo on this machine had the real one. The address is a placeholder on a `.invalid` host until given.
+2. **The sibling repos had no Umami to copy.** The request reads as a template applied across sites, and the suggestion address was left as `<SUGGESTION_URL>`; no other repo on this machine had the real one. The first version carried a placeholder on a `.invalid` host, which surprise 4 removed: no address is needed once the key opens the widget.
 3. **A stale build fooled the screenshots.** Comparing the browser suite against the untouched tree rebuilt `dist/` from `main`, and the first screenshots showed no link. A rebuild fixed it; the browser tests, which build their own preview, had been right all along.
-4. **Parallel browser runs saturate this machine.** One run with the default worker count timed out on every `page.goto`; a rerun passed. Not caused by the change, and CI runs one worker.
+4. **The dev check sent the suggestion key back.** The request's "Suggest a feature link that opens `<SUGGESTION_URL>` in a new tab" read as a separate page, so the first version opened a placeholder address next to the Feedback key that already files feature ideas through the shared widget. On dev the requester saw a suggestion key that did nothing, where the widget had always worked. The key now opens the shared form, whose default choice is Feature, and is disabled whenever Feedback is; the placeholder address and the new-tab behaviour are gone. `FEED-006` was revised after the dev check, with its tests. The lesson is the one in CO-002's alternatives table: when a request names a channel the app already has, ask whether the new one is the old one before building a second.
+5. **Parallel browser runs saturate this machine.** One run with the default worker count timed out on every `page.goto`; a rerun passed. Not caused by the change, and CI runs one worker.
 
 ### Commits
 
@@ -148,7 +149,7 @@ Written at the end of the change, before any review. The change was not pushed, 
 
 | | |
 |---|---|
-| Tests before → after | unit 319 → 327, browser 84 → 99 passed (5 skipped) |
+| Tests before → after | unit 319 → 329, browser 84 → 99 passed (5 skipped) |
 | Lines changed | +103 −2 (code, 8 files), +209 −6 (tests, 11 files), +127 −8 (HLD, design docs, specs, user flow, `CLAUDE.md`) |
 | Agent time | about 50 minutes from the proposal to the outcome, with no stops |
-| Deployed | Held back at first at the requester's instruction, then on their go: dev from the branch by the pipeline; production when the pull request merges. The suggestion address is still the placeholder until given. |
+| Deployed | Held back at first at the requester's instruction, then on their go: dev from the branch by the pipeline, twice (the second time after the dev check, with the suggestion key opening the widget); production when the pull request merges |

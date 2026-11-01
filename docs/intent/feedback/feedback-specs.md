@@ -15,7 +15,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Suggesting a Feature
 
-- `[x]` **FEED-006**: The system SHALL show a Suggest a feature link among the reader controls that opens the suggestion page (`SUGGESTION_URL`) in a new tab.
+- `[x]` **FEED-006**: The system SHALL show a Suggest a feature key among the reader controls that opens the shared feedback form, and SHALL disable it whenever the Feedback button is disabled.
 
 ## Keeping Reading Quiet
 

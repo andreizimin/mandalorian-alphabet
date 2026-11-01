@@ -35,7 +35,7 @@ The tracker reports a page view on load. The app has one route, so the view coun
 | `mando_letter_advance` | A new letter joins the learned set | `learned`: letters now learned | The ramp's progress; the highest count per visitor is where they stopped |
 | `mando_page_read` | A forward page turn that counts as new reading (not a re-read) | `learned`: letters learned at the time | Did they read, and how much, at each stage of the ramp |
 | `mando_quiz_done` | A quiz session shows its results | `score` out of 10, `learned` | Did they try the quiz and how they did |
-| `mando_suggest_feature_click` | The Suggest a feature link is tapped | none | Demand for the suggestion channel |
+| `mando_suggest_feature_click` | The Suggest a feature key is tapped | none | How often ideas are offered; the idea itself goes to the feedback platform, never here |
 
 Data is counts only. Nothing identifies a passage (a pasted title is the learner's own text), and nothing the learner types, pastes or answers in the quiz is sent. The events are placed at the action in `App.tsx` (intro, advance, page read) and `QuizScreen.tsx` (results), next to the state change they describe.
 

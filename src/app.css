@@ -310,28 +310,6 @@ button:hover:not(:disabled) {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
-/* @spec FEED-006 */
-/* A link drawn as a console key (Suggest a feature). */
-.key-link {
-  display: inline-flex;
-  align-items: center;
-  box-sizing: border-box;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid var(--accent);
-  border-radius: 2px;
-  color: var(--accent);
-  font: 600 13px/1.2 var(--mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background-color 120ms;
-}
-
-.key-link:hover {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-}
-
 button:active:not(:disabled) {
   background: color-mix(in srgb, var(--accent) 24%, transparent);
 }

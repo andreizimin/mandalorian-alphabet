@@ -1,9 +1,12 @@
-import { SUGGESTION_URL } from '../src/feedback/suggestion';
+import { readFileSync } from 'node:fs';
 import { learn, passIntro, reach } from './helpers';
 import { expect, test, type Page } from './test';
 
+const widget = readFileSync(new URL('./fixtures/feedback-widget.js', import.meta.url), 'utf8');
+
 // Every test installs a stand-in tracker before the app loads and reads back what the
-// app reported; the real tracker is blocked by the shared `test`.
+// app reported; the real tracker is blocked by the shared `test`, and the feedback
+// widget is the stand-in from the fixtures, so no test can file a real ticket.
 type Call = [string, Record<string, number> | undefined];
 const reported = (page: Page) => page.evaluate(() => (window as unknown as { __events: Call[] }).__events);
 const names = async (page: Page) => (await reported(page)).map(([name]) => name);
@@ -14,7 +17,11 @@ test.beforeEach(async ({ page }) => {
     w.__events = [];
     w.umami = { track: (name, data) => w.__events.push([name, data]) };
   });
-  await page.route('https://feedback.andreizimin.com/**', (route) => route.abort());
+  await page.route('https://feedback.andreizimin.com/**', (route) =>
+    new URL(route.request().url()).pathname === '/widget.js'
+      ? route.fulfill({ contentType: 'text/javascript', body: widget })
+      : route.abort(),
+  );
   await page.goto('/');
 });
 
@@ -46,20 +53,14 @@ test('reports a page read once per new page, not when re-reading', async ({ page
 });
 
 // @spec FEED-006, ANA-007, LAYOUT-002, LAYOUT-003
-test('Suggest a feature opens the suggestion page in a new tab and reports the tap', async ({ page }, info) => {
+test('Suggest a feature opens the shared feedback form and reports the tap', async ({ page }, info) => {
   await passIntro(page);
-  await page.context().route((url) => url.href.startsWith(SUGGESTION_URL), (route) =>
-    route.fulfill({ contentType: 'text/html', body: '<title>Suggestions</title>' }),
-  );
   await reach(page, info);
-  const link = page.getByRole('link', { name: 'Suggest a feature' });
-  await expect(link).toBeVisible();
-  const [popup] = await Promise.all([page.waitForEvent('popup'), link.click()]);
-  await popup.waitForLoadState();
-  expect(popup.url()).toBe(SUGGESTION_URL);
+  const key = page.getByRole('button', { name: 'Suggest a feature' });
+  await expect(key).toBeEnabled();
+  await key.click();
+  await expect.poll(() => page.evaluate(() => window.FeedbackWidget?.isOpen())).toBe(true);
   expect(await names(page)).toContain('mando_suggest_feature_click');
-  // The reader is still where it was.
-  await expect(page.locator('.page-area p').first()).toBeVisible();
 });
 
 // @spec ANA-008

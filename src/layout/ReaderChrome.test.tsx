@@ -50,10 +50,18 @@ describe('TopBar', () => {
   });
 
   // @spec LAYOUT-003, FEED-006
-  it('holds the Suggest a feature link', () => {
-    render(<TopBar {...actions()} />);
+  it('holds the Suggest a feature key, which opens the feedback form', async () => {
+    const a = actions();
+    render(<TopBar {...a} />);
     const bar = screen.getByRole('navigation', { name: /reader controls/i });
-    expect(within(bar).getByRole('link', { name: /suggest a feature/i })).toHaveAttribute('target', '_blank');
+    await userEvent.click(within(bar).getByRole('button', { name: 'Suggest a feature' }));
+    expect(a.onFeedback).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec FEED-006
+  it('disables Suggest a feature with Feedback while the widget is unavailable', () => {
+    render(<TopBar {...actions({ feedbackReady: false })} />);
+    expect(screen.getByRole('button', { name: 'Suggest a feature' })).toBeDisabled();
   });
 
   // @spec LAYOUT-003, LAYOUT-017
@@ -113,11 +121,10 @@ describe('MenuSheet', () => {
   });
 
   // @spec LAYOUT-002, FEED-006
-  it('holds the Suggest a feature link, which closes the sheet when chosen', async () => {
-    const { sheet, onClose } = renderSheet();
-    const link = within(sheet).getByRole('link', { name: /suggest a feature/i });
-    expect(link).toHaveAttribute('target', '_blank');
-    await userEvent.click(link);
+  it('holds the Suggest a feature key, which opens the feedback form and closes the sheet', async () => {
+    const { a, sheet, onClose } = renderSheet();
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Suggest a feature' }));
+    expect(a.onFeedback).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 

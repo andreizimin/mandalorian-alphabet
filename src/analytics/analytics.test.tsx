@@ -2,8 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SuggestLink } from '../feedback/SuggestLink';
-import { SUGGESTION_URL } from '../feedback/suggestion';
+import { SuggestButton } from '../feedback/SuggestButton';
 import { EVENT_PREFIX, track } from './analytics';
 
 const UMAMI_TAG =
@@ -50,21 +49,24 @@ describe('track', () => {
 
 describe('Suggest a feature', () => {
   // @spec FEED-006
-  it('is a link to the suggestion page that opens in a new tab', () => {
-    render(<SuggestLink />);
-    const link = screen.getByRole('link', { name: /suggest a feature/i });
-    expect(link).toHaveAttribute('href', SUGGESTION_URL);
-    expect(link).toHaveAttribute('target', '_blank');
-    expect(link.getAttribute('rel')).toMatch(/noopener/);
+  it('opens the shared feedback form', async () => {
+    const onOpen = vi.fn();
+    render(<SuggestButton ready onOpen={onOpen} />);
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Suggest a feature' }));
+    expect(onOpen).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec FEED-006
+  it('is disabled while the widget is unavailable', () => {
+    render(<SuggestButton ready={false} onOpen={() => {}} />);
+    expect(screen.getByRole('button', { name: 'Suggest a feature' })).toBeDisabled();
   });
 
   // @spec ANA-007
-  it('reports the click', async () => {
+  it('reports the tap', async () => {
     const umami = fakeTracker();
-    const onChoose = vi.fn();
-    render(<SuggestLink onChoose={onChoose} />);
-    await userEvent.setup().click(screen.getByRole('link', { name: /suggest a feature/i }));
+    render(<SuggestButton ready onOpen={() => {}} />);
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Suggest a feature' }));
     expect(umami.track.mock.calls.map((c) => c[0])).toEqual(['mando_suggest_feature_click']);
-    expect(onChoose).toHaveBeenCalledTimes(1);
   });
 });
