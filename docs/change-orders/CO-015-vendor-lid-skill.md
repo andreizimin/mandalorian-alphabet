@@ -100,6 +100,6 @@ Written before the requester's dev check.
 | | |
 |---|---|
 | Tests before → after | unchanged (no code or test changes) |
-| Lines changed | +807 (vendored skill, unmodified) +21 (LICENSE) +14 (SOURCE.md) +1 −1 (CLAUDE.md), plus this change order |
+| Lines changed | +807 (vendored skill, unmodified) +21 (LICENSE) +12 (SOURCE.md) +1 −1 (CLAUDE.md), plus this change order |
 | Agent time | about 10 minutes |
 | Deployed | dev from the branch by the pipeline (app unchanged); production when the pull request merges |
