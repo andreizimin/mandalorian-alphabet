@@ -195,6 +195,30 @@ describe('QuizButton', () => {
   });
 });
 
+describe('QuizScreen and analytics', () => {
+  afterEach(() => {
+    delete window.umami;
+  });
+
+  // @spec ANA-006
+  it('reports the session once, when the results show, with the score and the letters learned', async () => {
+    const umami = { track: vi.fn() };
+    window.umami = umami;
+    const user = userEvent.setup();
+    const session = expectedSession(7);
+    renderQuiz();
+    for (const q of session.slice(0, 9)) await answer(user, q.answer);
+    expect(umami.track).not.toHaveBeenCalled();
+
+    await user.click(choiceFor(session[9].choices.find((c) => c !== session[9].answer)!));
+    await user.click(screen.getByRole('button', { name: /see results/i }));
+
+    expect(screen.getByText(/you got 9 of 10/i)).toBeInTheDocument();
+    expect(umami.track).toHaveBeenCalledTimes(1);
+    expect(umami.track).toHaveBeenCalledWith('mando_quiz_done', { score: 9, learned: 10 });
+  });
+});
+
 describe('QuizScreen and the newest-letter highlight', () => {
   // @spec QUIZ-026
   it('renders glyphs without the highlight on every question', async () => {

@@ -49,6 +49,13 @@ describe('TopBar', () => {
     expect(within(bar).getByRole('group', { name: /text size/i })).toBeInTheDocument();
   });
 
+  // @spec LAYOUT-003, FEED-006
+  it('holds the Suggest a feature link', () => {
+    render(<TopBar {...actions()} />);
+    const bar = screen.getByRole('navigation', { name: /reader controls/i });
+    expect(within(bar).getByRole('link', { name: /suggest a feature/i })).toHaveAttribute('target', '_blank');
+  });
+
   // @spec LAYOUT-003, LAYOUT-017
   it('holds the appearance control', async () => {
     const a = actions();
@@ -103,6 +110,15 @@ describe('MenuSheet', () => {
       expect(within(sheet).getByRole('button', { name })).toBeInTheDocument();
     }
     expect(within(sheet).getByRole('group', { name: /text size/i })).toBeInTheDocument();
+  });
+
+  // @spec LAYOUT-002, FEED-006
+  it('holds the Suggest a feature link, which closes the sheet when chosen', async () => {
+    const { sheet, onClose } = renderSheet();
+    const link = within(sheet).getByRole('link', { name: /suggest a feature/i });
+    expect(link).toHaveAttribute('target', '_blank');
+    await userEvent.click(link);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   // @spec LAYOUT-014, LAYOUT-017

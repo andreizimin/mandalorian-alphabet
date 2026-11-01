@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | Done (not deployed) |
 | Requested | 2026-10-31 |
-| Approved | |
-| Completed | |
+| Approved | 2026-10-31 (as written; the decisions below were taken with the recommended options) |
+| Completed | 2026-10-31 |
 | Ticket | none (asked in conversation) |
 
 ## Request
@@ -117,4 +117,38 @@ Asked after the fact, since the request was to carry the change through without 
 
 ## Outcome
 
-Filled in after the change is complete.
+Written at the end of the change, before any review. The change was not pushed, so there is no pipeline run and no dev check; screenshots of the laptop top bar and the phone menu in the day palette were taken with Playwright against a local build and reviewed.
+
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | 3 changes | 3 changes | Design Tree row, Key Decision, open question closed |
+| LLDs | 1 new, 3 changed (4 sections) | 1 new, 3 changed (5 sections) | `layout` also changed its Breakpoints table row, as the prediction's section list said but its count did not |
+| Specs | +10 (1 deferred) ~2 | +11 (1 deferred) ~2 | `ANA-010` added for the tracker block in browser tests, so the `e2e/test.ts` annotation has a spec to cite |
+| Tests | 5 files | 11 files | The six existing browser specs each changed one import line to pick up the shared `test` |
+| Code | 7 files | 8 files | `src/feedback/suggestion.ts` holds the address on its own, so the browser spec can import it without pulling in React |
+| Other | user flow, `CLAUDE.md` | user flow, `CLAUDE.md` | `CLAUDE.md`'s node list also gained the missing `intro` entry |
+
+### Surprises
+
+1. **The quiz event could not sit in `next()`.** The last question's results phase is reached either by the Next button or by the 1.5-second timer, and the timer's callback closes over the picks of an earlier render, one pick short. The event moved to an effect on the results phase, where the picks are complete. The unit test that answers the last question wrong is what made this visible in the design rather than in the dashboard.
+2. **The sibling repos had no Umami to copy.** The request reads as a template applied across sites, and the suggestion address was left as `<SUGGESTION_URL>`; no other repo on this machine had the real one. The address is a placeholder on a `.invalid` host until given.
+3. **A stale build fooled the screenshots.** Comparing the browser suite against the untouched tree rebuilt `dist/` from `main`, and the first screenshots showed no link. A rebuild fixed it; the browser tests, which build their own preview, had been right all along.
+4. **Parallel browser runs saturate this machine.** One run with the default worker count timed out on every `page.goto`; a rerun passed. Not caused by the change, and CI runs one worker.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `6f86f56` | CO-012 proposed: Umami analytics and a Suggest-a-feature link |
+| (this commit) | CO-012: Umami analytics and a Suggest-a-feature link |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 319 → 327, browser 84 → 99 passed (5 skipped) |
+| Lines changed | +103 −2 (code, 8 files), +209 −6 (tests, 11 files), +127 −8 (HLD, design docs, specs, user flow, `CLAUDE.md`) |
+| Agent time | about 50 minutes from the proposal to the outcome, with no stops |
+| Deployed | Not deployed, at the requester's instruction; the branch `co-012-umami-analytics` is local only |

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { track } from '../analytics/analytics';
 import type { QuizAnswerRecord } from '../progression/progression';
 import { Substituted } from '../reader/Substituted';
 import { SESSION_LENGTH, generateSession, isWordQuestion, missedLetters, recordAnswers, type Question } from './session';
@@ -43,6 +44,15 @@ export function QuizScreen({ rng = Math.random, ...props }: QuizScreenProps) {
   const { questions } = session;
   const q = questions[index];
   const isLast = index === SESSION_LENGTH - 1;
+
+  // Reported from the results phase, where every pick is in state: the timer-driven `next`
+  // closes over the picks of an earlier render.
+  // @spec ANA-006
+  useEffect(() => {
+    if (phase !== 'results') return;
+    const score = picks.filter((p, i) => p === questions[i].answer).length;
+    track('quiz_done', { score, learned: session.snapshot.length });
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function next() {
     clearTimeout(timer.current);

@@ -68,6 +68,7 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 | [offline](intent/offline/offline-design.md) | OFF | Service worker, installability |
 | [feedback](intent/feedback/feedback-design.md) | FEED | In-app feedback through the shared feedback platform |
 | [intro](intent/intro/intro-design.md) | INTRO | The first-launch terminal that greets the learner and explains the app, replayable from the library |
+| [analytics](intent/analytics/analytics-design.md) | ANA | Cookieless usage analytics through the shared Umami account: a few core-loop events, nothing typed |
 
 ## Key Decisions
 
@@ -78,11 +79,12 @@ B is chosen because offline reading on a phone is a core goal and it adds no ser
 - **Font source:** the app bundles Mando AF Regular, a public-domain (CC0) font that draws the Mandalorian alphabet as seen in *The Clone Wars* and *The Mandalorian*. Nothing to upload or install. See `alphabet` LLD.
 - **Feedback:** learners send ideas and bug reports through the shared feedback platform used by every app on andreizimin.com, opened from an ordinary Feedback button among the reader controls. Submissions become Linear tickets labelled `learn-mandalorian`. See `feedback` LLD.
 - **One case:** the Mandalorian script has no upper and lower case, so both cases of a letter draw the same glyph. The underlying text keeps its original case for copy, search and screen readers.
+- **Analytics:** usage is measured with Umami, the cookieless tracker shared by every app on andreizimin.com, under one website ID with sites told apart by hostname. Beyond page views the app reports a handful of core-loop events (intro done, letter advanced, page read, quiz done, suggestion link tapped), each carrying counts only; nothing the learner types or pastes is ever sent, no cookie is set, no consent banner is shown, and a blocked tracker changes nothing. A privacy note and an opt-out setting are deferred. See `analytics` LLD.
 - **Look:** the app is drawn as a Mandalorian console, the intro terminal's style carried through the reader, library and quiz: a framed panel, amber on black by night or ink on parchment by day, monospace console keys. The passage itself keeps a reading font, because the goal is fluent reading and a monospace page costs it. See `layout` LLD.
 
 ## Open Questions
 
-1. Analytics with a young primary user: the convenience tenet allows it, but the app should carry a short privacy note and a setting to turn analytics off. Decide whether this becomes its own `analytics` node or a setting under `persistence` when analytics is first added.
+None at the HLD level. The `analytics` LLD defers a privacy note and an opt-out setting.
 
 ## Success Metrics
 

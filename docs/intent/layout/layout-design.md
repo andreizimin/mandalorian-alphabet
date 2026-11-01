@@ -13,16 +13,17 @@ One codebase serves iPhone, iPad and a laptop. Layout responds to viewport width
 
 | Width | Typical device | Controls |
 |---|---|---|
-| < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest; Feedback at the right end of the title line |
+| < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest, Suggest a feature included; Feedback at the right end of the title line |
 | ≥ 600 px | iPad, laptop | Top bar with every reader control; bottom bar holds ← and → |
 
 ## Reader Controls
 
-The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size, appearance and Feedback (owned by `feedback`).
+The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size, appearance, Feedback and Suggest a feature (both owned by `feedback`).
 
-- **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library, text size and appearance. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size and appearance buttons leave it open so the result can be seen and stepped several times.
+- **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library, Suggest a feature, text size and appearance. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size and appearance buttons leave it open so the result can be seen and stepped several times.
 - **Wider screens (≥ 600 px):** a top bar shows every reader control; the bottom bar holds only the page-turn buttons.
 - **Feedback:** an ordinary button styled like the others, never floating over the page. On wider screens it sits in the top bar; on phones, where there is no top bar and the bottom bar is full, a compact Feedback button sits at the right end of the passage-title line at the top of the screen.
+- **Suggest a feature:** a link drawn as a console key, in the top bar on wider screens and in the ⋯ menu sheet on phones, where the title line is already full. It opens in a new tab, and choosing it closes the sheet, like Library.
 
 The passage title sits above the page on every width. On the dev stage a small "DEV" marker follows the title, so a dev copy is never mistaken for the live app.
 
