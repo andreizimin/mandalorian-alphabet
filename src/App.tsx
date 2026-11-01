@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { browserFontRegistry, createAlphabet } from './alphabet/alphabet';
+import { track } from './analytics/analytics';
 import { FontStatus } from './alphabet/FontStatus';
 import { useFontState } from './alphabet/useFontState';
 import { EndCard, Library } from './content/components';
@@ -87,18 +88,24 @@ export function App() {
   const pageIndex = pageIndexFor(pages, positionOf(content, currentId));
   const page = pages[pageIndex];
 
+  // @spec ANA-004
   function advance() {
     const letter = nextLetter(progress, order);
     if (!letter) return;
     dispatch({ type: 'advance', order });
     setIntroLetter(letter);
+    track('letter_advance', { learned: progress.learned.length + 1 });
   }
 
+  // @spec ANA-005
   function forward() {
     if (pages.length === 0) return;
     const result = turnForward(content, currentId, pages);
     update(() => result.state);
-    if (result.pageRead) dispatch({ type: 'pageRead' });
+    if (result.pageRead) {
+      dispatch({ type: 'pageRead' });
+      track('page_read', { learned: progress.learned.length });
+    }
     if (result.ended) setEnded(true);
   }
 
@@ -154,12 +161,13 @@ export function App() {
       <StorageNotice notice={notice} onDismiss={dismissNotice} />
 
       {view === 'intro' && (
-        // @spec INTRO-004, INTRO-008
+        // @spec INTRO-004, INTRO-008, ANA-003
         <IntroTerminal
           fontState={fontState}
           onDone={() => {
             dispatch({ type: 'completeIntro' });
             setView('reader');
+            track('intro_done');
           }}
         />
       )}

@@ -36,6 +36,10 @@ If a widget loads without the host API (a version older than 1.1.0, for example 
 
 While the form is open, page turns by arrow keys, swipes and edge taps are paused, so typing or tapping in the form never moves the passage. Independently of that, key and pointer events that come from inside the widget never count as page turns: the widget's shadow DOM makes them arrive at the app as events on the widget's host element (`#feedback-widget-host`), which the page-turn handlers ignore.
 
+## Suggesting a Feature
+
+Next to Feedback there is a second door into the same form, named for the thing learners most often want to say: a **Suggest a feature** key (placement owned by `layout`: the top bar on wider screens, the ⋯ menu sheet on phones). It calls the same `window.FeedbackWidget.open()`; the form's default choice is Feature, so a suggestion is one tap and a message away. The key is disabled whenever Feedback is, for the same reasons, and shows no reason of its own because Feedback's reason already says it. Tapping it reports `mando_suggest_feature_click` through `analytics`, so the dashboard shows how often ideas are offered; the message itself goes only to the feedback platform.
+
 ## What a Submission Sends
 
 Only when the learner presses Send: the message, the Feature or Bug choice, optional name and contact fields, and context the widget captures (page, URL, user agent, language, viewport, environment, widget version and a trace ID). Nothing is sent by opening the form or by using the rest of the app.
@@ -49,6 +53,7 @@ Only when the learner presses Send: the message, the Feature or Bug choice, opti
 | Opening the form | The widget's public `open()` and events | Reaching into the widget's shadow DOM to click its hidden button | The public API is a contract the platform keeps; internals can change without notice |
 | Stale cached widget | Load a versioned URL; hide any widget that lacks the host API | Rely on the platform fixing its cache headers; let an old widget's floating button show | Browsers that already cached the old widget keep it until it expires, whatever the platform does next; a floating button is what the app was asked never to show |
 | Offline | Button disabled with a reason | Hide the button; queue feedback for later | A visible, explained state beats a button that silently does nothing; queueing would duplicate the platform's delivery |
+| Suggestion channel | A second key that opens the shared feedback form | A link to a separate suggestion page in a new tab; no second key | Ideas already arrive through the widget as Linear tickets; a separate page would split the pipeline, and a new tab loses the reader's place |
 
 ## Open Questions & Future Decisions
 

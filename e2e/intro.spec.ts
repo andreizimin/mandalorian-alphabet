@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './test';
 import { firstWord, passIntro, reach, start } from './helpers';
 
 const terminal = (page: Page) => page.locator('.terminal');

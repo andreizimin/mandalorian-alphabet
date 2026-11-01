@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test';
 import { passIntro } from './helpers';
 
 // The live-site check: runs against a deployed address (LIVE_URL) after each

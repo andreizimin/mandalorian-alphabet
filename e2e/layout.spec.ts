@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test';
 import { firstWord, isPhone, learn, pageText, reach, savedWord, start, swipe } from './helpers';
 
 const firstPassage: { paragraphs: string[] } = JSON.parse(

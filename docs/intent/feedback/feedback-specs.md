@@ -13,6 +13,10 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 - `[x]` **FEED-003**: While the feedback widget has not loaded (offline, blocked or failed), the system SHALL show the Feedback button disabled with the reason "Feedback needs a connection".
 - `[x]` **FEED-005**: If the feedback widget loads without the host API (a version older than 1.1.0), then the system SHALL hide the widget so its floating button never appears, and SHALL show the Feedback button disabled with the reason "Feedback is unavailable right now".
 
+## Suggesting a Feature
+
+- `[x]` **FEED-006**: The system SHALL show a Suggest a feature key among the reader controls that opens the shared feedback form, and SHALL disable it whenever the Feedback button is disabled.
+
 ## Keeping Reading Quiet
 
 - `[x]` **FEED-004**: While the feedback form is open, the system SHALL ignore page-turn keys, swipes and edge taps, and SHALL never treat key or pointer events from inside the feedback widget as page turns.

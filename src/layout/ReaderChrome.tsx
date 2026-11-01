@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FeedbackButton } from '../feedback/FeedbackButton';
+import { SuggestButton } from '../feedback/SuggestButton';
 import { Controls } from '../progression/components';
 import { QuizButton } from '../quiz/QuizScreen';
 import { PageTurnBar } from './pageTurning';
@@ -83,6 +84,7 @@ export function TopBar(a: ReaderActions) {
       <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
       <AppearanceControl appearance={a.appearance} onAppearance={a.onAppearance} />
       <FeedbackButton ready={a.feedbackReady} reason={a.feedbackReason} onOpen={a.onFeedback} />
+      <SuggestButton ready={a.feedbackReady} onOpen={a.onFeedback} />
     </nav>
   );
 }
@@ -175,6 +177,7 @@ export function MenuSheet({ onClose, ...a }: ReaderActions & { onClose: () => vo
             <button type="button" onClick={thenClose(a.onLibrary)}>
               Library
             </button>
+            <SuggestButton ready={a.feedbackReady} onOpen={thenClose(a.onFeedback)} />
             <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
             <AppearanceControl appearance={a.appearance} onAppearance={a.onAppearance} />
           </div>

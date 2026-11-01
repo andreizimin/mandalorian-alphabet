@@ -44,7 +44,7 @@ If a letter arrived too soon, *step back* removes the newest one and forgets its
 
 ## 10b. Sending feedback
 
-If something is confusing or broken, or they have an idea, they tap **Feedback**: in the top bar on an iPad or laptop, at the top right of the title line on a phone (LAYOUT-016). The shared feedback form opens over the page, and page turns pause until it closes (FEED-002, FEED-004). Offline, the button is greyed out with "Feedback needs a connection" (FEED-003).
+If something is confusing or broken, or they have an idea, they tap **Feedback**: in the top bar on an iPad or laptop, at the top right of the title line on a phone (LAYOUT-016). The shared feedback form opens over the page, and page turns pause until it closes (FEED-002, FEED-004). Offline, the button is greyed out with "Feedback needs a connection" (FEED-003). For an idea there is also **Suggest a feature**, next to Feedback in the top bar or in the phone's ⋯ menu, which opens the same form with Feature already chosen (FEED-006). Along the way the app reports a few milestones to the shared, cookieless analytics: the intro finished, each letter advanced, each new page read, each quiz finished and the suggestion link tapped, as counts only, never anything typed (ANA-003 to ANA-008).
 
 ## 11. About two hours in
 

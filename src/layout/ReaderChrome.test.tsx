@@ -49,6 +49,21 @@ describe('TopBar', () => {
     expect(within(bar).getByRole('group', { name: /text size/i })).toBeInTheDocument();
   });
 
+  // @spec LAYOUT-003, FEED-006
+  it('holds the Suggest a feature key, which opens the feedback form', async () => {
+    const a = actions();
+    render(<TopBar {...a} />);
+    const bar = screen.getByRole('navigation', { name: /reader controls/i });
+    await userEvent.click(within(bar).getByRole('button', { name: 'Suggest a feature' }));
+    expect(a.onFeedback).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec FEED-006
+  it('disables Suggest a feature with Feedback while the widget is unavailable', () => {
+    render(<TopBar {...actions({ feedbackReady: false })} />);
+    expect(screen.getByRole('button', { name: 'Suggest a feature' })).toBeDisabled();
+  });
+
   // @spec LAYOUT-003, LAYOUT-017
   it('holds the appearance control', async () => {
     const a = actions();
@@ -103,6 +118,14 @@ describe('MenuSheet', () => {
       expect(within(sheet).getByRole('button', { name })).toBeInTheDocument();
     }
     expect(within(sheet).getByRole('group', { name: /text size/i })).toBeInTheDocument();
+  });
+
+  // @spec LAYOUT-002, FEED-006
+  it('holds the Suggest a feature key, which opens the feedback form and closes the sheet', async () => {
+    const { a, sheet, onClose } = renderSheet();
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Suggest a feature' }));
+    expect(a.onFeedback).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   // @spec LAYOUT-014, LAYOUT-017
