@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Minor fix |
-| Status | Approved |
+| Status | Done |
 | Requested | 2026-11-01 |
 | Approved | 2026-11-01 |
-| Completed | |
+| Completed | 2026-11-01 |
 | Ticket | none (asked in conversation; follows [ZZF-74](https://linear.app/zizify-workshop/issue/ZZF-74)) |
 
 ## Request
@@ -118,4 +118,39 @@ The resulting edits (outside the prediction above, which stands as written):
 
 ## Outcome
 
-Filled in after the change is complete.
+Written before the requester's dev check. Worked through the `linked-intent-dev` skill (v1.4.2), with the phase stops consolidated per CLAUDE.md. The probes still ran: the CO-013 audit's LLD probe and blind divergence probe, then a second blind probe of this change's new lines before any test.
+
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | None | None | |
+| LLDs | 3 sections in `help`, 1 in `analytics` | 3 sections in `help` (The Panel, Content, Decisions: 3 rows), 1 in `analytics` | One more Decisions row than predicted, for withholding Help (edge audit answer 4) |
+| Specs | +6 ~5 | +8 ~6 | HELP-012 and HELP-013 came from the edge audit; HELP-009 was split and HELP-006 narrowed |
+| Tests | 3 files | 4 files | `src/intro/IntroTerminal.test.tsx` added for HELP-012 |
+| Code | 4 files | 7 files | `src/intro/IntroTerminal.tsx` (focus on replay); `src/quiz/session.ts` and `src/quiz/QuizScreen.tsx` both changed for the quiz's letter count |
+| Other | None | None | |
+
+### Surprises
+
+1. **The edge audit earned its keep.** The blind reader found six forks in lines I had written minutes earlier. Two the code settled. Four needed the requester: the same place, focus after replay, focus when the width crosses 600 px, and how Help is withheld. Each answer narrowed a line or added one before any test was written.
+2. **A wrong test, caught by its failure mode.** "A tap outside only closes Help" failed on iPhone and laptop before any code changed. The panel is nearly full height there, so the test's taps landed on the card, not the backdrop. The behaviour was already right. The test now taps only on controls outside the card, plus the edge-zone margin.
+3. **No formatter in the repository.** Running Prettier over the changed files rewrote them in its own default style, a 10-file churn. The repository is not Prettier-formatted under any setting tried, so the files were restored and the edits reapplied by hand. Wrapping the reader in a fragment (for `inert`) re-indents `App.tsx`; `git diff -w` shows +38 −14.
+4. **The intro terminal could not take focus.** Until now the intro was mouse and touch only. It takes focus now only when replayed from Help; a first launch is unchanged.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `abcd6fe` | CO-016 proposed and approved: Help panel audit fixes |
+| (two commits) | CO-016: help design, specs and analytics design; resolve the edge audit's forks |
+| (this commit) | CO-016: Help panel focus, modality, guard, quiz facts and first-only intro count |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 338 → 343; browser 107 → 134 passed (7 → 10 skipped), in Chromium at the three viewports (no WebKit in the build container; CI runs WebKit) |
+| Lines changed | code about +80 −20 ignoring whitespace (7 files); tests +201 (4 files); docs: help design and specs, analytics design and specs, this change order |
+| Agent time | about 45 minutes from the audit to the outcome, including two blind probes and one question round |
+| Deployed | dev from the branch by the pipeline; production when the pull request merges |

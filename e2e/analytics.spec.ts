@@ -32,6 +32,15 @@ test('reports the intro done once Let’s go is tapped', async ({ page }) => {
   expect(await names(page)).toEqual(['mando_intro_done']);
 });
 
+// @spec ANA-003
+test('does not report a replayed intro', async ({ page }) => {
+  await passIntro(page);
+  await page.getByRole('button', { name: 'Help', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Help' }).getByRole('button', { name: 'Replay intro' }).click();
+  await passIntro(page);
+  expect(await names(page)).toEqual(['mando_intro_done']);
+});
+
 // @spec ANA-004
 test('reports each letter advance with the letters learned', async ({ page }) => {
   await passIntro(page);

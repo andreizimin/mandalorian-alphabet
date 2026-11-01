@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { track } from '../analytics/analytics';
 import type { QuizAnswerRecord } from '../progression/progression';
 import { Substituted } from '../reader/Substituted';
-import { SESSION_LENGTH, generateSession, isWordQuestion, missedLetters, recordAnswers, type Question } from './session';
+import { QUIZ_MIN_LETTERS, SESSION_LENGTH, generateSession, isWordQuestion, missedLetters, recordAnswers, type Question } from './session';
 
 export const FEEDBACK_MS = 1500;
 
@@ -164,7 +164,7 @@ export function QuizButton({
   fontReady: boolean;
   onOpen: () => void;
 }) {
-  const reason = learnedCount < 2 ? 'Learn 2 letters first' : !fontReady ? 'Waiting for the Mandalorian font' : null;
+  const reason = learnedCount < QUIZ_MIN_LETTERS ? `Learn ${QUIZ_MIN_LETTERS} letters first` : !fontReady ? 'Waiting for the Mandalorian font' : null;
   return (
     <span className="quiz-button">
       <button type="button" onClick={onOpen} disabled={reason !== null} aria-describedby={reason ? 'quiz-reason' : undefined}>

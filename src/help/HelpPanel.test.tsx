@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HelpPanel } from './HelpPanel';
 import { HELP_CONTROLS, HELP_INTRO } from './helpText';
+import { QUIZ_MIN_LETTERS, SESSION_LENGTH } from '../quiz/session';
 
 /** Every reader control's visible name (LAYOUT-002, LAYOUT-003): Help must say what each one does. */
 const READER_CONTROLS = [
@@ -79,5 +80,42 @@ describe('HelpPanel', () => {
     const { onReplayIntro, panel } = renderPanel();
     await userEvent.click(within(panel).getByRole('button', { name: 'Replay intro' }));
     expect(onReplayIntro).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('HelpPanel focus and assistive technology', () => {
+  // @spec HELP-006
+  it('moves keyboard focus to Close when it opens', () => {
+    const { panel } = renderPanel();
+    expect(within(panel).getByRole('button', { name: 'Close' })).toHaveFocus();
+  });
+
+  // @spec HELP-007
+  it('is a modal dialog labelled Help that keeps Tab inside it', async () => {
+    render(
+      <>
+        <button type="button">Outside</button>
+        <HelpPanel onClose={vi.fn()} onReplayIntro={vi.fn()} />
+      </>,
+    );
+    const panel = screen.getByRole('dialog', { name: 'Help' });
+    expect(panel).toHaveAttribute('aria-modal', 'true');
+    for (let i = 0; i < 5; i++) {
+      await userEvent.tab();
+      expect(panel).toContainElement(document.activeElement as HTMLElement);
+    }
+    for (let i = 0; i < 5; i++) {
+      await userEvent.tab({ shift: true });
+      expect(panel).toContainElement(document.activeElement as HTMLElement);
+    }
+  });
+});
+
+describe('the Help text facts', () => {
+  // @spec HELP-011
+  it('states the quiz length and the letters the quiz needs from the quiz itself', () => {
+    const quiz = HELP_CONTROLS.find((c) => c.name === 'Quiz')!;
+    expect(quiz.text).toContain(`${SESSION_LENGTH}-question`);
+    expect(quiz.text).toMatch(new RegExp(`once you have ${QUIZ_MIN_LETTERS}\\b`));
   });
 });
