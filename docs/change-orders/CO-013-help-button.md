@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | Approved |
 | Requested | 2026-11-01 |
-| Approved | |
+| Approved | 2026-11-01 |
 | Completed | |
 | Ticket | [ZZF-74](https://linear.app/zizify-workshop/issue/ZZF-74) |
 
@@ -81,6 +81,8 @@ Net: +5 new, ~2 revised. With the alternative for decision 2 (Help in the phone 
 - **progression, quiz, content:** none. Help is a reader-only panel; the quiz and the library already have their own way back to reading.
 
 ## Decisions Needed
+
+Both answered on 2026-11-01, each with the recommended option: a Help panel with Replay intro and Close; a compact `?` key on the phone status line beside Feedback.
 
 1. **What Help shows.** *Recommended:* a Help panel over the page, in the console look: two or three lines on what the app is and how it teaches, then one short line per control and gesture, with Replay intro and Close keys at the bottom. Quick to scan, and it covers the controls the intro does not mention (Legend, Step back, Library, page turns, X-ray). *Alternatives:* Help simply replays the intro terminal (smallest change, but slow to sit through and silent on most controls); or the panel without the Replay intro key.
 2. **Where the Help key sits on a phone.** *Recommended:* a compact `?` key at the right end of the status line, beside Feedback, so a newcomer sees it without opening anything; on wider screens a HELP key in the top bar. *Alternative:* inside the ⋯ menu sheet on phones, like Suggest a feature (keeps the status line uncluttered, but the help is hidden behind a menu, which is where a confused learner looks last).
