@@ -122,7 +122,7 @@ Written before the requester's dev check; the production run is reported on the 
 
 1. **Close moved to the top.** The change order put Replay intro and Close together at the bottom of the panel. At the ticket's 418 × 401 viewport the bottom of the panel is several screens of scrolling away, so Close is pinned in the panel's header and only Replay intro sits at the bottom. HELP-005 ("keeping Close reachable") asked for this; the prediction's wording did not.
 2. **No WebKit in the build container.** The browser tests ran in Chromium at the same three viewports (iPhone 13, iPad gen 7, 1280 × 800 laptop) with a temporary config that was not committed. The pipeline runs them in WebKit as usual.
-3. **The pull request could not be opened from this session.** GitHub refused every push from this session (403), so the branch could not be pushed. The commits are on the local branch `zzf-74-help-button` and go to dev as soon as the branch is pushed.
+3. **The push was refused at first.** GitHub refused pushes from this session (403) until access was restored; the branch was pushed once it was, with no change to the work.
 4. **CO-012 had called the phone title line "already full".** It had placed Suggest a feature in the menu for that reason. The requester chose the title line for Help anyway. The `?` key is one 44 pt square, and on the iPhone 13 viewport the title still truncates at about 40 % of the line ("THE CALL OF THE W…"), which the new browser test measures.
 
 ### Commits
@@ -140,4 +140,4 @@ Written before the requester's dev check; the production run is reported on the 
 | Tests before → after | unit 329 → 338; browser 94 → 107 passed (5 → 7 skipped), in Chromium at the three viewports; offline 5 → 5 |
 | Lines changed | +213 −3 (code: help text, panel, chrome, App, stylesheet), +211 (tests, 3 files), +82 −9 (HLD, design docs, specs, user flow, CLAUDE.md) |
 | Agent time | about 7 minutes from approval (05:52) to the outcome (05:59), screenshots included |
-| Deployed | not yet: waiting for GitHub push access; dev from the branch by the pipeline once pushed, production when the pull request merges |
+| Deployed | dev from the branch by the pipeline; production when the pull request merges |
