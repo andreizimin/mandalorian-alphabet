@@ -48,7 +48,7 @@ Requests arrive as Linear tickets (team Zizify-team, project Feedback Collector,
 | Low-level designs | `docs/intent/<node>/<node>-design.md` |
 | EARS specs | `docs/intent/<node>/<node>-specs.md` |
 
-Nodes: `reader` (READ), `progression` (PROG), `quiz` (QUIZ), `alphabet` (ALPHA), `content` (TEXT), `persistence` (PERS), `layout` (LAYOUT), `offline` (OFF), `feedback` (FEED), `intro` (INTRO), `analytics` (ANA).
+Nodes: `reader` (READ), `progression` (PROG), `quiz` (QUIZ), `alphabet` (ALPHA), `content` (TEXT), `persistence` (PERS), `layout` (LAYOUT), `offline` (OFF), `feedback` (FEED), `intro` (INTRO), `help` (HELP), `analytics` (ANA).
 
 ### Terminology
 

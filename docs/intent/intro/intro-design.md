@@ -41,7 +41,7 @@ The intro replaces the reader on screen, like the quiz does, and shows none of t
 ## When It Shows
 
 - **First launch:** `progression` reports that the learned set is empty and the intro has not been completed (PROG-014). The intro is shown instead of the reader. Let's go marks the intro completed and opens the reader on the opening passage.
-- **Replay:** the library offers **Replay intro**. It shows the same terminal; Let's go returns to the passage the learner was reading, and nothing in progress changes.
+- **Replay:** the library offers **Replay intro**, and so does the Help panel (see `help`). It shows the same terminal; Let's go returns to the passage the learner was reading, and nothing in progress changes.
 
 Completion is stored by `progression` in its progress state under the field `welcomeSeen`, the name it had when the first-launch screen was a welcome card. The name is kept so saved progress and exports stay readable; its meaning is "the intro has been completed".
 

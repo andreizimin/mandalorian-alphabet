@@ -13,17 +13,18 @@ One codebase serves iPhone, iPad and a laptop. Layout responds to viewport width
 
 | Width | Typical device | Controls |
 |---|---|---|
-| < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest, Suggest a feature included; Feedback at the right end of the title line |
+| < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest, Suggest a feature included; Help (`?`) and Feedback at the right end of the title line |
 | ≥ 600 px | iPad, laptop | Top bar with every reader control; bottom bar holds ← and → |
 
 ## Reader Controls
 
-The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size, appearance, Feedback and Suggest a feature (both owned by `feedback`).
+The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size, appearance, Help (owned by `help`), Feedback and Suggest a feature (both owned by `feedback`).
 
 - **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library, Suggest a feature, text size and appearance. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size and appearance buttons leave it open so the result can be seen and stepped several times.
 - **Wider screens (≥ 600 px):** a top bar shows every reader control; the bottom bar holds only the page-turn buttons.
 - **Feedback:** an ordinary button styled like the others, never floating over the page. On wider screens it sits in the top bar; on phones, where there is no top bar and the bottom bar is full, a compact Feedback button sits at the right end of the passage-title line at the top of the screen.
-- **Suggest a feature:** a second key into the feedback form, in the top bar on wider screens and in the ⋯ menu sheet on phones, where the title line is already full. Choosing it closes the sheet, like Library, and the form opens over the page.
+- **Help:** a HELP key in the top bar on wider screens, just before Feedback. On phones it is a compact square `?` key (labelled "Help" for assistive technology) on the title line, just before Feedback, so a learner who is lost sees it without opening the menu. The two keys share the line with the title, which keeps at least 40 % of it; Feedback's "needs a connection" note stays beneath its key.
+- **Suggest a feature:** a second key into the feedback form, in the top bar on wider screens and in the ⋯ menu sheet on phones, where the title line already holds Help and Feedback. Choosing it closes the sheet, like Library, and the form opens over the page.
 
 The passage title sits above the page on every width. On the dev stage a small "DEV" marker follows the title, so a dev copy is never mistaken for the live app.
 
@@ -52,6 +53,7 @@ Every way of turning a page maps to the same two actions, forward and back, whic
 - **Buttons:** ← and → at the two ends of the bottom bar, fixed to the bottom of the viewport (above the safe area) at every width. They never move with the length of the text. The back button is disabled on the first page.
 - **Touch:** swipe left to go forward and swipe right to go back, following book direction. A swipe is a horizontal movement of at least 50 px that is larger than its vertical movement. A tap (movement under 10 px) on a non-glyph point in the outer 15 % of the viewport width turns the page: the right zone forward, the left zone back. A tap on a glyph anywhere is a peek (owned by `reader`); any other tap does nothing.
 - **Keyboard:** Right Arrow turns forward and Left Arrow turns back. Keys are ignored while focus is in a text field and when Cmd, Ctrl or Alt is held.
+- **While the Help panel is open** (see `help`), every page-turn input is paused, as it is while the phone menu sheet is open.
 - **While the feedback form is open** (see `feedback`), every page-turn input is paused, and events arriving from the feedback widget's host element never turn pages.
 
 ## Quiz Screen
@@ -65,7 +67,7 @@ The app is one Mandalorian console, the one the intro terminal already is, so no
 - **Panel and frame.** The reading column is a panel with a one-pixel amber frame, standing on a slightly darker page with a faint vignette. The panel carries a faint inner glow at its edges. The page-turn rail at the bottom is part of the same frame.
 - **Palette.** Two palettes, chosen by the appearance setting: **night** (black panel, amber chrome, pale amber reading text, gold for the newest letter) and **day** (parchment panel, brown-amber chrome, dark brown reading text, brown for the newest letter). Auto follows the system as before. Every color is a token on the document root; text and the newest-letter highlight meet a contrast ratio of at least 4.5:1 against the panel in both palettes.
 - **Keys.** Every button is a console key: the console monospace face, upper case with letter spacing, square corners, an amber edge, transparent face; the primary action (Next letter, Let's go, Again) is a filled amber key with a soft glow. Disabled keys dim. Keys keep their 44 pt minimum.
-- **Status line.** The passage title is a status line in the console face: a `//` prefix, the title, the DEV tag as a console tag, and a blinking block cursor. On phones Feedback still sits at its right end.
+- **Status line.** The passage title is a status line in the console face: a `//` prefix, the title, the DEV tag as a console tag, and a blinking block cursor. On phones Help and Feedback still sit at its right end.
 - **Rails and panels.** The top bar is a rail with a rule beneath it; cards (new letter, end of passage), the phone menu sheet, the readiness hint, the legend, the library and the data panel are sub-panels of the same console: square corners, amber rules, console face for labels. The quiz's choices are large keys; right and wrong keep their green and red, tinted on the panel.
 - **Reading text.** The passage keeps the serif reading font at the chosen text size, and the glyph font is untouched. A long story in a monospace face costs reading comfort, and reading fluency is the app's goal. The peek popover shows its word in the reading font on an amber chip.
 - **Effects.** A subtle inner glow and vignette only. No scanlines or flicker: they soften the glyphs the learner is trying to recognize.
