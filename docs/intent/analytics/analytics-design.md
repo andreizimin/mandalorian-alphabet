@@ -31,7 +31,7 @@ The tracker reports a page view on load. The app has one route, so the view coun
 
 | Event | Fired when | Data | Why |
 |---|---|---|---|
-| `mando_intro_done` | Let's go on the intro terminal | none | Did the visitor get past the door? |
+| `mando_intro_done` | Let's go on the intro terminal, the first time only; a replay from the library or Help is not reported | none | Did the visitor get past the door? Counting replays would inflate it with visitors who were already through |
 | `mando_letter_advance` | A new letter joins the learned set | `learned`: letters now learned | The ramp's progress; the highest count per visitor is where they stopped |
 | `mando_page_read` | A forward page turn that counts as new reading (not a re-read) | `learned`: letters learned at the time | Did they read, and how much, at each stage of the ramp |
 | `mando_quiz_done` | A quiz session shows its results | `score` out of 10, `learned` | Did they try the quiz and how they did |

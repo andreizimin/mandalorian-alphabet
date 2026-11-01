@@ -13,7 +13,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 ## Events
 
 - `[x]` **ANA-002**: When the app reports an event, the system SHALL name it with the `mando_` prefix and SHALL do nothing if the tracker is not present on the page.
-- `[x]` **ANA-003**: When the learner completes the intro with Let's go, the system SHALL report `mando_intro_done`.
+- `[ ]` **ANA-003**: When the learner completes the intro with Let's go for the first time, the system SHALL report `mando_intro_done`; completing a replayed intro SHALL NOT report it.
 - `[x]` **ANA-004**: When the learner advances to a new letter, the system SHALL report `mando_letter_advance` with the number of letters learned after the advance.
 - `[x]` **ANA-005**: When a forward page turn counts as new reading, the system SHALL report `mando_page_read` with the number of letters learned.
 - `[x]` **ANA-006**: When a quiz session reaches its results, the system SHALL report `mando_quiz_done` with the score out of 10 and the number of letters learned.
