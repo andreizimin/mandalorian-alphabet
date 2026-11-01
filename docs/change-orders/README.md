@@ -32,3 +32,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-012](CO-012-umami-analytics.md) | Umami analytics and a Suggest-a-feature link | Feature | Done | +10 ~2 | +11 ~3 (FEED-006 revised after the dev check) |
 | [CO-013](CO-013-help-button.md) | Help button ([ZZF-74](https://linear.app/zizify-workshop/issue/ZZF-74)) | Feature | Done | +5 ~2 | +5 ~2 |
 | [CO-014](CO-014-dev-check-question.md) | Explicit dev-check question before merging | Minor fix | Done | 0 | 0 |
+| [CO-016](CO-016-help-audit-fixes.md) | Help panel audit fixes (follows ZZF-74) | Minor fix | Approved | +6 ~5 | |
