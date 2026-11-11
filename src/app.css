@@ -660,20 +660,45 @@ button.primary:hover:not(:disabled) {
   font-size: 12px;
 }
 
-/* @spec LAYOUT-002, LAYOUT-003, LAYOUT-021 */
-/* Reader chrome: a top rail on wider screens, bottom rail extras on phones. */
+/* @spec LAYOUT-002, LAYOUT-003, LAYOUT-021, LAYOUT-023 */
+/* Reader chrome: a top rail of six keys on wider screens, bottom rail extras on phones. */
 .top-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 4px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--rule);
 }
 
-.top-bar .controls {
-  margin: 0;
+.top-bar-group {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  align-items: center;
+}
+
+/* The quiz's reason hangs under its key, so the six keys keep one row; the rail makes room for it. */
+.top-bar .quiz-button {
+  position: relative;
+}
+
+.top-bar .quiz-reason {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  white-space: nowrap;
+}
+
+.top-bar:has(.quiz-reason) {
+  padding-bottom: 26px;
+}
+
+.menu-key {
+  min-width: 44px;
+  font-size: 22px;
 }
 
 .phone-only {
@@ -714,9 +739,10 @@ button.primary:hover:not(:disabled) {
     font-size: 13px;
   }
 
-  .page-turn-bar .phone-only button[aria-label='Menu'] {
+  .page-turn-bar .phone-only .menu-key {
     font-size: 22px;
   }
+
 }
 
 @media (min-width: 600px) {
@@ -759,6 +785,18 @@ button.primary:hover:not(:disabled) {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+/* @spec LAYOUT-024 */
+/* On wider screens the same sheet rises from the bottom, framed and as wide as the console. */
+@media (min-width: 600px) {
+  .menu-sheet {
+    box-sizing: border-box;
+    max-width: 65ch;
+    margin: 0 auto;
+    border: 1px solid var(--accent);
+    border-bottom: none;
+  }
 }
 
 /* Title line: the status line, with Feedback at its right end on phones (LAYOUT-016). */
@@ -899,8 +937,15 @@ button.primary:hover:not(:disabled) {
   gap: 6px;
 }
 
+/* @spec HELP-010 */
 @media (min-width: 600px) {
-  .help-note {
+  .help-note.narrow-only {
+    display: none;
+  }
+}
+
+@media (max-width: 599px) {
+  .help-note.wide-only {
     display: none;
   }
 }

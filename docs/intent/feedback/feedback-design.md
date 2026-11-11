@@ -24,11 +24,11 @@ The version in the URL matters. The platform serves `widget.js` as cacheable for
 
 ## Opening the Form
 
-The Feedback button is an ordinary app button among the reader controls (placement owned by `layout`). Tapping it calls `window.FeedbackWidget.open()`. The widget reports its state with window events: `feedback:ready` once loaded, and `feedback:open` and `feedback:close` as the form opens and closes. If the widget finished loading before the app started listening, the app finds `window.FeedbackWidget` already present and treats it as ready.
+The Feedback button is an ordinary app button among the reader controls (placement owned by `layout`: the title line on phones, the ⋯ menu on wider screens). Tapping it calls `window.FeedbackWidget.open()`. The widget reports its state with window events: `feedback:ready` once loaded, and `feedback:open` and `feedback:close` as the form opens and closes. If the widget finished loading before the app started listening, the app finds `window.FeedbackWidget` already present and treats it as ready.
 
 ## Availability
 
-The widget comes from another origin and is not part of the offline cache. Until it reports ready (offline, blocked by a content blocker, or failed to load), the Feedback button is disabled and says why: "Feedback needs a connection". Reading, the quiz and everything else keep working.
+The widget comes from another origin and is not part of the offline cache. Until it reports ready (offline, blocked by a content blocker, or failed to load), the Feedback button is disabled and says why, in a note beside it wherever it sits: "Feedback needs a connection". Reading, the quiz and everything else keep working.
 
 If a widget loads without the host API (a version older than 1.1.0, for example from a cache between the browser and the platform that ignores the version in the URL), the app hides the widget's host element, so its floating button never appears over the page, and shows the Feedback button disabled with "Feedback is unavailable right now". An old widget cannot be opened from the app's button anyway.
 
@@ -38,7 +38,7 @@ While the form is open, page turns by arrow keys, swipes and edge taps are pause
 
 ## Suggesting a Feature
 
-Next to Feedback there is a second door into the same form, named for the thing learners most often want to say: a **Suggest a feature** key (placement owned by `layout`: the top bar on wider screens, the ⋯ menu sheet on phones). It calls the same `window.FeedbackWidget.open()`; the form's default choice is Feature, so a suggestion is one tap and a message away. The key is disabled whenever Feedback is, for the same reasons, and shows no reason of its own because Feedback's reason already says it. Tapping it reports `mando_suggest_feature_click` through `analytics`, so the dashboard shows how often ideas are offered; the message itself goes only to the feedback platform.
+Next to Feedback there is a second door into the same form, named for the thing learners most often want to say: a **Suggest a feature** key (placement owned by `layout`: the ⋯ menu on every width). It calls the same `window.FeedbackWidget.open()`; the form's default choice is Feature, so a suggestion is one tap and a message away. The key is disabled whenever Feedback is, for the same reasons, and shows no reason of its own because Feedback's reason already says it. Tapping it reports `mando_suggest_feature_click` through `analytics`, so the dashboard shows how often ideas are offered; the message itself goes only to the feedback platform.
 
 ## What a Submission Sends
 

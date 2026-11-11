@@ -25,7 +25,7 @@ The panel opens with what the app is and how it teaches, in two or three lines: 
 - **A− A+ and the appearance key:** text size; Auto, Light or Dark.
 - **Feedback and Suggest a feature:** tell us what is wrong or what you would like.
 
-A note, shown only under 600 px wide, says that on a phone the ⋯ key holds the controls that are not in the bottom bar; everything else reads the same at every width.
+A closing note says where the remaining controls are: the ⋯ key holds the ones that are not on screen. The note names where that key is at the current width (in the bottom bar under 600 px, in the top bar at 600 px or wider); everything else reads the same at every width.
 
 The text is data (`src/help/helpText.ts`), like the intro's script, so a test can check that every reader control is named and the words can change without touching the component. The quiz line takes its numbers (questions in a session, letters the quiz needs) from the quiz's own values, so it cannot drift from them.
 
@@ -39,7 +39,7 @@ The panel is a console sub-panel (see `layout`, Console Look) in the shared over
 - **Small screens:** the panel's text is longer than a phone in landscape is tall. So the panel is capped at the viewport's height and scrolls within itself; Close is pinned in the panel's header at every scroll position, and the page behind stays put.
 - **Focus and assistive technology:** opening the panel moves keyboard focus to Close; closing it moves focus to the Help key on screen at that moment, which is the key that opened it unless the width crossed 600 px while the panel was open. While it is open, the reader behind it is inert, so Tab and a screen reader stay inside the panel.
 
-Help opens from the reader only. The quiz, the library and the intro each have their own way back to reading. Help never opens while another overlay is open: the new-letter card, the end-of-passage card, the phone menu sheet or the feedback form. Most of these already cover the Help key; if a tap or a key press still reaches it, nothing happens. The key itself does not change, and a glyph peek does not block Help. So two overlays never stack.
+Help opens from the reader only. The quiz, the library and the intro each have their own way back to reading. Help never opens while another overlay is open: the new-letter card, the end-of-passage card, the menu or the feedback form. Most of these already cover the Help key; if a tap or a key press still reaches it, nothing happens. The key itself does not change, and a glyph peek does not block Help. So two overlays never stack.
 
 ## Decisions & Alternatives
 

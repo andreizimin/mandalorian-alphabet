@@ -7,24 +7,25 @@ prefix: LAYOUT
 
 ## Context and Design Philosophy
 
-One codebase serves iPhone, iPad and a laptop. Layout responds to viewport width, not device type, so iPad Split View and Slide Over behave correctly. The reading page gets as much of the screen as possible; on a phone, the actions used every few pages stay in thumb reach and the rest wait one tap away.
+One codebase serves iPhone, iPad and a laptop. Layout responds to viewport width, not device type, so iPad Split View and Slide Over behave correctly. The reading page gets as much of the screen as possible; on every width, the actions used every few pages stay in view and the occasional ones wait one tap away in a menu.
 
 ## Breakpoints
 
 | Width | Typical device | Controls |
 |---|---|---|
 | < 600 px | iPhone, narrow Split View | Bottom bar: ← · Next letter · Quiz · ⋯ · →; the ⋯ menu holds the rest, Suggest a feature included; Help (`?`) and Feedback at the right end of the title line |
-| ≥ 600 px | iPad, laptop | Top bar with every reader control; bottom bar holds ← and → |
+| ≥ 600 px | iPad, laptop | Top bar of six keys: Next letter · Quiz · Legend · Library · Help · ⋯; the ⋯ menu holds the rest, Feedback and Suggest a feature included; bottom bar holds ← and → |
 
 ## Reader Controls
 
 The reader controls are: Next letter, Quiz, Step back, Reset, Legend, Library, text size, appearance, Help (owned by `help`), Feedback and Suggest a feature (both owned by `feedback`).
 
-- **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu button. The menu opens a sheet with Step back, Reset, Legend, Library, Suggest a feature, text size and appearance. Choosing Step back, Reset, Legend or Library closes the sheet, and so does tapping outside it; the text-size and appearance buttons leave it open so the result can be seen and stepped several times.
-- **Wider screens (≥ 600 px):** a top bar shows every reader control; the bottom bar holds only the page-turn buttons.
-- **Feedback:** an ordinary button styled like the others, never floating over the page. On wider screens it sits in the top bar; on phones, where there is no top bar and the bottom bar is full, a compact Feedback button sits at the right end of the passage-title line at the top of the screen.
-- **Help:** a HELP key in the top bar on wider screens, just before Feedback. On phones it is a compact square `?` key (labelled "Help" for assistive technology) on the title line, just before Feedback, so a learner who is lost sees it without opening the menu. The two keys share the line with the title, which keeps at least 40 % of it; Feedback's "needs a connection" note stays beneath its key.
-- **Suggest a feature:** a second key into the feedback form, in the top bar on wider screens and in the ⋯ menu sheet on phones, where the title line already holds Help and Feedback. Choosing it closes the sheet, like Library, and the form opens over the page.
+- **Phones (< 600 px):** a single bottom bar holds the page-turn buttons at its two ends and, between them, Next letter, Quiz and a ⋯ menu key. The menu holds Step back, Reset, Legend, Library, Suggest a feature, text size and appearance.
+- **Wider screens (≥ 600 px):** a top bar shows exactly six keys on one row, never more: Next letter, Quiz, Legend and Library at its left end, in that order, and Help and a ⋯ menu key at its right end. These are the controls a learner reaches for while reading, and the one they need when lost. The menu holds the occasional ones: Step back, Reset, text size, appearance, Feedback and Suggest a feature. The bottom bar holds only the page-turn buttons.
+- **The menu:** one sheet on every width, rising from the bottom of the screen, opened by the ⋯ key (in the bottom bar on phones, in the top bar on wider screens). It holds the controls that are not on screen at that width, so no control is in two places at once. Choosing Step back, Legend, Library, Feedback or Suggest a feature closes it, as does confirming Reset, and so does a tap outside it, which reaches nothing beneath; the text-size and appearance keys leave it open so the result can be seen and stepped several times. Reset asks for confirmation inside the sheet, and cancelling returns to the menu. For keyboards, which a laptop always has and an iPad in Split View often has, the menu behaves like the Help panel at every width: opening it moves focus to its first available key, Tab stays inside it, and Escape closes it and returns focus to the ⋯ key on screen. While it is open every page-turn input is paused, so neither an arrow key nor a tap meant to dismiss it moves the page. If the width crosses 600 px while the menu is open, it closes, because its contents differ on each side.
+- **Feedback:** an ordinary key styled like the others, never floating over the page. On wider screens it is in the menu, with its "needs a connection" note beside it while it is unavailable; on phones a compact Feedback key sits at the right end of the passage-title line at the top of the screen.
+- **Help:** a HELP key in the top bar on wider screens, just before the ⋯ key. On phones it is a compact square `?` key (labelled "Help" for assistive technology) on the title line, just before Feedback, so a learner who is lost sees it without opening the menu. The two keys share the line with the title, which keeps at least 40 % of it; Feedback's "needs a connection" note stays beneath its key.
+- **Suggest a feature:** a second key into the feedback form, in the menu on every width. Choosing it closes the menu, and the form opens over the page.
 
 The passage title sits above the page on every width. On the dev stage a small "DEV" marker follows the title, so a dev copy is never mistaken for the live app.
 
@@ -53,7 +54,7 @@ Every way of turning a page maps to the same two actions, forward and back, whic
 - **Buttons:** ← and → at the two ends of the bottom bar, fixed to the bottom of the viewport (above the safe area) at every width. They never move with the length of the text. The back button is disabled on the first page.
 - **Touch:** swipe left to go forward and swipe right to go back, following book direction. A swipe is a horizontal movement of at least 50 px that is larger than its vertical movement. A tap (movement under 10 px) on a non-glyph point in the outer 15 % of the viewport width turns the page: the right zone forward, the left zone back. A tap on a glyph anywhere is a peek (owned by `reader`); any other tap does nothing.
 - **Keyboard:** Right Arrow turns forward and Left Arrow turns back. Keys are ignored while focus is in a text field and when Cmd, Ctrl or Alt is held.
-- **While the Help panel is open** (see `help`), every page-turn input is paused, as it is while the phone menu sheet is open.
+- **While the Help panel is open** (see `help`), every page-turn input is paused, as it is while the menu is open.
 - **While the feedback form is open** (see `feedback`), every page-turn input is paused, and events arriving from the feedback widget's host element never turn pages.
 
 ## Quiz Screen
@@ -68,7 +69,7 @@ The app is one Mandalorian console, the one the intro terminal already is, so no
 - **Palette.** Two palettes, chosen by the appearance setting: **night** (black panel, amber chrome, pale amber reading text, gold for the newest letter) and **day** (parchment panel, brown-amber chrome, dark brown reading text, brown for the newest letter). Auto follows the system as before. Every color is a token on the document root; text and the newest-letter highlight meet a contrast ratio of at least 4.5:1 against the panel in both palettes.
 - **Keys.** Every button is a console key: the console monospace face, upper case with letter spacing, square corners, an amber edge, transparent face; the primary action (Next letter, Let's go, Again) is a filled amber key with a soft glow. Disabled keys dim. Keys keep their 44 pt minimum.
 - **Status line.** The passage title is a status line in the console face: a `//` prefix, the title, the DEV tag as a console tag, and a blinking block cursor. On phones Help and Feedback still sit at its right end.
-- **Rails and panels.** The top bar is a rail with a rule beneath it; cards (new letter, end of passage), the phone menu sheet, the readiness hint, the legend, the library and the data panel are sub-panels of the same console: square corners, amber rules, console face for labels. The quiz's choices are large keys; right and wrong keep their green and red, tinted on the panel.
+- **Rails and panels.** The top bar is a rail with a rule beneath it; cards (new letter, end of passage), the menu sheet, the readiness hint, the legend, the library and the data panel are sub-panels of the same console: square corners, amber rules, console face for labels. The quiz's choices are large keys; right and wrong keep their green and red, tinted on the panel.
 - **Reading text.** The passage keeps the serif reading font at the chosen text size, and the glyph font is untouched. A long story in a monospace face costs reading comfort, and reading fluency is the app's goal. The peek popover shows its word in the reading font on an amber chip.
 - **Effects.** A subtle inner glow and vignette only. No scanlines or flicker: they soften the glyphs the learner is trying to recognize.
 - **The intro terminal** uses the night palette's constants whatever the appearance, as the `intro` LLD says.
@@ -90,6 +91,8 @@ Width-dependent placement, sizes and real pagination depend on the browser's lay
 | Breakpoints | By width | By user agent | Handles Split View and future devices |
 | iPad layout | Single column | Two columns in landscape | Simpler pagination; comfortable line length |
 | Phone controls | Bottom bar with ←, Next letter, Quiz, ⋯, →; the rest in a menu | Arrows and a menu only; two bottom rows with everything | Next letter and Quiz are the actions used between pages and belong in thumb reach; Step back, Reset, Legend, Library and text size are occasional and fit one tap away; two rows cost a phone too much reading space |
+| Wider-screen controls | A top bar of six keys (Next letter, Quiz, Legend, Library, Help, ⋯); the rest in the menu | Every control in the top bar; two rows; Feedback in the bar and Help in the menu | A bar of twelve keys is not read at a glance and wraps on an iPad; the six are what a learner uses while reading plus the way out when lost, and the occasional controls cost one more tap. Help outranks Feedback for the visible place because a lost learner looks at the bar, not in a menu |
+| Menu on wider screens | The same bottom sheet as on phones | A panel dropping from the ⋯ key | One menu that looks and behaves the same on every device, at the cost of opening away from its key on a laptop |
 | Page-turn buttons | At the ends of a bar fixed to the bottom of the viewport | Button after the text; floating arrows at mid-height | A button after the text moves with every page's length; a bottom bar stays put and is in thumb reach on a phone |
 | Keyboard turns | Left and Right Arrow, ignored in text fields and with modifier keys | Space and Page Down as well | Arrows match the book direction of swipes; Space would also scroll and collide with typing |
 | Edge-zone width | Outer 15 % of viewport width | Fixed 44 pt strips | A proportional zone stays reachable on iPad and leaves most of a phone page for peeks |

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from './test';
-import { firstWord, isPhone, learn, pageText, reach, savedWord, start, swipe } from './helpers';
+import { firstWord, isPhone, learn, openMenu, pageText, reach, savedWord, start, swipe } from './helpers';
 
 const firstPassage: { paragraphs: string[] } = JSON.parse(
   readFileSync(new URL('../src/content/bundled/call-of-the-wild.json', import.meta.url), 'utf8'),
@@ -40,18 +40,107 @@ test('phones: bottom bar with arrows, Next letter, Quiz and menu; the rest in th
 });
 
 // @spec LAYOUT-003
-test('wider screens: every control in the top bar, only arrows at the bottom', async ({ page }, info) => {
+test('wider screens: six keys in the top bar, the rest in the menu, only arrows at the bottom', async ({ page }, info) => {
   test.skip(isPhone(info), 'wide layout');
   const top = page.getByRole('navigation', { name: 'Reader controls' });
-  for (const name of ['Next letter', 'Quiz', 'Step back', 'Reset', 'Legend', 'Library', 'Larger text']) {
-    await expect(top.getByRole('button', { name: new RegExp(`^${name}`) })).toBeVisible();
-  }
+  const names = await top.getByRole('button').evaluateAll((keys) =>
+    keys.filter((k) => (k as HTMLElement).offsetParent !== null).map((k) => k.getAttribute('aria-label') ?? k.textContent),
+  );
+  expect(names).toEqual(['Next letter', 'Quiz', 'Legend (0)', 'Library', 'Help', 'Menu']);
   await expect(page.getByRole('navigation', { name: 'Page turning' }).getByRole('button')).toHaveCount(2);
+
+  await openMenu(page);
+  const sheet = page.getByRole('dialog', { name: 'Menu' });
+  for (const name of ['Step back', 'Reset', 'Smaller text', 'Larger text', 'Appearance', 'Feedback', 'Suggest a feature']) {
+    await expect(sheet.getByRole('button', { name: new RegExp(`^${name}`) })).toBeVisible();
+  }
+});
+
+// @spec LAYOUT-002, LAYOUT-003, LAYOUT-016
+test('shows every reader control in exactly one place at each width', async ({ page }) => {
+  await openMenu(page);
+  const visible = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('button'))
+      .filter((b) => b.offsetParent !== null)
+      .map((b) => b.getAttribute('aria-label') ?? b.textContent ?? ''),
+  );
+  for (const name of ['Next letter', 'Quiz', 'Legend', 'Library', 'Help', 'Feedback', 'Suggest a feature', 'Step back', 'Reset', 'Smaller text', 'Larger text', 'Appearance']) {
+    const label = name === 'Feedback' ? /^Feedback$/ : new RegExp(`^${name}`);
+    expect(visible.filter((v) => label.test(v)), name).toHaveLength(1);
+  }
+});
+
+// @spec LAYOUT-023
+test('keeps the six keys on one row, reading keys at the left and Help with the menu key at the right, even at 600 px', async ({ page }, info) => {
+  test.skip(isPhone(info), 'wide layout');
+  const check = async () => {
+    const bar = page.getByRole('navigation', { name: 'Reader controls' });
+    const geometry = await bar.evaluate((nav) => {
+      const keys = Array.from(nav.querySelectorAll('button')).map((k) => k.getBoundingClientRect());
+      const box = nav.getBoundingClientRect();
+      return { keys: keys.map((k) => ({ top: k.top, left: k.left, right: k.right })), right: box.right, overflow: nav.scrollWidth - nav.clientWidth };
+    });
+    expect(geometry.keys).toHaveLength(6);
+    for (const key of geometry.keys) expect(Math.abs(key.top - geometry.keys[0].top)).toBeLessThanOrEqual(2);
+    expect(geometry.overflow).toBeLessThanOrEqual(0);
+    const [, , , library, help, menu] = geometry.keys;
+    expect(help.left - library.right).toBeGreaterThan(8); // the two groups sit apart
+    expect(geometry.right - menu.right).toBeLessThanOrEqual(2); // the menu key ends the row
+  };
+  await check(); // no letters yet: the quiz shows why it is disabled
+  await page.setViewportSize({ width: 600, height: 800 });
+  await check();
+});
+
+// @spec LAYOUT-024
+test('wider screens: the menu key in the top bar opens the menu as a sheet at the bottom of the screen', async ({ page }, info) => {
+  test.skip(isPhone(info), 'wide layout');
+  await page.getByRole('navigation', { name: 'Reader controls' }).getByRole('button', { name: 'Menu' }).click();
+  const sheet = (await page.getByRole('dialog', { name: 'Menu' }).boundingBox())!;
+  const viewport = page.viewportSize()!;
+  expect(Math.abs(sheet.y + sheet.height - viewport.height)).toBeLessThanOrEqual(1);
+  expect(sheet.y).toBeGreaterThan(viewport.height / 2);
+});
+
+// @spec LAYOUT-025
+test('closes the menu when the width crosses 600 px', async ({ page }, info) => {
+  await openMenu(page);
+  await page.setViewportSize(isPhone(info) ? { width: 800, height: 900 } : { width: 420, height: 800 });
+  await expect(page.getByRole('dialog', { name: 'Menu' })).toHaveCount(0);
+});
+
+// @spec LAYOUT-026, LAYOUT-027, LAYOUT-028
+test('moves focus into the menu, keeps Tab inside it, and gives focus back to the menu key on Escape', async ({ page }) => {
+  await openMenu(page);
+  const sheet = page.getByRole('dialog', { name: 'Menu' });
+  // No letters yet, so Step back is disabled and Reset is the first available key.
+  await expect(sheet.getByRole('button', { name: 'Reset' })).toBeFocused();
+  for (let i = 0; i < 9; i++) {
+    await page.keyboard.press('Tab');
+    expect(await sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+  }
+  await page.keyboard.press('Shift+Tab');
+  expect(await sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+  await page.keyboard.press('Escape');
+  await expect(sheet).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Menu', exact: true })).toBeFocused();
+});
+
+// @spec LAYOUT-029, LAYOUT-014
+test('ignores page-turn keys and edge taps while the menu is open; the tap only closes it', async ({ page }) => {
+  const opening = await firstWord(page);
+  await openMenu(page);
+  await page.keyboard.press('ArrowRight');
+  expect(await firstWord(page)).toBe(opening);
+  const viewport = page.viewportSize()!;
+  await page.mouse.click(viewport.width - 4, 80);
+  await expect(page.getByRole('dialog', { name: 'Menu' })).toHaveCount(0);
+  expect(await firstWord(page)).toBe(opening);
 });
 
 // @spec LAYOUT-004
-test('makes every visible control at least 44 by 44', async ({ page }, info) => {
-  await reach(page, info);
+test('makes every visible control at least 44 by 44', async ({ page }) => {
+  await openMenu(page);
   const small = await page.evaluate(() =>
     Array.from(document.querySelectorAll('button'))
       .filter((b) => b.offsetParent !== null)
@@ -80,8 +169,8 @@ test('follows the system light or dark appearance and pads for the safe area', a
 });
 
 // @spec LAYOUT-021, LAYOUT-022
-test('draws the console: monospace square keys, a framed panel, a status line, and a serif passage', async ({ page }, info) => {
-  await reach(page, info);
+test('draws the console: monospace square keys, a framed panel, a status line, and a serif passage', async ({ page }) => {
+  await openMenu(page);
   const keys = await page.evaluate(() =>
     Array.from(document.querySelectorAll('button'))
       .filter((b) => b.offsetParent !== null)
@@ -120,7 +209,7 @@ test('draws the console: monospace square keys, a framed panel, a status line, a
 });
 
 // @spec LAYOUT-017, LAYOUT-005
-test('lets the learner choose Light or Dark over the system appearance, and remembers it', async ({ page }, info) => {
+test('lets the learner choose Light or Dark over the system appearance, and remembers it', async ({ page }) => {
   const luminance = () =>
     page.evaluate(() => {
       const [r, g, b] = getComputedStyle(document.body).backgroundColor.match(/\d+/g)!.map(Number);
@@ -129,7 +218,7 @@ test('lets the learner choose Light or Dark over the system appearance, and reme
   const appearance = () => page.getByRole('button', { name: /^Appearance/ });
 
   await page.emulateMedia({ colorScheme: 'light' });
-  await reach(page, info);
+  await openMenu(page);
   await expect(appearance()).toHaveText('Auto');
   await appearance().click(); // Light
   await expect(appearance()).toHaveText('Light');
@@ -148,7 +237,7 @@ test('lets the learner choose Light or Dark over the system appearance, and reme
 
   // Light over a dark system; Auto follows the system again.
   await page.emulateMedia({ colorScheme: 'dark' });
-  await reach(page, info);
+  await openMenu(page);
   await appearance().click(); // Auto
   await expect(appearance()).toHaveText('Auto');
   expect(await luminance()).toBeLessThan(0.2);
@@ -157,7 +246,7 @@ test('lets the learner choose Light or Dark over the system appearance, and reme
 });
 
 // @spec LAYOUT-006, TEXT-004
-test('changes text size for both fonts and keeps the learner on their word', async ({ page }, info) => {
+test('changes text size for both fonts and keeps the learner on their word', async ({ page }) => {
   await learn(page, 1);
   await page.getByRole('button', { name: 'Next page' }).click();
   await page.getByRole('button', { name: 'Next page' }).click();
@@ -166,7 +255,7 @@ test('changes text size for both fonts and keeps the learner on their word', asy
   const size = () => page.locator('.page-area p').first().evaluate((p) => parseFloat(getComputedStyle(p).fontSize));
   expect(await size()).toBe(20);
 
-  await reach(page, info);
+  await openMenu(page);
   await page.getByRole('button', { name: 'Larger text' }).click();
 
   await expect.poll(size).toBe(22);

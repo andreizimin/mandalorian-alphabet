@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HelpPanel } from './HelpPanel';
-import { HELP_CONTROLS, HELP_INTRO } from './helpText';
+import { HELP_CONTROLS, HELP_INTRO, MENU_NOTE } from './helpText';
 import { QUIZ_MIN_LETTERS, SESSION_LENGTH } from '../quiz/session';
 
 /** Every reader control's visible name (LAYOUT-002, LAYOUT-003): Help must say what each one does. */
@@ -50,6 +50,17 @@ describe('HelpPanel', () => {
     const { panel } = renderPanel();
     expect(within(panel).getByText(HELP_INTRO[0])).toBeInTheDocument();
     for (const control of HELP_CONTROLS) expect(within(panel).getByText(control.text)).toBeInTheDocument();
+  });
+
+  // @spec HELP-010
+  it('carries the menu note for each width, naming where the ⋯ key is, for the stylesheet to show one', () => {
+    const { panel } = renderPanel();
+    expect(MENU_NOTE.narrow).toMatch(/⋯ key/);
+    expect(MENU_NOTE.narrow).toMatch(/bottom bar/);
+    expect(MENU_NOTE.wide).toMatch(/⋯ key/);
+    expect(MENU_NOTE.wide).toMatch(/top bar/);
+    expect(within(panel).getByText(MENU_NOTE.narrow)).toHaveClass('help-note', 'narrow-only');
+    expect(within(panel).getByText(MENU_NOTE.wide)).toHaveClass('help-note', 'wide-only');
   });
 
   // @spec HELP-002

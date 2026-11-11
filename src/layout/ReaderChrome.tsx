@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FeedbackButton } from '../feedback/FeedbackButton';
 import { SuggestButton } from '../feedback/SuggestButton';
-import { Controls } from '../progression/components';
+import { NextLetterButton } from '../progression/components';
 import { QuizButton } from '../quiz/QuizScreen';
+import { keepTabInside, focusFirstKey } from './keepTabInside';
 import { PageTurnBar } from './pageTurning';
 import { APPEARANCE_LABEL, MAX_TEXT_SIZE, MIN_TEXT_SIZE, type Appearance } from './settings';
 
@@ -73,30 +74,37 @@ export function TextSizeControl({
   );
 }
 
-/** Every reader control, for viewports 600 px and wider (hidden below by CSS). */
-// @spec LAYOUT-003, LAYOUT-008, LAYOUT-011, LAYOUT-016, LAYOUT-017, PROG-007
-export function TopBar(a: ReaderActions) {
+/** The ⋯ key that opens the menu: in the top bar on wider screens, in the bottom bar on phones. */
+export function MenuKey({ onOpen }: { onOpen: () => void }) {
+  return (
+    <button type="button" className="menu-key" aria-label="Menu" onClick={onOpen}>
+      ⋯
+    </button>
+  );
+}
+
+/**
+ * The top bar for viewports 600 px and wider (hidden below by CSS): six keys on one row,
+ * the reading keys at the left and Help with the menu key at the right. The rest wait in the menu.
+ */
+// @spec LAYOUT-003, LAYOUT-023, LAYOUT-008, LAYOUT-011, LAYOUT-016, PROG-007
+export function TopBar({ onMenu, ...a }: ReaderActions & { onMenu: () => void }) {
   return (
     <nav className="top-bar" aria-label="Reader controls">
-      <Controls
-        canAdvance={a.canAdvance}
-        canStepBack={a.canStepBack}
-        onAdvance={a.onAdvance}
-        onStepBack={a.onStepBack}
-        onReset={a.onReset}
-      />
-      <button type="button" onClick={a.onLegend}>
-        Legend ({a.learnedCount})
-      </button>
-      <button type="button" onClick={a.onLibrary}>
-        Library
-      </button>
-      <QuizButton learnedCount={a.learnedCount} fontReady={a.fontReady} onOpen={a.onQuiz} />
-      <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
-      <AppearanceControl appearance={a.appearance} onAppearance={a.onAppearance} />
-      <HelpButton onOpen={a.onHelp} />
-      <FeedbackButton ready={a.feedbackReady} reason={a.feedbackReason} onOpen={a.onFeedback} />
-      <SuggestButton ready={a.feedbackReady} onOpen={a.onFeedback} />
+      <div className="top-bar-group">
+        <NextLetterButton canAdvance={a.canAdvance} onAdvance={a.onAdvance} />
+        <QuizButton learnedCount={a.learnedCount} fontReady={a.fontReady} onOpen={a.onQuiz} />
+        <button type="button" onClick={a.onLegend}>
+          Legend ({a.learnedCount})
+        </button>
+        <button type="button" onClick={a.onLibrary}>
+          Library
+        </button>
+      </div>
+      <div className="top-bar-group top-bar-end">
+        <HelpButton onOpen={a.onHelp} />
+        <MenuKey onOpen={onMenu} />
+      </div>
     </nav>
   );
 }
@@ -144,31 +152,51 @@ export function BottomBar({ onMenu, ...a }: ReaderActions & { onMenu: () => void
   return (
     <PageTurnBar canBack={a.canTurnBack} onBack={a.onBack} onForward={a.onForward}>
       <div className="phone-only">
-        <button type="button" className="primary" onClick={a.onAdvance} disabled={!a.canAdvance}>
-          Next letter
-        </button>
+        <NextLetterButton canAdvance={a.canAdvance} onAdvance={a.onAdvance} />
         <QuizButton learnedCount={a.learnedCount} fontReady={a.fontReady} onOpen={a.onQuiz} />
-        <button type="button" aria-label="Menu" onClick={onMenu}>
-          ⋯
-        </button>
+        <MenuKey onOpen={onMenu} />
       </div>
     </PageTurnBar>
   );
 }
 
-/** The phone menu: occasional controls, one tap from the bottom bar. */
-// @spec LAYOUT-002, LAYOUT-011, LAYOUT-014, LAYOUT-017, PROG-007
-export function MenuSheet({ onClose, ...a }: ReaderActions & { onClose: () => void }) {
+/** How the menu was closed: Escape asks for focus to go back to the menu key (LAYOUT-027). */
+export type MenuCloseReason = 'escape' | undefined;
+
+/**
+ * The menu: the controls that are not on screen at this width, in a sheet rising from the bottom.
+ * Under 600 px it holds Step back, Reset, Legend, Library, Suggest a feature, text size and appearance;
+ * at 600 px or wider, Step back, Reset, text size, appearance, Feedback and Suggest a feature.
+ */
+// @spec LAYOUT-002, LAYOUT-003, LAYOUT-011, LAYOUT-014, LAYOUT-016, LAYOUT-017, LAYOUT-024, LAYOUT-026, LAYOUT-027, LAYOUT-028, PROG-005, PROG-006, PROG-007
+export function MenuSheet({
+  onClose,
+  wide = false,
+  ...a
+}: ReaderActions & { onClose: (reason?: MenuCloseReason) => void; wide?: boolean }) {
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
   const thenClose = (action: () => void) => () => {
     action();
     onClose();
   };
 
+  // On opening, and when the Reset confirmation comes and goes, focus the first available key.
+  useEffect(() => focusFirstKey(sheetRef.current), [confirmingReset]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose('escape');
+      if (e.key === 'Tab') keepTabInside(e, sheetRef.current);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
   return (
     <>
-      <div className="menu-backdrop" onClick={onClose} />
-      <div className="menu-sheet" role="dialog" aria-label="Menu">
+      <div className="menu-backdrop" onClick={() => onClose()} />
+      <div ref={sheetRef} className="menu-sheet" role="dialog" aria-label="Menu">
         {confirmingReset ? (
           <div className="controls" role="group" aria-label="Confirm reset">
             <span>Reset all progress?</span>
@@ -187,15 +215,25 @@ export function MenuSheet({ onClose, ...a }: ReaderActions & { onClose: () => vo
             <button type="button" onClick={() => setConfirmingReset(true)}>
               Reset
             </button>
-            <button type="button" onClick={thenClose(a.onLegend)}>
-              Legend
-            </button>
-            <button type="button" onClick={thenClose(a.onLibrary)}>
-              Library
-            </button>
-            <SuggestButton ready={a.feedbackReady} onOpen={thenClose(a.onFeedback)} />
+            {!wide && (
+              <>
+                <button type="button" onClick={thenClose(a.onLegend)}>
+                  Legend
+                </button>
+                <button type="button" onClick={thenClose(a.onLibrary)}>
+                  Library
+                </button>
+                <SuggestButton ready={a.feedbackReady} onOpen={thenClose(a.onFeedback)} />
+              </>
+            )}
             <TextSizeControl textSize={a.textSize} onTextSize={a.onTextSize} />
             <AppearanceControl appearance={a.appearance} onAppearance={a.onAppearance} />
+            {wide && (
+              <>
+                <FeedbackButton ready={a.feedbackReady} reason={a.feedbackReason} onOpen={thenClose(a.onFeedback)} />
+                <SuggestButton ready={a.feedbackReady} onOpen={thenClose(a.onFeedback)} />
+              </>
+            )}
           </div>
         )}
       </div>

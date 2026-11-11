@@ -40,5 +40,9 @@ export const HELP_CONTROLS: readonly HelpEntry[] = [
   { name: 'Feedback and Suggest a feature', text: 'Tell us what is wrong or what you would like.' },
 ];
 
-/** Shown on phones only, where most controls wait in the menu. */
-export const PHONE_NOTE = 'On a phone, the ⋯ key at the bottom holds the controls that are not in the bottom bar.';
+/** Where the menu key is, for each side of 600 px; the stylesheet shows the one for the current width. */
+// @spec HELP-010
+export const MENU_NOTE = {
+  narrow: 'The ⋯ key in the bottom bar holds the controls that are not on screen.',
+  wide: 'The ⋯ key at the right end of the top bar holds the controls that are not on screen.',
+} as const;
