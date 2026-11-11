@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Proposed |
+| Status | Approved |
 | Requested | 2026-11-11 |
-| Approved | |
+| Approved | 2026-11-11 |
 | Completed | |
 | Ticket | [ZZF-78](https://linear.app/zizify-workshop/issue/ZZF-78) |
 
