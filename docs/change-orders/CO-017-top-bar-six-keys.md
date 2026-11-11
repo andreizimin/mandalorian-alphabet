@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Feature |
-| Status | Approved |
+| Status | Done |
 | Requested | 2026-11-11 |
 | Approved | 2026-11-11 |
-| Completed | |
+| Completed | 2026-11-11 |
 | Ticket | [ZZF-78](https://linear.app/zizify-workshop/issue/ZZF-78) |
 
 ## Request
@@ -116,4 +116,46 @@ All four answered on 2026-11-11. Decisions 1, 2 and 4 took the recommended optio
 
 ## Outcome
 
-Filled in after the change is complete.
+Written before the requester's dev check; the production run is reported on the ticket. Screenshots at the iPhone, iPad, laptop, 600 px and the ticket's 1044 × 771 viewports, reader and open menu, in both palettes, were taken and reviewed before the commit.
+
+### Departures recorded during the work
+
+1. **Edge audit, 2026-11-11.** A blind reader of the drafted specs found that the menu's keyboard behaviour was left open: whether focus stays in the menu, whether Escape and focus handling apply under 600 px, and whether page turns pause (only the design said so). The requester chose: keep focus within the menu, and apply focus and Escape at every width. So `LAYOUT-024` keeps only the sheet's placement, and four lines were added: `LAYOUT-026` (focus to the first available key on open), `LAYOUT-027` (Escape closes and returns focus to the menu key on screen), `LAYOUT-028` (focus stays within the menu) and `LAYOUT-029` (page turns pause while it is open). `LAYOUT-025` (the menu closes when the width crosses 600 px) was added from the Risks section, which already predicted the behaviour. `LAYOUT-014` now says that confirming Reset closes the menu, matching the design.
+2. **Settled by the design, not asked:** a tap on Help or another top-bar key while the menu is open lands on the menu's backdrop. It closes the menu and nothing else, as the design already says for any tap outside. That tap never reaches Help, so `HELP-013` and `LAYOUT-014` agree.
+
+### Predicted vs Actual
+
+| Level | Predicted | Actual | Notes |
+|---|---|---|---|
+| HLD | None | None | |
+| LLDs | `layout` (Breakpoints, Reader Controls, Decisions), `help` (content), `feedback` (placement) | The same, plus `layout`'s Context, Page Turning and Console Look lines that named the "phone menu sheet", and `feedback`'s Availability line (the reason sits beside the key wherever it is) | Two Decisions rows added in `layout`: wider-screen controls and the menu on wider screens |
+| Specs | +2 ~5 | +7 ~5 | `LAYOUT-023`, `LAYOUT-024` as predicted (024 narrowed to placement); `LAYOUT-025` to `LAYOUT-029` added at the edge audit (see Departures). Revised: `LAYOUT-003`, `LAYOUT-014`, `LAYOUT-016`, `HELP-010`, `HELP-013` |
+| Tests | 6 files | 9 files | As predicted, plus `e2e/analytics.spec.ts` (Suggest a feature is now always in the menu), `src/progression/components.test.tsx` (the `Controls` tests became `NextLetterButton` tests; Step back and Reset are tested in the menu), and the help note's unit test in `HelpPanel.test.tsx` |
+| Code | 6 files | 9 files | As predicted, plus `src/layout/viewport.ts` (the menu's contents and `LAYOUT-025` need the width in script, not only in CSS) and `src/layout/keepTabInside.ts` (the focus trap, moved out of the Help panel so the menu shares it) |
+| Other | `docs/user-flow.md` | `docs/user-flow.md` | |
+
+### Surprises
+
+1. **The focus trap did not hold in Safari.** The Help panel's trap only stepped in at its first and last key and left the rest of Tab to the browser. Safari's default Tab skips buttons, so in macOS WebKit Tab carried focus out of the panel. The existing Help test fails the same way on a clean checkout of `main`; it passes in CI only because CI's Linux WebKit tabs through buttons. The shared trap now moves focus itself on every Tab press, which fixes the Help panel (`HELP-007`) as well as the new menu (`LAYOUT-028`). No spec changed.
+2. **The edge audit added five spec lines.** See Departures: the menu's keyboard behaviour, page turns and the width crossing were in the design or the Risks but not in any spec line.
+3. **Six keys fit one row at 600 px** with the quiz's "Learn 2 letters first" note hanging under its key. No labels had to shorten; the rail grows downward only while that note shows.
+4. **The `Controls` component was split as predicted**, but it disappeared rather than shrinking: Next letter became `NextLetterButton`, and Step back and Reset (with its confirmation) already lived in the menu sheet for phones.
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `8a558ae` | CO-017 proposed: top bar of six keys (ZZF-78) |
+| `747bad0` | CO-017: record the four decisions; menu opens as the bottom sheet (ZZF-78) |
+| `f671010` | CO-017: record the approval (ZZF-78) |
+| (this commit) | CO-017: top bar of six keys, the rest in the menu (ZZF-78) |
+
+### Measurements
+
+| | |
+|---|---|
+| Tests before → after | unit 343 → 358; browser 146 → 167 run (155 passed, 12 skipped by design), in WebKit at the three viewports plus Chromium offline |
+| Lines changed | +209 −122 (code), +347 −166 (tests), about +40 −21 (design docs, specs, user flow) |
+| Agent time | about 1 hour 15 minutes |
+| Deployed | Pending the dev check |
+

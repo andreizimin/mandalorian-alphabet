@@ -29,58 +29,65 @@ function actions(overrides: Partial<ReaderActions> = {}): ReaderActions {
 }
 
 describe('TopBar', () => {
-  // @spec LAYOUT-003, LAYOUT-011, LAYOUT-008, PROG-007
-  it('holds every reader control, each one tap away', async () => {
-    const a = actions();
-    render(<TopBar {...a} />);
-    const bar = screen.getByRole('navigation', { name: /reader controls/i });
-    expect(bar).toHaveClass('top-bar');
+  function renderBar(overrides: Partial<ReaderActions> = {}) {
+    const a = actions(overrides);
+    const onMenu = vi.fn();
+    render(<TopBar {...a} onMenu={onMenu} />);
+    return { a, onMenu, bar: screen.getByRole('navigation', { name: /reader controls/i }) };
+  }
 
+  // @spec LAYOUT-003
+  it('shows exactly six keys, in order: Next letter, Quiz, Legend, Library, Help and the menu key', () => {
+    const { bar } = renderBar();
+    expect(bar).toHaveClass('top-bar');
+    expect(within(bar).getAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual([
+      'Next letter',
+      'Quiz',
+      'Legend (3)',
+      'Library',
+      'Help',
+      'Menu',
+    ]);
+  });
+
+  // @spec LAYOUT-003, LAYOUT-011, LAYOUT-008, PROG-007, HELP-001
+  it('keeps each of the six one tap away', async () => {
+    const { a, onMenu, bar } = renderBar();
     for (const [name, handler] of [
       [/next letter/i, a.onAdvance],
-      [/step back/i, a.onStepBack],
+      [/^quiz$/i, a.onQuiz],
       [/legend/i, a.onLegend],
       [/library/i, a.onLibrary],
-      [/^quiz$/i, a.onQuiz],
+      ['Help', a.onHelp],
+      ['Menu', onMenu],
     ] as const) {
       await userEvent.click(within(bar).getByRole('button', { name }));
       expect(handler).toHaveBeenCalledTimes(1);
     }
-    expect(within(bar).getByRole('button', { name: /^reset/i })).toBeInTheDocument();
-    expect(within(bar).getByRole('group', { name: /text size/i })).toBeInTheDocument();
   });
 
-  // @spec LAYOUT-003, FEED-006
-  it('holds the Suggest a feature key, which opens the feedback form', async () => {
-    const a = actions();
-    render(<TopBar {...a} />);
-    const bar = screen.getByRole('navigation', { name: /reader controls/i });
-    await userEvent.click(within(bar).getByRole('button', { name: 'Suggest a feature' }));
-    expect(a.onFeedback).toHaveBeenCalledTimes(1);
+  // @spec LAYOUT-003, LAYOUT-016
+  it('leaves Step back, Reset, text size, appearance, Feedback and Suggest a feature to the menu', () => {
+    const { bar } = renderBar();
+    for (const name of [/step back/i, /^reset/i, /smaller text/i, /larger text/i, /^appearance/i, 'Feedback', 'Suggest a feature']) {
+      expect(within(bar).queryByRole('button', { name })).not.toBeInTheDocument();
+    }
   });
 
-  // @spec FEED-006
-  it('disables Suggest a feature with Feedback while the widget is unavailable', () => {
-    render(<TopBar {...actions({ feedbackReady: false })} />);
-    expect(screen.getByRole('button', { name: 'Suggest a feature' })).toBeDisabled();
+  // @spec LAYOUT-023
+  it('groups the reading keys at one end and Help with the menu key at the other', () => {
+    const { bar } = renderBar();
+    const groups = [...bar.children] as HTMLElement[];
+    expect(groups).toHaveLength(2);
+    expect(within(groups[0]).getAllByRole('button')).toHaveLength(4);
+    expect(within(groups[1]).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Help', 'Menu']);
   });
 
-  // @spec LAYOUT-003, LAYOUT-016, HELP-001
-  it('holds the Help key, which opens Help', async () => {
-    const a = actions();
-    render(<TopBar {...a} />);
-    const bar = screen.getByRole('navigation', { name: /reader controls/i });
-    await userEvent.click(within(bar).getByRole('button', { name: 'Help' }));
-    expect(a.onHelp).toHaveBeenCalledTimes(1);
-  });
-
-  // @spec LAYOUT-003, LAYOUT-017
-  it('holds the appearance control', async () => {
-    const a = actions();
-    render(<TopBar {...a} />);
-    const bar = screen.getByRole('navigation', { name: /reader controls/i });
-    await userEvent.click(within(bar).getByRole('button', { name: /^appearance/i }));
-    expect(a.onAppearance).toHaveBeenCalledTimes(1);
+  // @spec PROG-013, LAYOUT-008
+  it('disables Next letter when no letter is left and Quiz below 2 letters', () => {
+    const { bar } = renderBar({ canAdvance: false, learnedCount: 1 });
+    expect(within(bar).getByRole('button', { name: /next letter/i })).toBeDisabled();
+    expect(within(bar).getByRole('button', { name: /^quiz$/i })).toBeDisabled();
   });
 });
 
@@ -114,35 +121,83 @@ describe('BottomBar', () => {
 });
 
 describe('MenuSheet', () => {
-  function renderSheet() {
-    const a = actions();
+  function renderSheet({ wide = false, ...overrides }: Partial<ReaderActions> & { wide?: boolean } = {}) {
+    const a = actions(overrides);
     const onClose = vi.fn();
-    render(<MenuSheet {...a} onClose={onClose} />);
+    render(<MenuSheet {...a} wide={wide} onClose={onClose} />);
     return { a, onClose, sheet: screen.getByRole('dialog', { name: /menu/i }) };
   }
+  const names = (sheet: HTMLElement) =>
+    within(sheet)
+      .getAllByRole('button')
+      .map((b) => b.getAttribute('aria-label') ?? b.textContent);
 
   // @spec LAYOUT-002, LAYOUT-011, PROG-007
-  it('holds Step back, Reset, Legend, Library, text size and appearance', () => {
+  it('under 600 px holds Step back, Reset, Legend, Library, Suggest a feature, text size and appearance', () => {
     const { sheet } = renderSheet();
-    for (const name of [/step back/i, /^reset/i, /legend/i, /library/i, /^appearance/i]) {
-      expect(within(sheet).getByRole('button', { name })).toBeInTheDocument();
-    }
-    expect(within(sheet).getByRole('group', { name: /text size/i })).toBeInTheDocument();
+    expect(names(sheet)).toEqual([
+      'Step back',
+      'Reset',
+      'Legend',
+      'Library',
+      'Suggest a feature',
+      'Smaller text',
+      'Larger text',
+      'Appearance: Auto',
+    ]);
   });
 
-  // @spec LAYOUT-002, FEED-006
-  it('holds the Suggest a feature key, which opens the feedback form and closes the sheet', async () => {
-    const { a, sheet, onClose } = renderSheet();
+  // @spec LAYOUT-003, LAYOUT-016
+  it('at 600 px or wider holds Step back, Reset, text size, appearance, Feedback and Suggest a feature', () => {
+    const { sheet } = renderSheet({ wide: true });
+    expect(names(sheet)).toEqual([
+      'Step back',
+      'Reset',
+      'Smaller text',
+      'Larger text',
+      'Appearance: Auto',
+      'Feedback',
+      'Suggest a feature',
+    ]);
+  });
+
+  // @spec LAYOUT-014, FEED-006
+  it.each([false, true])('Suggest a feature opens the feedback form and closes the menu (wide: %s)', async (wide) => {
+    const { a, sheet, onClose } = renderSheet({ wide });
     await userEvent.click(within(sheet).getByRole('button', { name: 'Suggest a feature' }));
     expect(a.onFeedback).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  // @spec LAYOUT-014, LAYOUT-016, FEED-002
+  it('Feedback opens the feedback form and closes the menu', async () => {
+    const { a, sheet, onClose } = renderSheet({ wide: true });
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Feedback' }));
+    expect(a.onFeedback).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec LAYOUT-016, FEED-003, FEED-006
+  it('shows Feedback and Suggest a feature disabled, with the reason, while the widget is unavailable', () => {
+    const { sheet } = renderSheet({ wide: true, feedbackReady: false });
+    expect(within(sheet).getByRole('button', { name: 'Feedback' })).toBeDisabled();
+    expect(within(sheet).getByRole('button', { name: 'Suggest a feature' })).toBeDisabled();
+    expect(within(sheet).getByText('Feedback needs a connection')).toBeInTheDocument();
+  });
+
   // @spec LAYOUT-014, LAYOUT-017
-  it('steps the appearance and stays open so the result can be seen', async () => {
-    const { a, onClose, sheet } = renderSheet();
+  it.each([false, true])('steps the appearance and stays open so the result can be seen (wide: %s)', async (wide) => {
+    const { a, onClose, sheet } = renderSheet({ wide });
     await userEvent.click(within(sheet).getByRole('button', { name: /^appearance/i }));
     expect(a.onAppearance).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  // @spec LAYOUT-014, LAYOUT-006
+  it('steps the text size and stays open', async () => {
+    const { a, onClose, sheet } = renderSheet({ wide: true });
+    await userEvent.click(within(sheet).getByRole('button', { name: /larger text/i }));
+    expect(a.onTextSize).toHaveBeenCalledWith(1);
     expect(onClose).not.toHaveBeenCalled();
   });
 
@@ -154,11 +209,71 @@ describe('MenuSheet', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  // @spec LAYOUT-014, PROG-005
+  it.each([false, true])('steps back and closes (wide: %s)', async (wide) => {
+    const { a, onClose, sheet } = renderSheet({ wide });
+    await userEvent.click(within(sheet).getByRole('button', { name: /step back/i }));
+    expect(a.onStepBack).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  // @spec PROG-005
+  it('disables Step back when no letter is learned', () => {
+    const { sheet } = renderSheet({ canStepBack: false });
+    expect(within(sheet).getByRole('button', { name: /step back/i })).toBeDisabled();
+  });
+
+  // @spec LAYOUT-014, PROG-006
+  it.each([false, true])('resets only after the learner confirms, then closes (wide: %s)', async (wide) => {
+    const { a, onClose, sheet } = renderSheet({ wide });
+
+    await userEvent.click(within(sheet).getByRole('button', { name: /^reset/i }));
+    expect(a.onReset).not.toHaveBeenCalled();
+    await userEvent.click(within(sheet).getByRole('button', { name: /cancel/i }));
+    expect(a.onReset).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+
+    await userEvent.click(within(sheet).getByRole('button', { name: /^reset/i }));
+    await userEvent.click(within(sheet).getByRole('button', { name: /yes, reset/i }));
+    expect(a.onReset).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   // @spec LAYOUT-014
   it('closes when the learner taps outside it', () => {
     const { onClose } = renderSheet();
     fireEvent.click(document.querySelector('.menu-backdrop')!);
     expect(onClose).toHaveBeenCalled();
+  });
+
+  // @spec LAYOUT-026
+  it.each([false, true])('moves keyboard focus to its first key when it opens (wide: %s)', (wide) => {
+    const { sheet } = renderSheet({ wide });
+    expect(within(sheet).getByRole('button', { name: /step back/i })).toHaveFocus();
+  });
+
+  // @spec LAYOUT-026
+  it('skips a disabled key when it moves focus in', () => {
+    const { sheet } = renderSheet({ wide: true, canStepBack: false });
+    expect(within(sheet).getByRole('button', { name: /^reset/i })).toHaveFocus();
+  });
+
+  // @spec LAYOUT-027
+  it.each([false, true])('closes on Escape, saying so, so focus can go back to the menu key (wide: %s)', (wide) => {
+    const { onClose } = renderSheet({ wide });
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onClose).toHaveBeenCalledWith('escape');
+  });
+
+  // @spec LAYOUT-028
+  it('keeps Tab inside the menu, wrapping at both ends', async () => {
+    const { sheet } = renderSheet({ wide: true });
+    const keys = within(sheet).getAllByRole('button');
+    keys[keys.length - 1].focus();
+    await userEvent.tab();
+    expect(keys[0]).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(keys[keys.length - 1]).toHaveFocus();
   });
 });
 
@@ -198,17 +313,6 @@ describe('AppearanceControl', () => {
 });
 
 describe('Feedback among the reader controls', () => {
-  // @spec LAYOUT-003, LAYOUT-016
-  it('sits in the top bar as an ordinary button', async () => {
-    const a = actions();
-    render(<TopBar {...a} />);
-    const bar = screen.getByRole('navigation', { name: /reader controls/i });
-
-    await userEvent.click(within(bar).getByRole('button', { name: 'Feedback' }));
-
-    expect(a.onFeedback).toHaveBeenCalledTimes(1);
-  });
-
   // @spec LAYOUT-016
   it('sits at the right end of the title line for phones', async () => {
     const a = actions();
@@ -239,15 +343,9 @@ describe('Feedback among the reader controls', () => {
   });
 
   // @spec LAYOUT-016, FEED-003
-  it('is disabled in both places while the widget is unavailable', () => {
-    const a = actions({ feedbackReady: false });
-    render(
-      <>
-        <TopBar {...a} />
-        <TitleBar title="Treasure Island" {...a} />
-      </>,
-    );
-    for (const button of screen.getAllByRole('button', { name: 'Feedback' })) expect(button).toBeDisabled();
+  it('is disabled on the phone title line while the widget is unavailable', () => {
+    render(<TitleBar title="Treasure Island" {...actions({ feedbackReady: false })} />);
+    expect(screen.getByRole('button', { name: 'Feedback' })).toBeDisabled();
   });
 });
 

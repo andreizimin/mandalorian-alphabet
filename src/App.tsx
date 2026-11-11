@@ -23,7 +23,8 @@ import { usePagination } from './content/usePagination';
 import { usePageGestures } from './layout/gestures';
 import { useArrowKeyPageTurns } from './layout/pageTurning';
 import { applyAppearance } from './layout/appearance';
-import { BottomBar, MenuSheet, TitleBar, TopBar, type ReaderActions } from './layout/ReaderChrome';
+import { BottomBar, MenuSheet, TitleBar, TopBar, type MenuCloseReason, type ReaderActions } from './layout/ReaderChrome';
+import { useWideViewport } from './layout/viewport';
 import { appearanceOf, cycleAppearance, stepTextSize } from './layout/settings';
 import { currentStage, isDevStage } from './stage';
 import { DataPanel, StorageNotice } from './persistence/components';
@@ -60,6 +61,23 @@ export function App() {
   const [introLetter, setIntroLetter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuReturnsFocus = useRef(false);
+  const wide = useWideViewport();
+
+  // @spec LAYOUT-025
+  useEffect(() => setMenuOpen(false), [wide]);
+
+  // @spec LAYOUT-027
+  useEffect(() => {
+    if (menuOpen || !menuReturnsFocus.current) return;
+    menuReturnsFocus.current = false;
+    const keys = [...document.querySelectorAll<HTMLButtonElement>('button[aria-label="Menu"]')];
+    keys.find((key) => key.offsetParent !== null)?.focus();
+  }, [menuOpen]);
+  const closeMenu = (reason?: MenuCloseReason) => {
+    if (reason === 'escape') menuReturnsFocus.current = true;
+    setMenuOpen(false);
+  };
   const [helpOpen, setHelpOpen] = useState(false);
   const [introFromHelp, setIntroFromHelp] = useState(false);
   const helpReturnsFocus = useRef(false);
@@ -132,7 +150,7 @@ export function App() {
     setView('reader');
   }
 
-  // @spec FEED-004, HELP-003
+  // @spec FEED-004, HELP-003, LAYOUT-029
   const reading = view === 'reader' && !menuOpen && !helpOpen && !introLetter && !ended && !feedback.isOpen;
   useArrowKeyPageTurns({ enabled: reading, onBack: back, onForward: forward });
   usePageGestures({ enabled: reading, onBack: back, onForward: forward });
@@ -242,7 +260,7 @@ export function App() {
         {view === 'reader' && (
           <>
             <header className="reader-header">
-              <TopBar {...actions} />
+              <TopBar {...actions} onMenu={() => setMenuOpen(true)} />
               <TitleBar
                 title={passage.title}
                 feedbackReady={feedback.ready}
@@ -268,7 +286,7 @@ export function App() {
             </div>
 
             <BottomBar {...actions} onMenu={() => setMenuOpen(true)} />
-            {menuOpen && <MenuSheet {...actions} onClose={() => setMenuOpen(false)} />}
+            {menuOpen && <MenuSheet {...actions} wide={wide} onClose={closeMenu} />}
           </>
         )}
 

@@ -30,9 +30,15 @@ export async function passIntro(page: Page) {
   await letsGo.click();
 }
 
-/** Opens the phone menu sheet when the control lives there. */
+/** For Legend and Library: opens the menu on phones, where they live in it; on wider screens they are in the top bar. */
 export async function reach(page: Page, info: TestInfo) {
-  if (isPhone(info)) await page.getByRole('button', { name: 'Menu' }).click();
+  if (isPhone(info)) await openMenu(page);
+}
+
+/** Opens the menu at any width: the ⋯ key is in the bottom bar on phones and in the top bar on wider screens. */
+export async function openMenu(page: Page) {
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible();
 }
 
 export async function learn(page: Page, count: number) {

@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Controls, HintBanner, IntroCard, Legend, exampleWords } from './components';
+import { HintBanner, IntroCard, Legend, NextLetterButton, exampleWords } from './components';
 
 describe('IntroCard', () => {
   const passage = 'The east gate stood open. Beyond it, the desert stretched east forever.';
@@ -72,53 +72,19 @@ describe('HintBanner', () => {
   });
 });
 
-describe('Controls', () => {
-  function renderControls(overrides: Partial<Parameters<typeof Controls>[0]> = {}) {
-    const props = {
-      canAdvance: true,
-      canStepBack: true,
-      onAdvance: vi.fn(),
-      onStepBack: vi.fn(),
-      onReset: vi.fn(),
-      ...overrides,
-    };
-    render(<Controls {...props} />);
-    return props;
-  }
-
-  // @spec PROG-002, PROG-005
-  it('advances and steps back on tap', async () => {
-    const props = renderControls();
+describe('NextLetterButton', () => {
+  // @spec PROG-002, PROG-010
+  it('advances on tap', async () => {
+    const onAdvance = vi.fn();
+    render(<NextLetterButton canAdvance onAdvance={onAdvance} />);
     await userEvent.click(screen.getByRole('button', { name: /next letter/i }));
-    await userEvent.click(screen.getByRole('button', { name: /step back/i }));
-    expect(props.onAdvance).toHaveBeenCalledTimes(1);
-    expect(props.onStepBack).toHaveBeenCalledTimes(1);
+    expect(onAdvance).toHaveBeenCalledTimes(1);
   });
 
   // @spec PROG-013
-  it('disables advance when there is no next letter', () => {
-    renderControls({ canAdvance: false });
+  it('is disabled when there is no next letter', () => {
+    render(<NextLetterButton canAdvance={false} onAdvance={() => {}} />);
     expect(screen.getByRole('button', { name: /next letter/i })).toBeDisabled();
-  });
-
-  // @spec PROG-005
-  it('disables step back when no letter is learned', () => {
-    renderControls({ canStepBack: false });
-    expect(screen.getByRole('button', { name: /step back/i })).toBeDisabled();
-  });
-
-  // @spec PROG-006
-  it('resets only after the learner confirms', async () => {
-    const props = renderControls();
-
-    await userEvent.click(screen.getByRole('button', { name: /^reset/i }));
-    expect(props.onReset).not.toHaveBeenCalled();
-    await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
-    expect(props.onReset).not.toHaveBeenCalled();
-
-    await userEvent.click(screen.getByRole('button', { name: /^reset/i }));
-    await userEvent.click(screen.getByRole('button', { name: /yes, reset/i }));
-    expect(props.onReset).toHaveBeenCalledTimes(1);
   });
 });
 

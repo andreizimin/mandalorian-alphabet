@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Substituted } from '../reader/Substituted';
 import type { Signal } from './progression';
 
@@ -72,54 +71,13 @@ export function HintBanner({ signals, onDismiss }: { signals: readonly Signal[];
   );
 }
 
-// @spec PROG-002, PROG-005, PROG-006, PROG-010, PROG-013
-export function Controls({
-  canAdvance,
-  canStepBack,
-  onAdvance,
-  onStepBack,
-  onReset,
-}: {
-  canAdvance: boolean;
-  canStepBack: boolean;
-  onAdvance: () => void;
-  onStepBack: () => void;
-  onReset: () => void;
-}) {
-  const [confirming, setConfirming] = useState(false);
-
-  if (confirming) {
-    return (
-      <div className="controls" role="group" aria-label="Confirm reset">
-        <span>Reset all progress?</span>
-        <button
-          type="button"
-          onClick={() => {
-            setConfirming(false);
-            onReset();
-          }}
-        >
-          Yes, reset
-        </button>
-        <button type="button" onClick={() => setConfirming(false)}>
-          Cancel
-        </button>
-      </div>
-    );
-  }
-
+/** Next letter, the action used between pages: in the top bar on wider screens and the bottom bar on phones. */
+// @spec PROG-002, PROG-010, PROG-013
+export function NextLetterButton({ canAdvance, onAdvance }: { canAdvance: boolean; onAdvance: () => void }) {
   return (
-    <div className="controls">
-      <button type="button" onClick={onStepBack} disabled={!canStepBack}>
-        Step back
-      </button>
-      <button type="button" className="primary" onClick={onAdvance} disabled={!canAdvance}>
-        Next letter
-      </button>
-      <button type="button" onClick={() => setConfirming(true)}>
-        Reset
-      </button>
-    </div>
+    <button type="button" className="primary" onClick={onAdvance} disabled={!canAdvance}>
+      Next letter
+    </button>
   );
 }
 

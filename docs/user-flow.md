@@ -36,7 +36,7 @@ With E, T, A and O learned, enough short words qualify (*tea*, *toe*, *ate*, *oa
 
 ## 9. Longer sessions on the iPad
 
-The same app, no account, on the iPad: controls move to a top bar, the reading column stays at about 65 characters, and text size runs from 16 to 32 px for both fonts (LAYOUT-003, LAYOUT-001, LAYOUT-006). Split View and Slide Over behave because layout keys off viewport width, not device (LAYOUT-002, LAYOUT-003). Reading in bed, they tap the appearance button from Auto to Dark and the page goes dark whatever the iPad is set to; the choice is remembered (LAYOUT-017).
+The same app, no account, on the iPad: the controls move to a top bar of six keys, Next letter, Quiz, Legend and Library at the left and Help and ⋯ at the right, all on one row (LAYOUT-003, LAYOUT-023). The ⋯ key opens the same menu sheet as on the phone, holding Step back, Reset, text size, appearance, Feedback and Suggest a feature (LAYOUT-024). The reading column stays at about 65 characters, and text size runs from 16 to 32 px for both fonts (LAYOUT-001, LAYOUT-006). Split View and Slide Over behave because layout keys off viewport width, not device (LAYOUT-002, LAYOUT-003). Reading in bed, they open the menu and tap the appearance button from Auto to Dark and the page goes dark whatever the iPad is set to; the choice is remembered (LAYOUT-017).
 
 ## 10. Stumbling, stepping back, resetting
 
@@ -44,7 +44,7 @@ If a letter arrived too soon, *step back* removes the newest one and forgets its
 
 ## 10b. Sending feedback
 
-If something is confusing or broken, or they have an idea, they tap **Feedback**: in the top bar on an iPad or laptop, at the top right of the title line on a phone (LAYOUT-016). The shared feedback form opens over the page, and page turns pause until it closes (FEED-002, FEED-004). Offline, the button is greyed out with "Feedback needs a connection" (FEED-003). For an idea there is also **Suggest a feature**, next to Feedback in the top bar or in the phone's ⋯ menu, which opens the same form with Feature already chosen (FEED-006). Along the way the app reports a few milestones to the shared, cookieless analytics: the intro finished, each letter advanced, each new page read, each quiz finished and the suggestion link tapped, as counts only, never anything typed (ANA-003 to ANA-008).
+If something is confusing or broken, or they have an idea, they tap **Feedback**: at the top right of the title line on a phone, in the ⋯ menu on an iPad or laptop (LAYOUT-016). The shared feedback form opens over the page, and page turns pause until it closes (FEED-002, FEED-004). Offline, the button is greyed out with "Feedback needs a connection" (FEED-003). For an idea there is also **Suggest a feature**, in the ⋯ menu at every width, which opens the same form with Feature already chosen (FEED-006). Along the way the app reports a few milestones to the shared, cookieless analytics: the intro finished, each letter advanced, each new page read, each quiz finished and the suggestion link tapped, as counts only, never anything typed (ANA-003 to ANA-008).
 
 ## 11. About two hours in
 

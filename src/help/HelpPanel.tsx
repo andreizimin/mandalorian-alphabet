@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { HELP_CONTROLS, HELP_INTRO, PHONE_NOTE } from './helpText';
+import { keepTabInside } from '../layout/keepTabInside';
+import { HELP_CONTROLS, HELP_INTRO, MENU_NOTE } from './helpText';
 
 /**
  * The Help panel: a console sub-panel over the page. Close sits at the top so
@@ -48,7 +49,9 @@ export function HelpPanel({ onClose, onReplayIntro }: { onClose: () => void; onR
             </div>
           ))}
         </dl>
-        <p className="help-note">{PHONE_NOTE}</p>
+        {/* @spec HELP-010: the stylesheet shows the note for the current width. */}
+        <p className="help-note narrow-only">{MENU_NOTE.narrow}</p>
+        <p className="help-note wide-only">{MENU_NOTE.wide}</p>
         <div className="help-actions">
           <button type="button" onClick={onReplayIntro}>
             Replay intro
@@ -57,21 +60,4 @@ export function HelpPanel({ onClose, onReplayIntro }: { onClose: () => void; onR
       </div>
     </div>
   );
-}
-
-/** Wraps Tab and Shift+Tab around the panel's own keys, so focus never reaches the page behind. */
-function keepTabInside(e: KeyboardEvent, dialog: HTMLElement | null) {
-  if (!dialog) return;
-  const keys = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled])')];
-  if (keys.length === 0) return;
-  const first = keys[0];
-  const last = keys[keys.length - 1];
-  const inside = dialog.contains(document.activeElement);
-  if (e.shiftKey && (document.activeElement === first || !inside)) {
-    e.preventDefault();
-    last.focus();
-  } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
-    e.preventDefault();
-    first.focus();
-  }
 }

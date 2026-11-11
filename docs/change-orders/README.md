@@ -34,4 +34,4 @@ Every change to the app, whether feature, bug or minor fix, starts as a change o
 | [CO-014](CO-014-dev-check-question.md) | Explicit dev-check question before merging | Minor fix | Done | 0 | 0 |
 | [CO-015](CO-015-vendor-lid-skill.md) | Vendor the linked-intent-dev skill into the repository (LID v1.4.2, with the 1.3 → 1.4 migration) | Minor fix | Done | 0 | 0 |
 | [CO-016](CO-016-help-audit-fixes.md) | Help panel audit fixes (follows ZZF-74) | Minor fix | Done | +6 ~5 | +8 ~6 |
-| [CO-017](CO-017-top-bar-six-keys.md) | Top bar of six keys ([ZZF-78](https://linear.app/zizify-workshop/issue/ZZF-78)) | Feature | Approved | +2 ~5 | |
+| [CO-017](CO-017-top-bar-six-keys.md) | Top bar of six keys ([ZZF-78](https://linear.app/zizify-workshop/issue/ZZF-78)) | Feature | Done | +2 ~5 | +7 ~5 (5 added at the edge audit) |

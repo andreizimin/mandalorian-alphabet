@@ -15,7 +15,7 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 - `[x]` **HELP-005**: When the Help panel's content is taller than the viewport, the system SHALL scroll the panel within itself, keeping Close pinned at the top at every scroll position, while the page behind it stays put.
 - `[x]` **HELP-008**: When the learner taps outside the Help panel, the system SHALL close the panel without the tap reaching any control, glyph or edge zone beneath it.
 - `[x]` **HELP-009**: The system SHALL offer Help from the reader only.
-- `[x]` **HELP-013**: While the new-letter card, the end-of-passage card, the phone menu sheet or the feedback form is open, when the Help key is activated, the system SHALL do nothing.
+- `[x]` **HELP-013**: While the new-letter card, the end-of-passage card, the menu or the feedback form is open, when the Help key is activated, the system SHALL do nothing.
 
 ## Focus and Assistive Technology
 
@@ -25,5 +25,5 @@ Status markers: `[x]` implemented · `[ ]` active gap · `[D]` deferred
 
 ## Content
 
-- `[x]` **HELP-010**: The Help panel SHALL describe the controls in the same words at every width, and SHALL show the note about the ⋯ menu only while the viewport is under 600 px wide.
+- `[x]` **HELP-010**: The Help panel SHALL describe the controls in the same words at every width, and SHALL show a note about the ⋯ menu that names where its key is at the current width: in the bottom bar under 600 px, in the top bar at 600 px or wider.
 - `[x]` **HELP-011**: The quiz facts the Help panel states (the number of questions in a session and the number of letters the quiz needs) SHALL be the values the quiz uses.

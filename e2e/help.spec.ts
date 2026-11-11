@@ -1,6 +1,6 @@
 import { expect, test, type Page } from './test';
 import { readFileSync } from 'node:fs';
-import { firstWord, isPhone, learn, pageText, passIntro, reach, savedWord, start } from './helpers';
+import { firstWord, isPhone, learn, openMenu, pageText, passIntro, reach, savedWord, start } from './helpers';
 
 const fixture = readFileSync(new URL('./fixtures/feedback-widget.js', import.meta.url), 'utf8');
 
@@ -210,7 +210,7 @@ test('offers Help from the reader only', async ({ page }, info) => {
 });
 
 // @spec HELP-013
-test('does nothing when the Help key is activated while the phone menu or the feedback form is open', async ({ page }, info) => {
+test('does nothing when the Help key is activated while the menu or the feedback form is open', async ({ page }, info) => {
   await start(page, { feedbackWidget: fixture });
   const activateHelp = () =>
     page.evaluate(() => {
@@ -218,13 +218,12 @@ test('does nothing when the Help key is activated while the phone menu or the fe
       keys.find((key) => key.offsetParent !== null)!.click();
     });
 
-  if (isPhone(info)) {
-    await page.getByRole('button', { name: 'Menu' }).click();
-    await activateHelp();
-    await expect(panel(page)).toHaveCount(0);
-    await page.mouse.click(5, 5); // close the sheet
-  }
+  await openMenu(page);
+  await activateHelp();
+  await expect(panel(page)).toHaveCount(0);
+  await page.keyboard.press('Escape'); // close the menu
 
+  if (!isPhone(info)) await openMenu(page);
   await page.getByRole('button', { name: 'Feedback', exact: true }).click();
   await expect.poll(() => page.evaluate(() => window.FeedbackWidget?.isOpen())).toBe(true);
   await activateHelp();
@@ -232,10 +231,10 @@ test('does nothing when the Help key is activated while the phone menu or the fe
 });
 
 // @spec HELP-010
-test('shows the note about the menu on phones only', async ({ page }, info) => {
+test('shows the note about the menu, naming where its key is at this width', async ({ page }, info) => {
   await start(page);
   await helpKey(page).click();
-  const note = panel(page).getByText(/the ⋯ key/);
-  if (isPhone(info)) await expect(note).toBeVisible();
-  else await expect(note).toBeHidden();
+  const note = panel(page).getByText(/the ⋯ key/i).filter({ visible: true });
+  await expect(note).toHaveCount(1);
+  await expect(note).toContainText(isPhone(info) ? 'bottom bar' : 'top bar');
 });

@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { learn, passIntro, reach } from './helpers';
+import { learn, openMenu, passIntro } from './helpers';
 import { expect, test, type Page } from './test';
 
 const widget = readFileSync(new URL('./fixtures/feedback-widget.js', import.meta.url), 'utf8');
@@ -62,9 +62,9 @@ test('reports a page read once per new page, not when re-reading', async ({ page
 });
 
 // @spec FEED-006, ANA-007, LAYOUT-002, LAYOUT-003
-test('Suggest a feature opens the shared feedback form and reports the tap', async ({ page }, info) => {
+test('Suggest a feature opens the shared feedback form and reports the tap', async ({ page }) => {
   await passIntro(page);
-  await reach(page, info);
+  await openMenu(page);
   const key = page.getByRole('button', { name: 'Suggest a feature' });
   await expect(key).toBeEnabled();
   await key.click();
